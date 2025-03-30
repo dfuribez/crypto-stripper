@@ -27,10 +27,6 @@ public class Extension implements BurpExtension {
       stripperForceIntercept = PersistedList.persistedStringList();
     }
 
-    for (String i : stripperScope) {
-      api.logging().logToOutput(i);
-    }
-
     api.extension().setName("Crypto Stripper");
 
     MainTab tab = new MainTab();

@@ -96,7 +96,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="927ff" class="javax.swing.JList" binding="list2" default-binding="true">
+              <component id="927ff" class="javax.swing.JList" binding="blackList">
                 <constraints/>
                 <properties/>
               </component>
@@ -109,7 +109,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="1b030" class="javax.swing.JList" binding="list3" default-binding="true">
+              <component id="1b030" class="javax.swing.JList" binding="forceInterceptList">
                 <constraints/>
                 <properties/>
               </component>

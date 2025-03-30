@@ -12,37 +12,32 @@ public class Extension implements BurpExtension {
   public void initialize(MontoyaApi api) {
 
     PersistedList<String> stripperScope = api.persistence().extensionData().getStringList(Constants.STRIPPER_SCOPE_KEY);
+    PersistedList<String> stripperBlackList = api.persistence().extensionData().getStringList(Constants.STRIPPER_BLACK_LIST_KEY);
+    PersistedList<String> stripperForceIntercept = api.persistence().extensionData().getStringList(Constants.STRIPPER_FORCE_INTERCEPT);
 
     if (stripperScope == null) {
       stripperScope = PersistedList.persistedStringList();
     }
 
-    stripperScope.add("asasd");
-    stripperScope.add("213123123123123");
-    stripperScope.add("as564564646456456asd");
-    stripperScope.add("asaytryrtyrtyrtysd");
-    stripperScope.add("asartyrtyrtysd");
-    stripperScope.add("asassdfd");
-    stripperScope.add("213123123123123sdf");
-    stripperScope.add("as564564646456456asdsdf");
-    stripperScope.add("asaytryrtyrtyrtysdsfd");
-    stripperScope.add("asasfrtyrtyrtysd");
-    stripperScope.add("asasd");
-    stripperScope.add("213123123123123");
-    stripperScope.add("as564564646456456asd");
-    stripperScope.add("asaytryrtyrtyrtysd");
-    stripperScope.add("asartyrtyrtysd");
+    if (stripperBlackList == null) {
+      stripperBlackList = PersistedList.persistedStringList();
+    }
+
+    if (stripperForceIntercept == null) {
+      stripperForceIntercept = PersistedList.persistedStringList();
+    }
 
     for (String i : stripperScope) {
       api.logging().logToOutput(i);
     }
-    ArrayList<String> stripperBlackList = new ArrayList<String>();
 
     api.extension().setName("Crypto Stripper");
 
     MainTab tab = new MainTab();
 
     tab.setScopeList(stripperScope);
+    tab.setBlackList(stripperBlackList);
+    tab.setForceIntercept(stripperForceIntercept);
 
     api.userInterface().registerSuiteTab("Stripper", tab.panel1);
     api.userInterface()

@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 public final class Executor {
 
-  public static String execute(
+  public static ExecutorResponse execute(
       MontoyaApi api,
       String action,
       String scriptToExecute,
@@ -20,6 +20,7 @@ public final class Executor {
     String decodedOutput = "";
 
     HashMap<String, String> argumentMap = new HashMap<String, String>();
+    ExecutorResponse response = new ExecutorResponse();
 
     argumentMap.put("body", body);
     argumentMap.put("headers", headers);
@@ -56,10 +57,16 @@ public final class Executor {
           .decode(output.toString())
           .toString();
 
-    } catch (IOException e) {
-      return e.toString();
-    }
+      if (decodedOutput.isEmpty()) {
+        response.setError(scriptToExecute  + "Script's output is null");
+        return  response;
+      }
 
-    return decodedOutput;
+      return new Gson()
+          .fromJson(decodedOutput, ExecutorResponse.class);
+    } catch (IOException  | IllegalStateException e) {
+      response.setError(e.toString());
+      return  response;
+    }
   }
 }

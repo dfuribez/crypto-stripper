@@ -8,10 +8,12 @@ import burp.api.montoya.ui.contextmenu.ContextMenuEvent;
 import burp.api.montoya.ui.contextmenu.ContextMenuItemsProvider;
 import burp.api.montoya.ui.contextmenu.InvocationType;
 import burp.api.montoya.ui.contextmenu.MessageEditorHttpRequestResponse;
+import jdk.jshell.execution.Util;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static burp.api.montoya.persistence.PersistedList.persistedStringList;
@@ -44,13 +46,19 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
   ){
     HttpRequest request = requestResponse.requestResponse().request();
 
-    requestResponse.setRequest(request
-        .withAddedHeader(
-            HttpHeader.httpHeader(
-                "X-Stripper",
-                "true"
-            )
-        ));
+    HttpRequest modifiedRequest;
+
+    HashMap<String, String> preparedToExecute = Utils.prepareForExecutor(request);
+
+    ExecutorResponse executorResponse = Executor.execute(
+      this.api,
+      "decrypt",
+      "request",
+      preparedToExecute
+    );
+
+    requestResponse.setRequest(Utils.executorToHttp(request, executorResponse));
+
   }
 
 

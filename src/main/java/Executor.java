@@ -11,23 +11,29 @@ public final class Executor {
   public static ExecutorResponse execute(
       MontoyaApi api,
       String action,
-      String scriptToExecute,
-      String body,
-      String headers,
-      String urlParameters
+      String source,
+      HashMap<String, String> request
   ) {
     StringBuilder output = new StringBuilder();
     String decodedOutput = "";
+    String scriptToExecute;
 
-    HashMap<String, String> argumentMap = new HashMap<String, String>();
     ExecutorResponse response = new ExecutorResponse();
 
-    argumentMap.put("body", body);
-    argumentMap.put("headers", headers);
-    argumentMap.put("urlparams", urlParameters);
+    String argumentJSON = new Gson().toJson(request);
 
-    String argumentJSON = new Gson()
-        .toJson(argumentMap);
+    if ("request".equals(source)) {
+      scriptToExecute = api.persistence().extensionData().getString(Constants.REQUEST_SCRIPT_PATH);
+    } else {
+      scriptToExecute = api.persistence().extensionData().getString(Constants.RESPONSE_SCRIPT_PATH);
+    }
+
+    api.logging().logToOutput(request.get("headers"));
+
+    if (!Utils.checkFileExists(scriptToExecute)) {
+      response.setError(scriptToExecute + " is not a file");
+      return response;
+    }
 
     try {
       ProcessBuilder processBuilder = new ProcessBuilder(

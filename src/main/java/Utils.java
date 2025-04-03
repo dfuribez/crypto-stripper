@@ -82,7 +82,7 @@ public class Utils {
   }
 
   public static List<HttpParameter> listToUrlParams(
-      List<String> urlParametersList
+      List<HashMap<String, String>> urlParametersList
   ) {
     List<HttpParameter> urlParameters = new ArrayList<HttpParameter>();
 
@@ -90,8 +90,10 @@ public class Utils {
       return  urlParameters;
     }
 
-    for (String h : urlParametersList) {
-      //urlParameters.add(HttpParameter.urlParameter(h, ));
+    for (HashMap<String, String> param : urlParametersList) {
+      urlParameters.add(
+          HttpParameter.urlParameter(param.get("name"), param.get("value"))
+      );
     }
 
     return urlParameters;
@@ -104,8 +106,9 @@ public class Utils {
     HttpRequest modified = HttpRequest.httpRequest();
 
     modified = modified.withService(request.httpService());
-    modified = modified.withPath(request.path());
-    modified = modified.withAddedHeaders(listToHttpHeaders(output.getHeaders()));
+    modified = modified.withPath(request.pathWithoutQuery());
+    modified = modified.withAddedHeaders(
+        listToHttpHeaders(output.getHeaders()));
 
     if (output.getError() != null && !output.getError().isEmpty()) {
       modified = modified.withHeader(Constants.STRIPPER_HEADER, "error");
@@ -114,7 +117,11 @@ public class Utils {
     }
 
     modified = modified.withBody(output.getBody());
+    modified = modified.withAddedParameters(
+        listToUrlParams(output.getUrlParameters()));
     return modified;
   }
+
+
 
 }

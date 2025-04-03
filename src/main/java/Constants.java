@@ -4,7 +4,7 @@ public class Constants {
   public static String STRIPPER_FORCE_INTERCEPT = "stripperForceIntercept";
 
   public static String REQUEST_SCRIPT_PATH = "requestScriptPath";
-  public static String RESPONSE_SCRIPT_PATH = "requestScriptPath";
+  public static String RESPONSE_SCRIPT_PATH = "responseScriptPath";
 
   public static String STRIPPER_HEADER = "X-Stripper";
 

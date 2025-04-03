@@ -122,6 +122,8 @@ public class Utils {
     return modified;
   }
 
-
+  public static String removeQueryFromUrl(String url) {
+    return url.split("\\?")[0];
+  }
 
 }

@@ -78,10 +78,12 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
           .messageEditorRequestResponse()
           .get();
 
-      String url = requestResponse
+      String url = Utils.removeQueryFromUrl(
+          requestResponse
           .requestResponse()
           .request()
-          .url();
+          .url()
+      );
 
       List<Component> menuItemList = new ArrayList<>();
 

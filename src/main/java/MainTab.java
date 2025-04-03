@@ -9,9 +9,9 @@ import java.awt.event.ActionListener;
 public class MainTab {
   public JPanel panel1;
   private JPanel encryptorsPanel;
-  private JCheckBox requestCheckBox;
-  private JCheckBox responseCheckBox;
-  public JCheckBox interceptionScopeCheckBox;
+  public JCheckBox requestCheckBox;
+  public JCheckBox responseCheckBox;
+  public JCheckBox forceInterceptInScope;
   private JList scopeList;
   private JList blackList;
   private JList forceInterceptList;

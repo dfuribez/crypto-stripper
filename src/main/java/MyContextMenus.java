@@ -21,17 +21,28 @@ import static burp.api.montoya.persistence.PersistedList.persistedStringList;
 public class MyContextMenus  implements ContextMenuItemsProvider {
   private final MontoyaApi api;
   public PersistedList<String> stripperScope;
+  public PersistedList<String> stripperBlackList;
+  public PersistedList<String> stripperForceIntercept;
 
   public MyContextMenus(
       MontoyaApi api,
-      PersistedList<String> stripperScope
+      PersistedList<String> stripperScope,
+      PersistedList<String> stripperBlackList,
+      PersistedList<String> stripperForceIntercept
   ) {
     this.api = api;
     this.stripperScope = stripperScope;
+    this.stripperBlackList = stripperBlackList;
+    this.stripperForceIntercept = stripperForceIntercept;
   }
 
-  public void addUrlToScope(String url) {
-    this.stripperScope.add(url);
+  public void updateStripperScope(String action, String url) {
+
+    if ("add".equals(action)) {
+      this.stripperScope.add(url);
+    } else {
+      this.stripperScope.remove(url);
+    }
 
     this.api.persistence()
         .extensionData()
@@ -90,10 +101,17 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
       if (this.stripperScope.contains(url)) {
         JMenuItem item = new JMenuItem("Decrypt");
         item.addActionListener(l -> this.decryptRequest(requestResponse));
+
+        JMenuItem removeScopeItem = new JMenuItem("Remove from scope");
+        removeScopeItem.addActionListener(
+            l -> this.updateStripperScope("remove", url));
+
         menuItemList.add(item);
+        menuItemList.add(removeScopeItem);
       } else {
         JMenuItem item = new JMenuItem("Add url to scope");
-        item.addActionListener(l -> this.addUrlToScope(url));
+        item.addActionListener(
+            l -> this.updateStripperScope("add", url));
         menuItemList.add(item);
       }
 

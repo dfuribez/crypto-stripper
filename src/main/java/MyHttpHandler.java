@@ -3,24 +3,17 @@ import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.Annotations;
 import burp.api.montoya.core.HighlightColor;
 import burp.api.montoya.http.handler.*;
-import burp.api.montoya.http.message.HttpHeader;
-import burp.api.montoya.http.message.params.HttpParameterType;
-import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.logging.Logging;
 import burp.api.montoya.persistence.PersistedList;
-import burp.api.montoya.utilities.json.JsonObjectNode;
-import burp.api.montoya.utilities.json.JsonUtils;
-import com.google.gson.Gson;
 
 import static burp.api.montoya.http.message.HttpHeader.httpHeader;
 import static burp.api.montoya.http.handler.RequestToBeSentAction.continueWith;
 import static burp.api.montoya.http.handler.ResponseReceivedAction.continueWith;
 import static burp.api.montoya.http.message.params.HttpParameter.urlParameter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 
 class MyHttpHandler implements HttpHandler {
@@ -28,34 +21,48 @@ class MyHttpHandler implements HttpHandler {
   public PersistedList<String> stripperScope;
   public boolean forceInterceptInScope;
 
+  MontoyaApi api;
 
-  public MyHttpHandler(MontoyaApi api,  PersistedList<String> stripperScope) {
+  MainTab mainTab;
+
+  public MyHttpHandler(
+      MontoyaApi api,
+      PersistedList<String> stripperScope,
+      MainTab gui
+  ) {
+    this.api = api;
     this.logging = api.logging();
     this.stripperScope = stripperScope;
+    this.mainTab = gui;
   }
 
   @Override
   public RequestToBeSentAction handleHttpRequestToBeSent(
       HttpRequestToBeSent requestToBeSent
   ) {
-    Annotations annotations = requestToBeSent.annotations();
+    //Annotations annotations = requestToBeSent.annotations();
 
-    annotations = annotations.withNotes("tesing");
-    annotations = annotations.withHighlightColor(HighlightColor.BLUE);
+    //annotations = annotations.withNotes("tesing");
+    //annotations = annotations.withHighlightColor(HighlightColor.BLUE);
 
-    HttpRequest modifiedRequest = requestToBeSent.withAddedParameters(urlParameter("foo", "bar"));
+    String url = Utils.removeQueryFromUrl(requestToBeSent.url());
 
-    String body = requestToBeSent.body().toString();
-    List<HttpHeader> headers = requestToBeSent.headers();
-    List<ParsedHttpParameter> getParameters = requestToBeSent.parameters(HttpParameterType.URL);
+    if (this.mainTab.requestCheckBox.isSelected() &&
+      this.stripperScope.contains(url)
+    ) {
 
-    String headersJSON = new Gson()
-        .toJson(Utils.burpListToArray(headers));
+      HashMap<String, String> preparedToExecute = Utils.prepareForExecutor(requestToBeSent);
+      ExecutorResponse executorResponse = Executor.execute(
+          this.api,
+          "encrypt",
+          "request",
+          preparedToExecute
+      );
 
-    String getParamsJSON = new Gson()
-        .toJson(Utils.burpListToArray(getParameters));
+      return continueWith(Utils.executorToHttp(requestToBeSent, executorResponse));
+    }
 
-    return continueWith(modifiedRequest, annotations);
+    return continueWith(requestToBeSent);
   }
 
   @Override

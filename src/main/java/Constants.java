@@ -7,4 +7,6 @@ public class Constants {
   public static String RESPONSE_SCRIPT_PATH = "requestScriptPath";
 
   public static String STRIPPER_HEADER = "X-Stripper";
+
+  public static String STRIPPER_ERROR_TEMPLATE = "Executing %s %s %s \n Error: \n %s \n Scripts output: %s";
 }

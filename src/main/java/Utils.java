@@ -1,6 +1,7 @@
-import burp.api.montoya.http.handler.HttpRequestToBeSent;
 import burp.api.montoya.http.message.HttpHeader;
+import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.HttpParameterType;
+import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import com.google.gson.Gson;
 
@@ -14,12 +15,26 @@ public class Utils {
   public static ArrayList<String> burpListToArray(
       List object) {
 
-
     ArrayList<String> o = new ArrayList<String>();
-
     object.forEach((item) -> o.add(item.toString()));
 
     return o;
+  }
+
+  public static List<HashMap<String, String>> parametersToArray(
+      List<ParsedHttpParameter> parameters
+  ) {
+    List<HashMap<String, String>> array = new ArrayList<>();
+
+    for (ParsedHttpParameter param : parameters) {
+      HashMap<String, String> p = new HashMap<String, String>();
+      p.put("name", param.name());
+      p.put("value", param.value());
+
+      array.add(p);
+    }
+
+    return array;
   }
 
   public static HashMap<String, String> prepareForExecutor(
@@ -27,15 +42,16 @@ public class Utils {
   ) {
     HashMap<String, String> result = new HashMap<String, String>();
 
-    String body = request.bodyToString();
     String headers = new Gson().toJson(
         burpListToArray(request.headers()));
-    String urlParameters = new Gson().toJson(
-        burpListToArray(request.parameters(HttpParameterType.URL)));
 
-    result.put("body", body);
+    String urlParameters = new Gson().toJson(
+        parametersToArray(request.parameters(HttpParameterType.URL)));
+
+    result.put("body", request.bodyToString());
     result.put("headers", headers);
     result.put("urlParameters", urlParameters);
+    result.put("url", request.url());
 
     return result;
   }
@@ -65,8 +81,26 @@ public class Utils {
     return headers;
   }
 
+  public static List<HttpParameter> listToUrlParams(
+      List<String> urlParametersList
+  ) {
+    List<HttpParameter> urlParameters = new ArrayList<HttpParameter>();
 
-  public static HttpRequest executorToHttp(HttpRequest request, ExecutorResponse output) {
+    if (urlParametersList == null || urlParametersList.isEmpty()) {
+      return  urlParameters;
+    }
+
+    for (String h : urlParametersList) {
+      //urlParameters.add(HttpParameter.urlParameter(h, ));
+    }
+
+    return urlParameters;
+  }
+
+  public static HttpRequest executorToHttp(
+      HttpRequest request,
+      ExecutorResponse output
+  ) {
     HttpRequest modified = HttpRequest.httpRequest();
 
     modified = modified.withService(request.httpService());

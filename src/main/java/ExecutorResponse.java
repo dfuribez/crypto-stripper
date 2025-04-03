@@ -1,10 +1,20 @@
+import java.util.HashMap;
 import java.util.List;
 
 public class ExecutorResponse {
   private String body;
   private List<String> headers;
-  private List<String> urlParameters;
+  private List<HashMap<String, String>> urlParameters;
   private String error;
+
+
+  public List<HashMap<String, String>> getUrlParameters() {
+    return urlParameters;
+  }
+
+  public void setUrlParameters(List<HashMap<String, String>> urlParameters) {
+    this.urlParameters = urlParameters;
+  }
 
   public String getError() {
     return error;
@@ -30,11 +40,4 @@ public class ExecutorResponse {
     this.headers = headers;
   }
 
-  public List<String> getUrlParameters() {
-    return urlParameters;
-  }
-
-  public void setUrlParameters(List<String> urlParameters) {
-    this.urlParameters = urlParameters;
-  }
 }

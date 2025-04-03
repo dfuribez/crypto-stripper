@@ -1,5 +1,6 @@
 import burp.api.montoya.MontoyaApi;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,9 +18,11 @@ public final class Executor {
     StringBuilder output = new StringBuilder();
     String decodedOutput = "";
     String scriptToExecute;
+    String command = "node";
 
     ExecutorResponse response = new ExecutorResponse();
 
+    request.put("action", action);
     String argumentJSON = new Gson().toJson(request);
 
     if ("request".equals(source)) {
@@ -37,9 +40,8 @@ public final class Executor {
 
     try {
       ProcessBuilder processBuilder = new ProcessBuilder(
-          "node",
+          command,
           scriptToExecute,
-          action,
           api.utilities().base64Utils().encodeToString(argumentJSON)
       );
 
@@ -64,14 +66,28 @@ public final class Executor {
           .toString();
 
       if (decodedOutput.isEmpty()) {
-        response.setError(scriptToExecute  + "Script's output is null");
+        response.setError(String.format(
+            Constants.STRIPPER_ERROR_TEMPLATE,
+            command,
+            scriptToExecute,
+            argumentJSON,
+            "Script's output is empty or null",
+            ""
+            ));
         return  response;
       }
 
       return new Gson()
           .fromJson(decodedOutput, ExecutorResponse.class);
-    } catch (IOException  | IllegalStateException e) {
-      response.setError(e.toString());
+    } catch (IOException  | IllegalStateException | JsonSyntaxException e) {
+      response.setError(String.format(
+          Constants.STRIPPER_ERROR_TEMPLATE,
+          command,
+          scriptToExecute,
+          argumentJSON,
+          e.toString(),
+          decodedOutput
+      ));
       return  response;
     }
   }

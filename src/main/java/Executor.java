@@ -79,7 +79,7 @@ public final class Executor {
             Constants.STRIPPER_ERROR_TEMPLATE,
             command,
             scriptToExecute,
-            argumentJSON,
+            api.utilities().base64Utils().encodeToString(argumentJSON),
             "Script's output is empty or null",
             ""
             ));
@@ -93,7 +93,7 @@ public final class Executor {
           Constants.STRIPPER_ERROR_TEMPLATE,
           command,
           scriptToExecute,
-          argumentJSON,
+          api.utilities().base64Utils().encodeToString(argumentJSON),
           e.toString(),
           decodedOutput
       ));

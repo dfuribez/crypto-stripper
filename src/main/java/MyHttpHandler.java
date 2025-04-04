@@ -66,10 +66,33 @@ class MyHttpHandler implements HttpHandler {
   }
 
   @Override
-  public ResponseReceivedAction handleHttpResponseReceived(HttpResponseReceived responseReceived) {
+  public ResponseReceivedAction handleHttpResponseReceived(
+      HttpResponseReceived responseReceived
+  ) {
 
-    HttpResponse modifiedResponse = responseReceived.withAddedHeader(httpHeader("test", "new"));
+    String url = Utils.removeQueryFromUrl(
+        responseReceived.initiatingRequest().url());
 
-    return continueWith(modifiedResponse);
+    if (this.mainTab.responseCheckBox.isSelected()
+        && this.stripperScope.contains(url)
+        && responseReceived.initiatingRequest().hasHeader(Constants.STRIPPER_HEADER)
+    ) {
+      HashMap<String, String> preparedToExecute =
+          Utils.prepareForExecutor(responseReceived);
+
+      ExecutorResponse executorResponse = Executor.execute(
+          this.api,
+          "decrypt",
+          "response",
+          preparedToExecute
+      );
+
+      HttpResponse response =
+          Utils.executorToHttpResponse(responseReceived, executorResponse);
+
+      return continueWith(response);
+    }
+
+    return continueWith(responseReceived);
   }
 }

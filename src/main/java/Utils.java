@@ -1,10 +1,12 @@
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.http.handler.HttpResponseReceived;
 import burp.api.montoya.http.message.HttpHeader;
 import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.HttpParameterType;
 import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.persistence.PersistedObject;
+import burp.api.montoya.http.message.responses.HttpResponse;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -58,6 +60,26 @@ public class Utils {
     return result;
   }
 
+  public static HashMap<String, String> prepareForExecutor(
+      HttpResponseReceived response
+  ) {
+    HashMap<String, String> result = new HashMap<String, String>();
+
+
+    String headers = new Gson().toJson(
+        burpListToArray(response.headers()));
+
+    String urlParameters = new Gson().toJson(null);
+
+    result.put("body", response.bodyToString());
+    result.put("headers", headers);
+    result.put("urlParameters", urlParameters);
+    result.put("url", Utils.removeQueryFromUrl(
+        response.initiatingRequest().url()));
+
+    return result;
+  }
+
   public static boolean checkFileExists(String path) {
 
     if (path == null || path.isEmpty()) {
@@ -69,7 +91,9 @@ public class Utils {
     return file.isFile();
   }
 
-  public static List<HttpHeader> listToHttpHeaders(List<String> headersList) {
+  public static List<HttpHeader> listToHttpHeaders(
+      List<String> headersList
+  ) {
     List<HttpHeader> headers = new ArrayList<HttpHeader>();
 
     if (headersList == null || headersList.isEmpty()) {
@@ -105,23 +129,43 @@ public class Utils {
       HttpRequest request,
       ExecutorResponse output
   ) {
-    HttpRequest modified = HttpRequest.httpRequest();
-
-    modified = modified.withService(request.httpService());
-    modified = modified.withPath(request.pathWithoutQuery());
-    modified = modified.withAddedHeaders(
-        listToHttpHeaders(output.getHeaders()));
+    HttpRequest modified = HttpRequest.httpRequest()
+        .withService(request.httpService())
+        .withPath(request.pathWithoutQuery())
+        .withAddedHeaders(listToHttpHeaders(output.getHeaders()))
+        .withHeader(Constants.STRIPPER_HEADER, "true");
 
     if (output.getError() != null && !output.getError().isEmpty()) {
-      modified = modified.withHeader(Constants.STRIPPER_HEADER, "error");
-      modified = modified.withBody(output.getError());
+      modified = modified
+          .withHeader(Constants.STRIPPER_HEADER, "error")
+          .withBody(output.getError());
       return modified;
     }
 
-    modified = modified.withBody(output.getBody());
-    modified = modified.withAddedParameters(
-        listToUrlParams(output.getUrlParameters()));
-    return modified;
+    return modified
+        .withBody(output.getBody())
+        .withAddedParameters(listToUrlParams(output.getUrlParameters()));
+  }
+
+  public static HttpResponse executorToHttpResponse(
+      HttpResponseReceived response,
+      ExecutorResponse output
+  ) {
+
+    HttpResponse modified = response
+        .withRemovedHeaders(response.headers())
+        .withAddedHeaders(listToHttpHeaders(output.getHeaders()));
+
+    if (output.getError() != null && !output.getError().isEmpty()) {
+      return modified
+          .withAddedHeader(Constants.STRIPPER_HEADER, "error")
+          .withBody(output.getError());
+    }
+
+    return modified
+        .withBody(output.getBody())
+        .withAddedHeader(Constants.STRIPPER_HEADER, "true");
+
   }
 
   public static String removeQueryFromUrl(String url) {
@@ -132,6 +176,11 @@ public class Utils {
       PersistedObject persistedObject,
       String path
   ) {
+
+    if (path == null) {
+      return null;
+    }
+
     int dotIndex = path.lastIndexOf(".");
 
     if (dotIndex > 0) {

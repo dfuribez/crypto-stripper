@@ -18,7 +18,7 @@ public final class Executor {
     StringBuilder output = new StringBuilder();
     String decodedOutput = "";
     String scriptToExecute;
-    String command = "node";
+    String command;
 
     ExecutorResponse response = new ExecutorResponse();
 
@@ -31,10 +31,19 @@ public final class Executor {
       scriptToExecute = api.persistence().extensionData().getString(Constants.RESPONSE_SCRIPT_PATH);
     }
 
-    api.logging().logToOutput(request.get("headers"));
+    command = Utils.getCommandFromPath(
+        api.persistence().extensionData(),
+        scriptToExecute);
 
     if (!Utils.checkFileExists(scriptToExecute)) {
       response.setError(scriptToExecute + " is not a file");
+      return response;
+    }
+
+    if (command == null) {
+      response.setError("The selected script: "
+          + scriptToExecute
+          + " does not have a valid extension");
       return response;
     }
 

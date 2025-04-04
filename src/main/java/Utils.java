@@ -1,8 +1,10 @@
+import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.http.message.HttpHeader;
 import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.HttpParameterType;
 import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.persistence.PersistedObject;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -124,6 +126,24 @@ public class Utils {
 
   public static String removeQueryFromUrl(String url) {
     return url.split("\\?")[0];
+  }
+
+  public static String getCommandFromPath(
+      PersistedObject persistedObject,
+      String path
+  ) {
+    int dotIndex = path.lastIndexOf(".");
+
+    if (dotIndex > 0) {
+      String extension = path.substring(dotIndex + 1);
+      return switch (extension) {
+        case "py" -> persistedObject.getString(Constants.PERSISTANCE_PYTHON_PATH);
+        case "js" -> persistedObject.getString(Constants.PERSISTANCE_NODE_PATH);
+        default -> null;
+      };
+    }
+
+    return null;
   }
 
 }

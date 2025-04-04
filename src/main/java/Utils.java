@@ -1,4 +1,5 @@
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.http.handler.HttpRequestToBeSent;
 import burp.api.montoya.http.handler.HttpResponseReceived;
 import burp.api.montoya.http.message.HttpHeader;
 import burp.api.montoya.http.message.params.HttpParameter;
@@ -41,8 +42,9 @@ public class Utils {
     return array;
   }
 
-  public static HashMap<String, String> prepareForExecutor(
-      HttpRequest request
+  public static HashMap<String, String> prepareRequestForExecutor(
+      HttpRequest request,
+      int messageId
   ) {
     HashMap<String, String> result = new HashMap<String, String>();
 
@@ -56,11 +58,12 @@ public class Utils {
     result.put("headers", headers);
     result.put("urlParameters", urlParameters);
     result.put("url", request.url());
+    result.put("messageId", String.valueOf(messageId));
 
     return result;
   }
 
-  public static HashMap<String, String> prepareForExecutor(
+  public static HashMap<String, String> prepareResponseForExecutor(
       HttpResponseReceived response
   ) {
     HashMap<String, String> result = new HashMap<String, String>();
@@ -76,6 +79,7 @@ public class Utils {
     result.put("urlParameters", urlParameters);
     result.put("url", Utils.removeQueryFromUrl(
         response.initiatingRequest().url()));
+    result.put("messageId", String.valueOf(response.messageId()));
 
     return result;
   }

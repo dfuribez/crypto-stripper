@@ -44,7 +44,8 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
     if (this.mainTab.requestCheckBox.isSelected() &&
       this.stripperScope.contains(url)
     ) {
-      HashMap<String, String> preparedForExecute = Utils.prepareForExecutor(interceptedRequest);
+      HashMap<String, String> preparedForExecute =
+          Utils.prepareRequestForExecutor(interceptedRequest, interceptedRequest.messageId());
       ExecutorResponse executorResponse = Executor.execute(
           this.mainTab.api,
           "decrypt",

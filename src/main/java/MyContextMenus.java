@@ -57,9 +57,9 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
   ){
     HttpRequest request = requestResponse.requestResponse().request();
 
-    HttpRequest modifiedRequest;
-
-    HashMap<String, String> preparedToExecute = Utils.prepareForExecutor(request);
+    // TODO: calculate own messageID since the api does not provide it for this object
+    HashMap<String, String> preparedToExecute =
+        Utils.prepareRequestForExecutor(request, 0);
 
     ExecutorResponse executorResponse = Executor.execute(
       this.api,

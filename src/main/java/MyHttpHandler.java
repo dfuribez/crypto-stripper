@@ -51,7 +51,8 @@ class MyHttpHandler implements HttpHandler {
       this.stripperScope.contains(url)
     ) {
 
-      HashMap<String, String> preparedToExecute = Utils.prepareForExecutor(requestToBeSent);
+      HashMap<String, String> preparedToExecute =
+          Utils.prepareRequestForExecutor(requestToBeSent, requestToBeSent.messageId());
       ExecutorResponse executorResponse = Executor.execute(
           this.api,
           "encrypt",
@@ -78,7 +79,7 @@ class MyHttpHandler implements HttpHandler {
         && responseReceived.initiatingRequest().hasHeader(Constants.STRIPPER_HEADER)
     ) {
       HashMap<String, String> preparedToExecute =
-          Utils.prepareForExecutor(responseReceived);
+          Utils.prepareResponseForExecutor(responseReceived);
 
       ExecutorResponse executorResponse = Executor.execute(
           this.api,

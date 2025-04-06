@@ -35,11 +35,16 @@ public class Extension implements BurpExtension {
 
     api.extension().setName("Crypto Stripper");
 
-    MainTab tab = new MainTab(api);
+    MainTab tab = new MainTab(
+        api,
+        stripperScope,
+        stripperBlackList,
+        stripperForceIntercept
+    );
 
-    tab.setScopeList(stripperScope);
-    tab.setBlackList(stripperBlackList);
-    tab.setForceIntercept(stripperForceIntercept);
+    tab.setScopeList("scope", stripperScope);
+    tab.setScopeList("blacklist", stripperBlackList);
+    tab.setScopeList("force", stripperForceIntercept);
 
     api.userInterface().registerSuiteTab("Stripper", tab.panel1);
     api.userInterface()

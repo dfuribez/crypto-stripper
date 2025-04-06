@@ -70,9 +70,9 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
         .extensionData()
         .setStringList(key, target);
 
-    this.mainTab.setForceIntercept(this.forceInterceptList);
-    this.mainTab.setBlackList(this.blackList);
-    this.mainTab.setScopeList(this.stripperScope);
+    this.mainTab.setScopeList("force", this.forceInterceptList);
+    this.mainTab.setScopeList("black", this.blackList);
+    this.mainTab.setScopeList("scope", this.stripperScope);
   }
 
   public void decryptRequest(

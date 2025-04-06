@@ -6,8 +6,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 
 public class MainTab {
   public JPanel panel1;
@@ -19,9 +17,9 @@ public class MainTab {
   private JList blackList;
   private JList forceInterceptList;
   private JButton button1;
-  private JButton deleteSelectedButton;
-  private JButton deleteSelectedButton1;
-  private JButton deleteSelectedButton2;
+  private JButton deleteSelectedScopeButton;
+  private JButton deleteSelectedBlacklistButton;
+  private JButton deleteSelectedForceButton;
   private JButton RequestFileButton;
   private JButton selectResponseScriptButton;
   private JLabel requetsPathLabel;
@@ -36,9 +34,20 @@ public class MainTab {
 
 
   MontoyaApi api;
+  PersistedList<String> stripperScope;
+  PersistedList<String> stripperBlackList;
+  PersistedList<String> stripperforce;
 
-  public MainTab(MontoyaApi api) {
+  public MainTab(
+      MontoyaApi api,
+      PersistedList<String> stripperScope,
+      PersistedList<String> stripperBlackList,
+      PersistedList<String> stripperForce
+  ) {
     this.api = api;
+    this.stripperBlackList = stripperBlackList;
+    this.stripperforce = stripperForce;
+    this.stripperScope = stripperScope;
 
     requetsPathLabel.setText(
         api.persistence().extensionData().getString(
@@ -131,6 +140,24 @@ public class MainTab {
         pythonPathLabel.setText("python");
       }
     });
+    deleteSelectedScopeButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        updateScope("scope");
+      }
+    });
+    deleteSelectedBlacklistButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        updateScope("blacklist");
+      }
+    });
+    deleteSelectedForceButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        updateScope("force");
+      }
+    });
   }
 
   private String openChooser(
@@ -147,21 +174,67 @@ public class MainTab {
     return "";
   }
 
+  private void updateScope(
+      String source
+  ) {
+    JList target;
+    PersistedList<String> array;
+    String key;
+
+    switch (source) {
+      case "scope":
+        target = this.scopeList;
+        array = this.stripperScope;
+        key = Constants.STRIPPER_SCOPE_KEY;
+        break;
+      case "blacklist":
+        target = this.blackList;
+        array = this.stripperBlackList;
+        key = Constants.STRIPPER_BLACK_LIST_KEY;
+        break;
+      case "force":
+        target = this.forceInterceptList;
+        array = this.stripperforce;
+        key = Constants.STRIPPER_FORCE_INTERCEPT;
+        break;
+      default:
+        return;
+    }
+
+    DefaultListModel  model = (DefaultListModel) target.getModel();
+
+    int selectedIndex = target.getSelectedIndex();
+
+    Object selectedValue = target.getSelectedValue();
+
+    if (selectedIndex != -1) {
+      model.remove(selectedIndex);
+      array.remove(selectedValue.toString());
+      this.api.persistence().extensionData().deleteString(key);
+    }
+  }
+
   public void setScopeList(
+      String type,
       PersistedList<String> scopeListArray
   ) {
-    scopeList.setListData(scopeListArray.toArray());
-  }
 
-  public void setBlackList(
-      PersistedList<String> scopeBlackList
-  ) {
-    blackList.setListData(scopeBlackList.toArray());
-  }
+    DefaultListModel<String> listModel =
+        new DefaultListModel<String>();
 
-  public void setForceIntercept(
-      PersistedList<String> scopeListArray
-  ) {
-    forceInterceptList.setListData(scopeListArray.toArray());
+    listModel.addAll(scopeListArray);
+
+    switch (type) {
+      case "scope":
+        this.scopeList.setModel(listModel);
+        break;
+      case "blacklist":
+        this.blackList.setModel(listModel);
+        break;
+      case "force":
+        this.forceInterceptList.setModel(listModel);
+        break;
+    }
+
   }
 }

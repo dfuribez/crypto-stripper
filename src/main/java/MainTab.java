@@ -6,6 +6,8 @@ import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 public class MainTab {
   public JPanel panel1;
@@ -36,8 +38,8 @@ public class MainTab {
   MontoyaApi api;
 
   public MainTab(MontoyaApi api) {
-
     this.api = api;
+
     requetsPathLabel.setText(
         api.persistence().extensionData().getString(
             Constants.REQUEST_SCRIPT_PATH));
@@ -69,7 +71,8 @@ public class MainTab {
             new FileNameExtensionFilter(
             "Python, JavaScript files",
             "py", "js"));
-        api.persistence().extensionData().setString(Constants.REQUEST_SCRIPT_PATH, path);
+        api.persistence().extensionData().setString(
+            Constants.REQUEST_SCRIPT_PATH, path);
         requetsPathLabel.setText(path);
       }
     });
@@ -81,7 +84,8 @@ public class MainTab {
             new FileNameExtensionFilter(
                 "Python, JavaScript files",
                 "py", "js"));
-        api.persistence().extensionData().setString(Constants.RESPONSE_SCRIPT_PATH, path);
+        api.persistence().extensionData().setString(
+            Constants.RESPONSE_SCRIPT_PATH, path);
         responsePathLabel.setText(path);
       }
     });
@@ -92,7 +96,8 @@ public class MainTab {
         String path = openChooser(null);
 
         if (!path.isEmpty()) {
-          api.persistence().extensionData().setString(Constants.PERSISTANCE_NODE_PATH, path);
+          api.persistence().extensionData().setString(
+              Constants.PERSISTANCE_NODE_PATH, path);
           nodePathLabel.setText(path);
         }
       }
@@ -104,7 +109,8 @@ public class MainTab {
         String path = openChooser(null);
 
         if (!path.isEmpty()) {
-          api.persistence().extensionData().setString(Constants.PERSISTANCE_PYTHON_PATH, path);
+          api.persistence().extensionData().setString(
+              Constants.PERSISTANCE_PYTHON_PATH, path);
           pythonPathLabel.setText(path);
         }
       }
@@ -112,19 +118,20 @@ public class MainTab {
     setNodeDefaultButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        api.persistence().extensionData().setString(Constants.PERSISTANCE_NODE_PATH, "node");
+        api.persistence().extensionData().setString(
+            Constants.PERSISTANCE_NODE_PATH, "node");
         nodePathLabel.setText("node");
       }
     });
     setPythonDefaultButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        api.persistence().extensionData().setString(Constants.PERSISTANCE_PYTHON_PATH, "python");
+        api.persistence().extensionData().setString(
+            Constants.PERSISTANCE_PYTHON_PATH, "python");
         pythonPathLabel.setText("python");
       }
     });
   }
-
 
   private String openChooser(
       FileNameExtensionFilter filter
@@ -147,9 +154,9 @@ public class MainTab {
   }
 
   public void setBlackList(
-      PersistedList<String> scopeListArray
+      PersistedList<String> scopeBlackList
   ) {
-    blackList.setListData(scopeListArray.toArray());
+    blackList.setListData(scopeBlackList.toArray());
   }
 
   public void setForceIntercept(

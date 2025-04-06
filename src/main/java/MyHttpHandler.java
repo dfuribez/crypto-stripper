@@ -17,21 +17,17 @@ import java.util.HashMap;
 
 
 class MyHttpHandler implements HttpHandler {
-  private final Logging logging;
   public PersistedList<String> stripperScope;
-  public boolean forceInterceptInScope;
 
   MontoyaApi api;
-
   MainTab mainTab;
 
   public MyHttpHandler(
       MontoyaApi api,
-      PersistedList<String> stripperScope,
-      MainTab gui
+      MainTab gui,
+      PersistedList<String> stripperScope
   ) {
     this.api = api;
-    this.logging = api.logging();
     this.stripperScope = stripperScope;
     this.mainTab = gui;
   }

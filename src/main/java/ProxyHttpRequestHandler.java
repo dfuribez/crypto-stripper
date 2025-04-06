@@ -15,17 +15,24 @@ import burp.api.montoya.proxy.http.ProxyRequestToBeSentAction;
 
 class ProxyHttpRequestHandler implements ProxyRequestHandler {
   PersistedList<String> stripperScope;
+  PersistedList<String> blackList;
+  PersistedList<String> forceIntercept;
+
   Logging logger;
   MontoyaApi api;
   public MainTab mainTab;
 
   public ProxyHttpRequestHandler(
       MontoyaApi api,
+      MainTab tab,
       PersistedList<String> stripperScope,
-      MainTab tab
+      PersistedList<String> blackList,
+      PersistedList<String> forceIntercept
   ) {
     this.api = api;
     this.stripperScope = stripperScope;
+    this.blackList = blackList;
+    this.forceIntercept = forceIntercept;
     this.logger = api.logging();
     this.mainTab = tab;
   }
@@ -37,9 +44,9 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
 
     String url = Utils.removeQueryFromUrl(interceptedRequest.url());
 
-
-    //.continueWith follow current interception rules
-    //.intercept intercepts the request no matter the interception rule
+    if (this.blackList.contains(url)) {
+      ProxyRequestReceivedAction.doNotIntercept(interceptedRequest);
+    }
 
     if (this.mainTab.requestCheckBox.isSelected() &&
       this.stripperScope.contains(url)
@@ -63,6 +70,10 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
       }
 
       return ProxyRequestReceivedAction.continueWith(decryptedRequest);
+    }
+
+    if (this.forceIntercept.contains(url)) {
+      return ProxyRequestReceivedAction.intercept(interceptedRequest);
     }
 
     return ProxyRequestReceivedAction.continueWith(interceptedRequest);

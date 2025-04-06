@@ -1,9 +1,12 @@
 import static burp.api.montoya.http.message.HttpHeader.httpHeader;
 
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.Annotations;
+import burp.api.montoya.core.HighlightColor;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.logging.Logging;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import burp.api.montoya.persistence.PersistedList;
@@ -43,6 +46,20 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
   ) {
 
     String url = Utils.removeQueryFromUrl(interceptedRequest.url());
+    Annotations annotations = interceptedRequest.annotations();
+
+    if (interceptedRequest.hasHeader(Constants.FIREPROXY_HEADER)) {
+      String[] value = interceptedRequest.headerValue(
+          Constants.FIREPROXY_HEADER).split(",", 2);
+
+      this.api.logging().logToOutput(value.toString());
+
+      if (value.length == 2) {
+        annotations = annotations
+            .withHighlightColor(HighlightColor.valueOf(value[0].toUpperCase()))
+            .withNotes(value[1]);
+      }
+    }
 
     if (this.blackList.contains(url)) {
       ProxyRequestReceivedAction.doNotIntercept(interceptedRequest);
@@ -66,17 +83,25 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
       );
 
       if (this.mainTab.forceInterceptInScope.isSelected()) {
-        return ProxyRequestReceivedAction.intercept(decryptedRequest);
+        return ProxyRequestReceivedAction.intercept(
+            decryptedRequest,
+            annotations);
       }
 
-      return ProxyRequestReceivedAction.continueWith(decryptedRequest);
+      return ProxyRequestReceivedAction.continueWith(
+          decryptedRequest,
+          annotations);
     }
 
     if (this.forceIntercept.contains(url)) {
-      return ProxyRequestReceivedAction.intercept(interceptedRequest);
+      return ProxyRequestReceivedAction.intercept(
+          interceptedRequest,
+          annotations);
     }
 
-    return ProxyRequestReceivedAction.continueWith(interceptedRequest);
+    return ProxyRequestReceivedAction.continueWith(
+        interceptedRequest,
+        annotations);
   }
 
 

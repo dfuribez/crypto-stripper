@@ -13,4 +13,6 @@ public class Constants {
   public static String PERSISTANCE_NODE_PATH = "nodePath";
   public static String PERSISTANCE_PYTHON_PATH = "pythonPath";
 
+  public static String FIREPROXY_HEADER = "x-fire";
+
 }

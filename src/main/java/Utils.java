@@ -132,11 +132,16 @@ public class Utils {
       HttpRequest request,
       ExecutorResponse output
   ) {
-    HttpRequest modified = HttpRequest.httpRequest()
-        .withService(request.httpService())
-        .withPath(request.pathWithoutQuery())
-        .withAddedHeaders(listToHttpHeaders(output.getHeaders()))
+
+    HttpRequest modified = request
+        .withRemovedHeaders(request.headers())
+        .withRemovedParameters(request.parameters(HttpParameterType.URL))
         .withHeader(Constants.STRIPPER_HEADER, "true");
+
+
+    for (HttpHeader h : listToHttpHeaders(output.getHeaders())) {
+      modified = modified.withHeader(h);
+    }
 
     if (output.getError() != null && !output.getError().isEmpty()) {
       modified = modified

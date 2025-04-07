@@ -88,7 +88,8 @@ public final class Executor {
 
       return new Gson()
           .fromJson(decodedOutput, ExecutorResponse.class);
-    } catch (IOException  | IllegalStateException | JsonSyntaxException e) {
+    } catch (IOException  | IllegalStateException | JsonSyntaxException |
+        IllegalArgumentException e) {
       response.setError(String.format(
           Constants.STRIPPER_ERROR_TEMPLATE,
           command,

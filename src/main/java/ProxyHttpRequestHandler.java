@@ -52,8 +52,6 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
       String[] value = interceptedRequest.headerValue(
           Constants.FIREPROXY_HEADER).split(",", 2);
 
-      this.api.logging().logToOutput(value.toString());
-
       if (value.length == 2) {
         annotations = annotations
             .withHighlightColor(HighlightColor.valueOf(value[0].toUpperCase()))
@@ -69,7 +67,8 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
       this.stripperScope.contains(url)
     ) {
       HashMap<String, String> preparedForExecute =
-          Utils.prepareRequestForExecutor(interceptedRequest, interceptedRequest.messageId());
+          Utils.prepareRequestForExecutor(
+              interceptedRequest, interceptedRequest.messageId());
       ExecutorResponse executorResponse = Executor.execute(
           this.mainTab.api,
           "decrypt",

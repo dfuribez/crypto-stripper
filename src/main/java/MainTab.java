@@ -100,6 +100,11 @@ public class MainTab {
             new FileNameExtensionFilter(
             "Python, JavaScript files",
             "py", "js"));
+
+        if (path.isBlank()) {
+          return;
+        }
+
         api.persistence().extensionData().setString(
             Constants.REQUEST_SCRIPT_PATH, path);
         requetsPathLabel.setText(path);
@@ -113,6 +118,11 @@ public class MainTab {
             new FileNameExtensionFilter(
                 "Python, JavaScript files",
                 "py", "js"));
+
+        if (path.isBlank()) {
+          return;
+        }
+
         api.persistence().extensionData().setString(
             Constants.RESPONSE_SCRIPT_PATH, path);
         responsePathLabel.setText(path);
@@ -182,6 +192,11 @@ public class MainTab {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         String path = openChooser(null);
+
+        if (path.isBlank()) {
+          return;
+        }
+
         api.persistence().preferences().setString(
             Constants.GLOBAL_NODE_PATH, path);
         globalNodeLabel.setText(path);
@@ -191,6 +206,11 @@ public class MainTab {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         String path = openChooser(null);
+
+        if (path.isBlank()) {
+          return;
+        }
+
         api.persistence().preferences().setString(
             Constants.GLOBAL_PYTHON_PATH, path);
         globalPythonLabel.setText(path);

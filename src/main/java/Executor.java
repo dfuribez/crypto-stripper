@@ -32,7 +32,7 @@ public final class Executor {
     }
 
     command = Utils.getCommandFromPath(
-        api.persistence().extensionData(),
+        api.persistence(),
         scriptToExecute);
 
     if (!Utils.checkFileExists(scriptToExecute)) {

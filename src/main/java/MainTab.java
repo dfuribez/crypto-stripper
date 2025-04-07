@@ -16,7 +16,7 @@ public class MainTab {
   private JList scopeList;
   private JList blackList;
   private JList forceInterceptList;
-  private JButton button1;
+  private JButton clearScopeButton;
   private JButton deleteSelectedScopeButton;
   private JButton deleteSelectedBlacklistButton;
   private JButton deleteSelectedForceButton;
@@ -31,6 +31,13 @@ public class MainTab {
   private JButton setPythonDefaultButton;
   private JLabel nodePathLabel;
   private JLabel pythonPathLabel;
+  private JButton exportScopeButton;
+  private JButton importScopeButton;
+  private JButton chooseNodeGlobalBinaryButton;
+  private JButton choosePythonGlobalBinaryButton;
+  private JPanel globalBinariesPanel;
+  private JLabel globalNodeLabel;
+  private JLabel globalPythonLabel;
 
 
   MontoyaApi api;
@@ -59,18 +66,31 @@ public class MainTab {
 
     nodePathLabel.setText(
         api.persistence().extensionData().getString(
-          Constants.PERSISTANCE_NODE_PATH
+          Constants.PROJECT_NODE_PATH
         )
     );
 
     pythonPathLabel.setText(
         api.persistence().extensionData().getString(
-            Constants.PERSISTANCE_PYTHON_PATH
+            Constants.PROJECT_PYTHON_PATH
+        )
+    );
+
+    globalNodeLabel.setText(
+        api.persistence().preferences().getString(
+            Constants.GLOBAL_NODE_PATH
+        )
+    );
+
+    globalPythonLabel.setText(
+        api.persistence().preferences().getString(
+            Constants.GLOBAL_PYTHON_PATH
         )
     );
 
     this.encryptorsPanel.setBorder(new TitledBorder("Encryptors"));
-    this.pathsPanel.setBorder(new TitledBorder("Paths"));
+    this.pathsPanel.setBorder(new TitledBorder("Project Paths"));
+    this.globalBinariesPanel.setBorder(new TitledBorder("Global Paths"));
 
 
     RequestFileButton.addActionListener(new ActionListener() {
@@ -106,7 +126,7 @@ public class MainTab {
 
         if (!path.isEmpty()) {
           api.persistence().extensionData().setString(
-              Constants.PERSISTANCE_NODE_PATH, path);
+              Constants.PROJECT_NODE_PATH, path);
           nodePathLabel.setText(path);
         }
       }
@@ -119,7 +139,7 @@ public class MainTab {
 
         if (!path.isEmpty()) {
           api.persistence().extensionData().setString(
-              Constants.PERSISTANCE_PYTHON_PATH, path);
+              Constants.PROJECT_PYTHON_PATH, path);
           pythonPathLabel.setText(path);
         }
       }
@@ -128,7 +148,7 @@ public class MainTab {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         api.persistence().extensionData().setString(
-            Constants.PERSISTANCE_NODE_PATH, "node");
+            Constants.PROJECT_NODE_PATH, "node");
         nodePathLabel.setText("node");
       }
     });
@@ -136,7 +156,7 @@ public class MainTab {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         api.persistence().extensionData().setString(
-            Constants.PERSISTANCE_PYTHON_PATH, "python");
+            Constants.PROJECT_PYTHON_PATH, "python");
         pythonPathLabel.setText("python");
       }
     });
@@ -156,6 +176,24 @@ public class MainTab {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         updateScope("force");
+      }
+    });
+    chooseNodeGlobalBinaryButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        String path = openChooser(null);
+        api.persistence().preferences().setString(
+            Constants.GLOBAL_NODE_PATH, path);
+        globalNodeLabel.setText(path);
+      }
+    });
+    choosePythonGlobalBinaryButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        String path = openChooser(null);
+        api.persistence().preferences().setString(
+            Constants.GLOBAL_PYTHON_PATH, path);
+        globalPythonLabel.setText(path);
       }
     });
   }

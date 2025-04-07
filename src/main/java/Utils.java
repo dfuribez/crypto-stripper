@@ -1,5 +1,3 @@
-import burp.api.montoya.MontoyaApi;
-import burp.api.montoya.http.handler.HttpRequestToBeSent;
 import burp.api.montoya.http.handler.HttpResponseReceived;
 import burp.api.montoya.http.message.HttpHeader;
 import burp.api.montoya.http.message.params.HttpParameter;
@@ -8,6 +6,7 @@ import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.persistence.PersistedObject;
 import burp.api.montoya.http.message.responses.HttpResponse;
+import burp.api.montoya.persistence.Persistence;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -177,7 +176,7 @@ public class Utils {
   }
 
   public static String getCommandFromPath(
-      PersistedObject persistedObject,
+      Persistence persistence,
       String path
   ) {
 
@@ -185,13 +184,31 @@ public class Utils {
       return null;
     }
 
+    String globalPython = persistence.preferences().getString(
+        Constants.GLOBAL_PYTHON_PATH);
+    String globalNode = persistence.preferences().getString(
+        Constants.GLOBAL_NODE_PATH);
+
+    String nodePath = persistence.extensionData().getString(
+        Constants.PROJECT_NODE_PATH);
+    String pythonPath = persistence.extensionData().getString(
+        Constants.PROJECT_PYTHON_PATH);
+
+    if (!checkFileExists(pythonPath)) {
+      pythonPath = globalPython;
+    }
+
+    if (!checkFileExists(nodePath)) {
+      nodePath = globalNode;
+    }
+
     int dotIndex = path.lastIndexOf(".");
 
     if (dotIndex > 0) {
       String extension = path.substring(dotIndex + 1);
       return switch (extension) {
-        case "py" -> persistedObject.getString(Constants.PERSISTANCE_PYTHON_PATH);
-        case "js" -> persistedObject.getString(Constants.PERSISTANCE_NODE_PATH);
+        case "py" -> pythonPath;
+        case "js" -> nodePath;
         default -> null;
       };
     }

@@ -1,5 +1,7 @@
 
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ToolSource;
+import burp.api.montoya.core.ToolType;
 import burp.api.montoya.http.handler.*;
 import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.persistence.PersistedList;
@@ -60,13 +62,11 @@ class MyHttpHandler implements HttpHandler {
   public ResponseReceivedAction handleHttpResponseReceived(
       HttpResponseReceived responseReceived
   ) {
-
     String url = Utils.removeQueryFromUrl(
         responseReceived.initiatingRequest().url());
 
     if (this.mainTab.responseCheckBox.isSelected()
         && this.stripperScope.contains(url)
-        && responseReceived.initiatingRequest().hasHeader(Constants.STRIPPER_HEADER)
     ) {
       HashMap<String, String> preparedToExecute =
           Utils.prepareResponseForExecutor(responseReceived);
@@ -80,6 +80,14 @@ class MyHttpHandler implements HttpHandler {
 
       HttpResponse response =
           Utils.executorToHttpResponse(responseReceived, executorResponse);
+
+      if (responseReceived.toolSource().isFromTool(ToolType.PROXY)) {
+        if (executorResponse.getReplaceResponse()) {
+          return continueWith(response);
+        } else {
+          return continueWith(responseReceived);
+        }
+      }
 
       return continueWith(response);
     }

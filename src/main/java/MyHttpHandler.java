@@ -1,17 +1,11 @@
 
 import burp.api.montoya.MontoyaApi;
-import burp.api.montoya.core.Annotations;
-import burp.api.montoya.core.HighlightColor;
 import burp.api.montoya.http.handler.*;
-import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
-import burp.api.montoya.logging.Logging;
 import burp.api.montoya.persistence.PersistedList;
 
-import static burp.api.montoya.http.message.HttpHeader.httpHeader;
 import static burp.api.montoya.http.handler.RequestToBeSentAction.continueWith;
 import static burp.api.montoya.http.handler.ResponseReceivedAction.continueWith;
-import static burp.api.montoya.http.message.params.HttpParameter.urlParameter;
 
 import java.util.HashMap;
 
@@ -36,10 +30,10 @@ class MyHttpHandler implements HttpHandler {
   public RequestToBeSentAction handleHttpRequestToBeSent(
       HttpRequestToBeSent requestToBeSent
   ) {
-    //Annotations annotations = requestToBeSent.annotations();
 
-    //annotations = annotations.withNotes("tesing");
-    //annotations = annotations.withHighlightColor(HighlightColor.BLUE);
+    if (requestToBeSent.method().equalsIgnoreCase("options")) {
+      continueWith(requestToBeSent);
+    }
 
     String url = Utils.removeQueryFromUrl(requestToBeSent.url());
 

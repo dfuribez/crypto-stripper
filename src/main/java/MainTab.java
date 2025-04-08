@@ -12,7 +12,7 @@ public class MainTab {
   private JPanel encryptorsPanel;
   public JCheckBox requestCheckBox;
   public JCheckBox responseCheckBox;
-  public JCheckBox forceInterceptInScope;
+  public JCheckBox forceInterceptInScopeCheckbox;
   private JList scopeList;
   private JList blackList;
   private JList forceInterceptList;
@@ -87,6 +87,8 @@ public class MainTab {
             Constants.GLOBAL_PYTHON_PATH
         )
     );
+
+    loadCurrentSettings();
 
     this.encryptorsPanel.setBorder(new TitledBorder("Encryptors"));
     this.pathsPanel.setBorder(new TitledBorder("Project Paths"));
@@ -216,6 +218,24 @@ public class MainTab {
         globalPythonLabel.setText(path);
       }
     });
+    requestCheckBox.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        saveCurrentSettings();
+      }
+    });
+    responseCheckBox.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        saveCurrentSettings();
+      }
+    });
+    forceInterceptInScopeCheckbox.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        saveCurrentSettings();
+      }
+    });
   }
 
   private String openChooser(
@@ -230,6 +250,45 @@ public class MainTab {
     }
 
     return "";
+  }
+
+  public void loadCurrentSettings() {
+
+    Boolean requestStatus = this.api.persistence().extensionData().getBoolean(
+        Constants.PERSISTANCE_REQUEST_CHECKBOX_STATUS
+    );
+
+    Boolean responseStatus = this.api.persistence().extensionData().getBoolean(
+        Constants.PERSISTANCE_RESPONSE_CHECKBOX_STATUS
+    );
+
+    Boolean forceStatus = this.api.persistence().extensionData().getBoolean(
+        Constants.PERSISTANCE_FORCE_CHECKBOX_STATUS
+    );
+
+    requestStatus = requestStatus == null ? true : requestStatus;
+    responseStatus = responseStatus == null ? true : responseStatus;
+    forceStatus = forceStatus == null ? false : forceStatus;
+
+    requestCheckBox.setSelected(requestStatus);
+    responseCheckBox.setSelected(responseStatus);
+    forceInterceptInScopeCheckbox.setSelected(forceStatus);
+  }
+
+  public void saveCurrentSettings() {
+    boolean requestCheckboxStatus = requestCheckBox.isSelected();
+    boolean responseCheckboxStatus = responseCheckBox.isSelected();
+    boolean forceCheckboxStatus = forceInterceptInScopeCheckbox.isSelected();
+
+    this.api.persistence().extensionData().setBoolean(
+        Constants.PERSISTANCE_FORCE_CHECKBOX_STATUS,
+        forceCheckboxStatus);
+    this.api.persistence().extensionData().setBoolean(
+        Constants.PERSISTANCE_REQUEST_CHECKBOX_STATUS,
+        requestCheckboxStatus);
+    this.api.persistence().extensionData().setBoolean(
+        Constants.PERSISTANCE_RESPONSE_CHECKBOX_STATUS,
+        responseCheckboxStatus);
   }
 
   private void updateScope(

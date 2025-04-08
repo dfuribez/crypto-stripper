@@ -6,7 +6,6 @@ import burp.api.montoya.core.HighlightColor;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.logging.Logging;
 
-import java.util.Arrays;
 import java.util.HashMap;
 
 import burp.api.montoya.persistence.PersistedList;
@@ -81,7 +80,7 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
           executorResponse
       );
 
-      if (this.mainTab.forceInterceptInScope.isSelected()) {
+      if (this.mainTab.forceInterceptInScopeCheckbox.isSelected()) {
         return ProxyRequestReceivedAction.intercept(
             decryptedRequest,
             annotations);

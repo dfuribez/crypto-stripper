@@ -17,4 +17,8 @@ public class Constants {
 
   public static String FIREPROXY_HEADER = "x-fire";
 
+  public static String PERSISTANCE_REQUEST_CHECKBOX_STATUS = "requestCheckboxStatus";
+  public static String PERSISTANCE_RESPONSE_CHECKBOX_STATUS = "responseCheckboxStatus";
+  public static String PERSISTANCE_FORCE_CHECKBOX_STATUS = "forceCheckboxStatus";
+
 }

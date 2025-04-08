@@ -3,6 +3,7 @@ import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ToolSource;
 import burp.api.montoya.core.ToolType;
 import burp.api.montoya.http.handler.*;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.persistence.PersistedList;
 
@@ -33,8 +34,12 @@ class MyHttpHandler implements HttpHandler {
       HttpRequestToBeSent requestToBeSent
   ) {
 
+    HttpRequest modifiedRequest = requestToBeSent
+        .withRemovedHeader(Constants.FIREPROXY_HEADER)
+        .withRemovedHeader(Constants.STRIPPER_HEADER);
+
     if (requestToBeSent.method().equalsIgnoreCase("options")) {
-      continueWith(requestToBeSent);
+      continueWith(modifiedRequest);
     }
 
     String url = Utils.removeQueryFromUrl(requestToBeSent.url());
@@ -44,7 +49,7 @@ class MyHttpHandler implements HttpHandler {
     ) {
 
       HashMap<String, String> preparedToExecute =
-          Utils.prepareRequestForExecutor(requestToBeSent, requestToBeSent.messageId());
+          Utils.prepareRequestForExecutor(modifiedRequest, requestToBeSent.messageId());
       ExecutorResponse executorResponse = Executor.execute(
           this.api,
           "encrypt",
@@ -52,10 +57,11 @@ class MyHttpHandler implements HttpHandler {
           preparedToExecute
       );
 
-      return continueWith(Utils.executorToHttp(requestToBeSent, executorResponse));
+      return continueWith(
+          Utils.executorToHttp(modifiedRequest, executorResponse));
     }
 
-    return continueWith(requestToBeSent);
+    return continueWith(modifiedRequest);
   }
 
   @Override
@@ -80,6 +86,7 @@ class MyHttpHandler implements HttpHandler {
 
       HttpResponse response =
           Utils.executorToHttpResponse(responseReceived, executorResponse);
+
 
       if (responseReceived.toolSource().isFromTool(ToolType.PROXY)) {
         if (executorResponse.getReplaceResponse()) {

@@ -7,6 +7,15 @@ public class ExecutorResponse {
   private List<HashMap<String, String>> urlParameters;
   private String error;
   private Boolean replaceResponse = false;
+  private String stdErr;
+
+  public String getStdErr() {
+    return stdErr;
+  }
+
+  public void setStdErr(String stdErr) {
+    this.stdErr = stdErr;
+  }
 
   public Boolean getReplaceResponse() {
     return replaceResponse;

@@ -19,6 +19,7 @@ public final class Executor {
     String decodedOutput = "";
     String scriptToExecute;
     String command;
+    StringBuilder stdErr = new StringBuilder();
 
     ExecutorResponse response = new ExecutorResponse();
 
@@ -26,9 +27,11 @@ public final class Executor {
     String argumentJSON = new Gson().toJson(request);
 
     if ("request".equals(source)) {
-      scriptToExecute = api.persistence().extensionData().getString(Constants.REQUEST_SCRIPT_PATH);
+      scriptToExecute = api.persistence().extensionData().getString(
+          Constants.REQUEST_SCRIPT_PATH);
     } else {
-      scriptToExecute = api.persistence().extensionData().getString(Constants.RESPONSE_SCRIPT_PATH);
+      scriptToExecute = api.persistence().extensionData().getString(
+          Constants.RESPONSE_SCRIPT_PATH);
     }
 
     command = Utils.getCommandFromPath(
@@ -62,10 +65,18 @@ public final class Executor {
           new InputStreamReader(process.getInputStream())
       );
 
+      BufferedReader errorReader = new BufferedReader(
+          new InputStreamReader(process.getErrorStream())
+      );
+
       String line;
 
       while ((line = reader.readLine()) != null) {
         output.append(line);
+      }
+
+      while ((line = errorReader.readLine()) != null) {
+        stdErr.append(line);
       }
 
       decodedOutput = api
@@ -86,8 +97,11 @@ public final class Executor {
         return  response;
       }
 
-      return new Gson()
+      response = new  Gson()
           .fromJson(decodedOutput, ExecutorResponse.class);
+
+      response.setStdErr(stdErr.toString());
+      return response;
     } catch (IOException  | IllegalStateException | JsonSyntaxException |
         IllegalArgumentException e) {
       response.setError(String.format(

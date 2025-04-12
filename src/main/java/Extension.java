@@ -55,6 +55,13 @@ public class Extension implements BurpExtension {
             stripperBlackList,
             stripperForceIntercept
         ));
+    api.userInterface().registerHttpRequestEditorProvider(
+        new MyHttpRequestEditorProvider(
+            api,
+            stripperScope,
+            stripperBlackList,
+            stripperForceIntercept
+        ));
 
     api.http().registerHttpHandler(new MyHttpHandler(
         api,

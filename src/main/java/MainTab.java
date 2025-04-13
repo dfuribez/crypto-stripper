@@ -1,11 +1,15 @@
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.persistence.PersistedList;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.util.HashMap;
 
 public class MainTab {
@@ -17,7 +21,7 @@ public class MainTab {
   private JList scopeList;
   private JList blackList;
   private JList forceInterceptList;
-  private JButton clearScopeButton;
+  private JButton restoreSettingsButton;
   private JButton deleteSelectedScopeButton;
   private JButton deleteSelectedBlacklistButton;
   private JButton deleteSelectedForceButton;
@@ -33,12 +37,15 @@ public class MainTab {
   private JLabel nodePathLabel;
   private JLabel pythonPathLabel;
   private JButton exportScopeButton;
-  private JButton importScopeButton;
+  private JButton importSettingsButton;
   private JButton chooseNodeGlobalBinaryButton;
   private JButton choosePythonGlobalBinaryButton;
   private JPanel globalBinariesPanel;
   private JLabel globalNodeLabel;
   private JLabel globalPythonLabel;
+  private JPanel scopeListPanel;
+  private JPanel blackListPanel;
+  private JPanel forceInterceptListPanel;
 
   MontoyaApi api;
 
@@ -51,6 +58,10 @@ public class MainTab {
     this.encryptorsPanel.setBorder(new TitledBorder("Encryptors"));
     this.pathsPanel.setBorder(new TitledBorder("Project Paths"));
     this.globalBinariesPanel.setBorder(new TitledBorder("Global Paths"));
+
+    this.scopeListPanel.setBorder(new TitledBorder("Scope:"));
+    this.blackListPanel.setBorder(new TitledBorder("Black List"));
+    this.forceInterceptListPanel.setBorder(new TitledBorder("Force intercept:"));
 
 
     RequestFileButton.addActionListener(new ActionListener() {
@@ -194,12 +205,60 @@ public class MainTab {
         saveCurrentSettings();
       }
     });
-    clearScopeButton.addActionListener(new ActionListener() {
+    restoreSettingsButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         clearSettings();
       }
     });
+    exportScopeButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        exportSettings();
+      }
+    });
+  }
+
+  private void exportSettings() {
+    JsonSettings settings = new JsonSettings();
+
+    settings.setEnableRequest(
+        this.api.persistence().extensionData().getBoolean(
+            Constants.REQUEST_CHECKBOX_STATUS_KEY
+        )
+    );
+    settings.setEnableResponse(
+        this.api.persistence().extensionData().getBoolean(
+            Constants.RESPONSE_CHECKBOX_STATUS_KEY
+        )
+    );
+    settings.setEnableForceIntercept(
+        this.api.persistence().extensionData().getBoolean(
+            Constants.FORCE_CHECKBOX_STATUS_KEY
+        )
+    );
+
+    HashMap<String, PersistedList<String>> scope =
+        Utils.loadScope(this.api.persistence().extensionData());
+
+    settings.setBlackList(scope.get("blacklist").toArray(new String[0]));
+    settings.setScope(scope.get("scope").toArray(new String[0]));
+    settings.setForceIntercept(scope.get("force").toArray(new String[0]));
+
+    JFileChooser fileChooser = new JFileChooser();
+    //fileChooser.setFileFilter();
+    int response = fileChooser.showSaveDialog(null);
+
+    if (response != JFileChooser.APPROVE_OPTION) {
+      return;
+    }
+
+    try (Writer writer = new FileWriter(fileChooser.getSelectedFile().getAbsolutePath())) {
+      Gson gson = new GsonBuilder().create();
+      gson.toJson(settings, writer);
+    } catch (Exception e) {
+      this.api.logging().logToError(e.toString());
+    }
   }
 
   private String openChooser(

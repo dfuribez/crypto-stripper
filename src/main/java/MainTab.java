@@ -43,9 +43,7 @@ public class MainTab {
   MontoyaApi api;
 
 
-  public MainTab(
-      MontoyaApi api
-  ) {
+  public MainTab(MontoyaApi api) {
     this.api = api;
 
     requetsPathLabel.setText(

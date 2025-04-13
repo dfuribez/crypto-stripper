@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -256,6 +257,14 @@ public class Utils {
     output.put("force", stripperForceIntercept);
 
     return output;
+  }
+
+  public static PersistedList<String> arrayToPersisted(String[] list){
+    PersistedList<String> out = PersistedList.persistedStringList();
+
+    Collections.addAll(out, list);
+
+    return out;
   }
 
 }

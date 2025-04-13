@@ -1,16 +1,23 @@
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.persistence.PersistedList;
+import burp.api.montoya.persistence.PersistedObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import jdk.jshell.execution.Util;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainTab {
   public JPanel panel1;
@@ -217,6 +224,56 @@ public class MainTab {
         exportSettings();
       }
     });
+    importSettingsButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        importSettings();
+      }
+    });
+  }
+
+  private void importSettings() {
+    String path = openChooser(
+        new FileNameExtensionFilter(
+            "JSON, configuration files",
+            "json"));
+
+    if (path.isBlank()) {
+      return;
+    }
+
+    try (Reader reader = new FileReader(path)) {
+      Gson gson = new Gson();
+      JsonSettings jsonSettings = gson.fromJson(reader, JsonSettings.class);
+
+      this.api.persistence().extensionData().setBoolean(
+          Constants.REQUEST_CHECKBOX_STATUS_KEY, jsonSettings.isEnableRequest()
+      );
+      this.api.persistence().extensionData().setBoolean(
+          Constants.RESPONSE_CHECKBOX_STATUS_KEY, jsonSettings.isEnableResponse()
+      );
+      this.api.persistence().extensionData().setBoolean(
+          Constants.FORCE_CHECKBOX_STATUS_KEY, jsonSettings.isEnableForceIntercept()
+      );
+
+      this.api.persistence().extensionData().setStringList(
+          Constants.STRIPPER_SCOPE_LIST_KEY,
+          Utils.arrayToPersisted(jsonSettings.getScope())
+      );
+      this.api.persistence().extensionData().setStringList(
+          Constants.STRIPPER_BLACK_LIST_KEY,
+          Utils.arrayToPersisted(jsonSettings.getBlackList())
+      );
+      this.api.persistence().extensionData().setStringList(
+          Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY,
+          Utils.arrayToPersisted(jsonSettings.getForceIntercept())
+      );
+      loadCurrentSettings();
+
+    } catch (Exception e) {
+      this.api.logging().logToError(e.toString());
+    }
+
   }
 
   private void exportSettings() {

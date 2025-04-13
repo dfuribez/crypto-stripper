@@ -6,8 +6,6 @@ import java.util.HashMap;
 
 public class Extension implements BurpExtension {
 
-  public boolean forceInterceptInScope = false;
-
   @Override
   public void initialize(MontoyaApi api) {
 
@@ -20,12 +18,7 @@ public class Extension implements BurpExtension {
 
     api.extension().setName("Crypto Stripper");
 
-    MainTab tab = new MainTab(
-        api,
-        stripperScope,
-        stripperBlackList,
-        stripperForceIntercept
-    );
+    MainTab tab = new MainTab(api);
 
     tab.setScopeList("scope", stripperScope);
     tab.setScopeList("blacklist", stripperBlackList);

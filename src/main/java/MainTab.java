@@ -40,22 +40,13 @@ public class MainTab {
   private JLabel globalNodeLabel;
   private JLabel globalPythonLabel;
 
-
   MontoyaApi api;
-  PersistedList<String> stripperScope;
-  PersistedList<String> stripperBlackList;
-  PersistedList<String> stripperforce;
+
 
   public MainTab(
-      MontoyaApi api,
-      PersistedList<String> stripperScope,
-      PersistedList<String> stripperBlackList,
-      PersistedList<String> stripperForce
+      MontoyaApi api
   ) {
     this.api = api;
-    this.stripperBlackList = stripperBlackList;
-    this.stripperforce = stripperForce;
-    this.stripperScope = stripperScope;
 
     requetsPathLabel.setText(
         api.persistence().extensionData().getString(
@@ -296,10 +287,6 @@ public class MainTab {
         Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY, PersistedList.persistedStringList()
     );
 
-    this.stripperBlackList = PersistedList.persistedStringList();
-    this.stripperforce = PersistedList.persistedStringList();
-    this.stripperScope = PersistedList.persistedStringList();
-
     loadCurrentSettings();
   }
 
@@ -317,6 +304,9 @@ public class MainTab {
         Constants.FORCE_CHECKBOX_STATUS_KEY
     );
 
+    HashMap<String, PersistedList<String>> scope =
+        Utils.loadScope(this.api.persistence().extensionData());
+
     requestStatus = requestStatus == null ? true : requestStatus;
     responseStatus = responseStatus == null ? true : responseStatus;
     forceStatus = forceStatus == null ? false : forceStatus;
@@ -324,9 +314,9 @@ public class MainTab {
     requestCheckBox.setSelected(requestStatus);
     responseCheckBox.setSelected(responseStatus);
     forceInterceptInScopeCheckbox.setSelected(forceStatus);
-    setScopeList("scope", this.stripperScope);
-    setScopeList("blacklist", this.stripperBlackList);
-    setScopeList("force", this.stripperforce);
+    setScopeList("scope", scope.get("scope"));
+    setScopeList("blacklist", scope.get("blacklist"));
+    setScopeList("force", scope.get("force"));
   }
 
   public void saveCurrentSettings() {
@@ -352,20 +342,23 @@ public class MainTab {
     PersistedList<String> array;
     String key;
 
+    HashMap<String, PersistedList<String>> scope =
+        Utils.loadScope(this.api.persistence().extensionData());
+
     switch (source) {
       case "scope":
         target = this.scopeList;
-        array = this.stripperScope;
+        array = scope.get("scope");
         key = Constants.STRIPPER_SCOPE_LIST_KEY;
         break;
       case "blacklist":
         target = this.blackList;
-        array = this.stripperBlackList;
+        array = scope.get("blacklist");
         key = Constants.STRIPPER_BLACK_LIST_KEY;
         break;
       case "force":
         target = this.forceInterceptList;
-        array = this.stripperforce;
+        array = scope.get("force");
         key = Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY;
         break;
       default:

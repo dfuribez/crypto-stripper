@@ -20,4 +20,52 @@ public class Constants {
   public static String REQUEST_CHECKBOX_STATUS_KEY = "requestCheckboxStatus";
   public static String RESPONSE_CHECKBOX_STATUS_KEY = "responseCheckboxStatus";
   public static String FORCE_CHECKBOX_STATUS_KEY = "forceCheckboxStatus";
+
+  public static String JS_TEMPLATE = """
+var jsonData = JSON.parse(atob(process.argv[2]))
+
+var body = jsonData.body
+var headers = JSON.parse(jsonData.headers)
+var urlParameters = JSON.parse(jsonData.urlParameters)
+var url = jsonData.url
+var messageId = jsonData.messageId
+
+
+if (jsonData.action == "encrypt") {
+    var enc =  encrypt(body, headers, urlParameters, url, messageId)
+    prepare_return(enc[0], enc[1], enc[2], enc[3])
+} else {
+    var dec = decrypt(body, headers, urlParameters, url, messageId)
+    prepare_return(dec[0], dec[1], dec[2])
+}
+
+function prepare_return(body, headers, params, replaceResponse=false) {
+    console.log(
+        Buffer.from(
+            JSON.stringify({
+                body: body,
+                headers: headers,
+                urlParameters: params,
+                replaceResponse: replaceResponse
+            })
+        ).toString("base64")
+    )
+}
+
+
+// Function that performs the decryption
+function decrypt(body, headers, params, url, messageId) {
+    console.error("only use console.error to debug")
+    console.error("the use of console.log will cause the process to fail")
+    return [body, headers, params]
+}
+
+
+// Function that perform encryption
+function encrypt(body, headers, params, url, messageId) {
+    let replaceResponse = false;  // only used in responses
+    return [body, headers, params, replaceResponse];
+}
+
+      """;
 }

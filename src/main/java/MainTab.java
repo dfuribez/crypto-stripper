@@ -1,9 +1,7 @@
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.persistence.PersistedList;
-import burp.api.montoya.persistence.PersistedObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import jdk.jshell.execution.Util;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -14,10 +12,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 public class MainTab {
   public JPanel panel1;
@@ -53,6 +48,8 @@ public class MainTab {
   private JPanel scopeListPanel;
   private JPanel blackListPanel;
   private JPanel forceInterceptListPanel;
+  private JButton JSTemplateButton;
+  private JButton pythonTemplateButton;
 
   MontoyaApi api;
 
@@ -228,6 +225,16 @@ public class MainTab {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         importSettings();
+      }
+    });
+    JSTemplateButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        try (Writer writer = new FileWriter("test.js")) {
+          writer.write(Constants.JS_TEMPLATE);
+        } catch (Exception e) {
+          api.logging().logToError(e.toString());
+        }
       }
     });
   }

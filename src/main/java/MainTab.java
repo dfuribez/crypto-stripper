@@ -136,16 +136,16 @@ public class MainTab {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         api.persistence().extensionData().setString(
-            Constants.PROJECT_NODE_PATH_KEY, "node");
-        nodePathLabel.setText("node");
+            Constants.PROJECT_NODE_PATH_KEY, "");
+        nodePathLabel.setText("");
       }
     });
     setPythonDefaultButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         api.persistence().extensionData().setString(
-            Constants.PROJECT_PYTHON_PATH_KEY, "python");
-        pythonPathLabel.setText("python");
+            Constants.PROJECT_PYTHON_PATH_KEY, "");
+        pythonPathLabel.setText("");
       }
     });
     deleteSelectedScopeButton.addActionListener(new ActionListener() {

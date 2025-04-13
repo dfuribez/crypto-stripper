@@ -1,5 +1,3 @@
-import burp.api.montoya.MontoyaApi;
-import burp.api.montoya.http.handler.HttpResponseReceived;
 import burp.api.montoya.http.message.HttpHeader;
 import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.HttpParameterType;
@@ -19,11 +17,14 @@ import java.util.List;
 
 public class Utils {
 
-  public static ArrayList<String> burpListToArray(
-      List object) {
-
+  public static ArrayList<String> headersToArray(
+      List headers) {
     ArrayList<String> o = new ArrayList<String>();
-    object.forEach((item) -> o.add(item.toString()));
+    for (Object header : headers) {
+      if (!header.toString().startsWith(":")) {
+        o.add(header.toString());
+      }
+    }
 
     return o;
   }
@@ -51,7 +52,7 @@ public class Utils {
     HashMap<String, String> result = new HashMap<String, String>();
 
     String headers = new Gson().toJson(
-        burpListToArray(request.headers()));
+        headersToArray(request.headers()));
 
     String urlParameters = new Gson().toJson(
         parametersToArray(request.parameters(HttpParameterType.URL)));
@@ -74,7 +75,7 @@ public class Utils {
 
 
     String headers = new Gson().toJson(
-        burpListToArray(response.headers()));
+        headersToArray(response.headers()));
 
     String urlParameters = new Gson().toJson(null);
 

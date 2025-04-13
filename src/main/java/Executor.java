@@ -76,7 +76,7 @@ public final class Executor {
       }
 
       while ((line = errorReader.readLine()) != null) {
-        stdErr.append(line);
+        stdErr.append(line + "\n");
       }
 
       decodedOutput = api
@@ -94,6 +94,7 @@ public final class Executor {
             "Script's output is empty or null",
             ""
             ));
+        response.setStdErr(stdErr.toString());
         return  response;
       }
 
@@ -112,6 +113,7 @@ public final class Executor {
           e.toString(),
           decodedOutput
       ));
+      response.setStdErr(stdErr.toString());
       return  response;
     }
   }

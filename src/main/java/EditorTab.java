@@ -1,7 +1,9 @@
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.HttpRequestResponse;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.ui.editor.RawEditor;
+import jdk.jshell.execution.Util;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -85,8 +87,16 @@ public class EditorTab {
         prepared
     );
 
-    this.stdOutEditor.setContents(ByteArray.byteArray(
-        executed.getError().getBytes()));
+    HttpRequest output =
+        Utils.executorToHttp(this.requestResponse.request(), executed);
+
+    String error = executed.getError();
+
+    if (error.isBlank()) {
+      error = output.toString();
+    }
+
+    this.stdOutEditor.setContents(ByteArray.byteArray(error));
     this.stdErrEditor.setContents(ByteArray.byteArray(
         executed.getStdErr().getBytes()));
   }

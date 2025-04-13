@@ -71,10 +71,10 @@ public class MainTab {
     RequestFileButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        String path = openChooser(
-            new FileNameExtensionFilter(
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
             "Python, JavaScript files",
-            "py", "js"));
+            "py", "js");
+        String path = openChooser(filter, true);
 
         if (path.isBlank()) {
           return;
@@ -89,10 +89,10 @@ public class MainTab {
     selectResponseScriptButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        String path = openChooser(
-            new FileNameExtensionFilter(
-                "Python, JavaScript files",
-                "py", "js"));
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+            "Python, JavaScript files",
+            "py", "js");
+        String path = openChooser(filter, true);
 
         if (path.isBlank()) {
           return;
@@ -107,7 +107,7 @@ public class MainTab {
     chooseNodeBinaryButto.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        String path = openChooser(null);
+        String path = openChooser(null, true);
 
         if (!path.isEmpty()) {
           api.persistence().extensionData().setString(
@@ -120,7 +120,7 @@ public class MainTab {
     choosePythonBinaryButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        String path = openChooser(null);
+        String path = openChooser(null, true);
 
         if (!path.isEmpty()) {
           api.persistence().extensionData().setString(
@@ -166,7 +166,7 @@ public class MainTab {
     chooseNodeGlobalBinaryButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        String path = openChooser(null);
+        String path = openChooser(null, true);
 
         if (path.isBlank()) {
           return;
@@ -180,7 +180,7 @@ public class MainTab {
     choosePythonGlobalBinaryButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        String path = openChooser(null);
+        String path = openChooser(null, true);
 
         if (path.isBlank()) {
           return;
@@ -230,7 +230,13 @@ public class MainTab {
     JSTemplateButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        try (Writer writer = new FileWriter("test.js")) {
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+            "JavaScript files", "js");
+        String path = openChooser(filter, false);
+        if (path.isBlank()) {
+          return;
+        }
+        try (Writer writer = new FileWriter(path)) {
           writer.write(Constants.JS_TEMPLATE);
         } catch (Exception e) {
           api.logging().logToError(e.toString());
@@ -243,7 +249,7 @@ public class MainTab {
     String path = openChooser(
         new FileNameExtensionFilter(
             "JSON, configuration files",
-            "json"));
+            "json"), true);
 
     if (path.isBlank()) {
       return;
@@ -328,11 +334,19 @@ public class MainTab {
   }
 
   private String openChooser(
-      FileNameExtensionFilter filter
+      FileNameExtensionFilter filter,
+      boolean isOpenDialog
   ) {
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setFileFilter(filter);
-    int response = fileChooser.showOpenDialog(null);
+
+    int response;
+
+    if (isOpenDialog) {
+      response = fileChooser.showOpenDialog(null);
+    } else {
+      response = fileChooser.showSaveDialog(null);
+    }
 
     if (response == JFileChooser.APPROVE_OPTION) {
       return fileChooser.getSelectedFile().getAbsolutePath();

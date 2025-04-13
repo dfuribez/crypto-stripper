@@ -68,4 +68,52 @@ function encrypt(body, headers, params, url, messageId) {
 }
 
       """;
+
+  public static String PYTHON_TEMPLATE = """
+      import base64
+      import json
+      import sys
+      
+      
+      def prepare_return(body, headers, urlparameters, replaceresponse=False):
+          print(
+              base64.b64encode(
+                  json.dumps({
+                      "body": body,
+                      "headers": headers,
+                      "urlParameters": urlparameters,
+                      "replaceResponce": replaceresponse
+                      }
+                  ).encode("utf8")
+              ).decode()
+          )
+      
+      
+      def encrypt(body, headers, urlparameters, url, messageid):
+          # implement your code here
+          return body, headers, urlparameters
+      
+      
+      def decrypt(body, headers, urlparameters, url, messageid):
+          # implement your code here
+          replaceresponce = False
+          return body, headers, urlparameters, replaceresponce
+      
+      
+      jsonData = json.loads(base64.b64decode(sys.argv[1]))
+      
+      body = jsonData["body"]
+      headers = json.loads(jsonData["headers"])
+      url = jsonData["url"]
+      urlparameters = json.loads(jsonData["urlParameters"])
+      messageid = jsonData["messageId"]
+      
+      if (jsonData["action"] == "encrypt"):
+          encrypted = encrypt(body, headers, urlparameters, url, messageid)
+          prepare_return(encrypted[0], encrypted[1], encrypted[2])
+      else:
+          decrypted = decrypt(body, headers, urlparameters, url, messageid)
+          prepare_return(decrypted[0], decrypted[1], decrypted[2], decrypted[3])
+      
+      """;
 }

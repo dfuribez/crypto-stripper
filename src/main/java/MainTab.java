@@ -243,6 +243,22 @@ public class MainTab {
         }
       }
     });
+    pythonTemplateButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+            "Python files", "py");
+        String path = openChooser(filter, false);
+        if (path.isBlank()) {
+          return;
+        }
+        try (Writer writer = new FileWriter(path)) {
+          writer.write(Constants.PYTHON_TEMPLATE);
+        } catch (Exception e) {
+          api.logging().logToError(e.toString());
+        }
+      }
+    });
   }
 
   private void importSettings() {

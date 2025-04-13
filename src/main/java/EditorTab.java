@@ -2,6 +2,7 @@ import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.ui.editor.RawEditor;
 import jdk.jshell.execution.Util;
 
@@ -28,11 +29,16 @@ public class EditorTab {
   RawEditor stdErrEditor;
   RawEditor stdOutEditor;
 
+  boolean isRequest;
 
   HttpRequestResponse requestResponse;
 
 
-  EditorTab(MontoyaApi api) {
+  EditorTab(
+      MontoyaApi api,
+      boolean isRequest
+  ) {
+    this.isRequest = isRequest;
     this.api = api;
     this.commandPanel.setBorder(new TitledBorder("Command:"));
     this.stdErrPanel.setBorder(new TitledBorder("stderr:"));
@@ -76,27 +82,52 @@ public class EditorTab {
   }
 
   private void execute(String action) {
-    HashMap<String, String> prepared =
-        Utils.prepareRequestForExecutor(
-            this.requestResponse.request(), 0);
+    HashMap<String, String> prepared = new HashMap<>();
+    String source;
+    String stdOutBox = "";
+    String stdErrBox = "";
+
+    if (this.isRequest) {
+      prepared = Utils.prepareRequestForExecutor(
+              this.requestResponse.request(), 0);
+      source = "request";
+
+    } else {
+      String url =
+          Utils.removeQueryFromUrl(this.requestResponse.request().url());
+      prepared = Utils.prepareResponseForExecutor(
+          this.requestResponse.response(), url, 0);
+      source = "response";
+    }
 
     ExecutorResponse executed = Executor.execute(
         this.api,
         action,
-        "request",
+        source,
         prepared
     );
 
-    HttpRequest output =
-        Utils.executorToHttp(this.requestResponse.request(), executed);
 
-    String error = executed.getError();
+    if (isRequest) {
+      HttpRequest request =
+          Utils.executorToHttp(this.requestResponse.request(), executed);
 
-    if (error.isBlank()) {
-      error = output.toString();
+      stdOutBox = executed.getError();
+
+      if (stdOutBox.isBlank()) {
+        stdOutBox = request.toString();
+      }
+    } else {
+      HttpResponse response =
+          Utils.executorToHttpResponse(this.requestResponse.response(), executed);
+      stdOutBox = executed.getError();
+
+      if (stdOutBox.isBlank()) {
+        stdOutBox = response.toString();
+      }
     }
 
-    this.stdOutEditor.setContents(ByteArray.byteArray(error));
+    this.stdOutEditor.setContents(ByteArray.byteArray(stdOutBox));
     this.stdErrEditor.setContents(ByteArray.byteArray(
         executed.getStdErr().getBytes()));
   }

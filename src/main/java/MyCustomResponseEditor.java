@@ -22,7 +22,7 @@ public class MyCustomResponseEditor implements ExtensionProvidedHttpResponseEdit
   ) {
     this.api = api;
     this.creationContext = editorCreationContext;
-    this.editorTab = new EditorTab(api);
+    this.editorTab = new EditorTab(api, false);
   }
 
   @Override

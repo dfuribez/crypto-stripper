@@ -70,8 +70,9 @@ class MyHttpHandler implements HttpHandler {
     if (this.mainTab.responseCheckBox.isSelected()
         && scope.get("scope").contains(url)
     ) {
+
       HashMap<String, String> preparedToExecute =
-          Utils.prepareResponseForExecutor(responseReceived);
+          Utils.prepareResponseForExecutor(responseReceived, url, responseReceived.messageId());
 
       ExecutorResponse executorResponse = Executor.execute(
           this.api,

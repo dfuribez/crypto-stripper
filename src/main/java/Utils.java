@@ -66,7 +66,9 @@ public class Utils {
   }
 
   public static HashMap<String, String> prepareResponseForExecutor(
-      HttpResponseReceived response
+      HttpResponse response,
+      String url,
+      int messageId
   ) {
     HashMap<String, String> result = new HashMap<String, String>();
 
@@ -79,9 +81,8 @@ public class Utils {
     result.put("body", response.bodyToString());
     result.put("headers", headers);
     result.put("urlParameters", urlParameters);
-    result.put("url", Utils.removeQueryFromUrl(
-        response.initiatingRequest().url()));
-    result.put("messageId", String.valueOf(response.messageId()));
+    result.put("url", url);
+    result.put("messageId", String.valueOf(messageId));
 
     return result;
   }
@@ -159,7 +160,7 @@ public class Utils {
   }
 
   public static HttpResponse executorToHttpResponse(
-      HttpResponseReceived response,
+      HttpResponse response,
       ExecutorResponse output
   ) {
 

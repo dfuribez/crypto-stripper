@@ -23,7 +23,7 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
   ) {
     this.api = api;
     this.creationContext = editorCreationContext;
-    this.editorTab = new EditorTab(api);
+    this.editorTab = new EditorTab(api, true);
   }
 
   @Override

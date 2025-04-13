@@ -46,38 +46,6 @@ public class MainTab {
   public MainTab(MontoyaApi api) {
     this.api = api;
 
-    requetsPathLabel.setText(
-        api.persistence().extensionData().getString(
-            Constants.REQUEST_SCRIPT_PATH_KEY));
-
-    responsePathLabel.setText(
-        api.persistence().extensionData().getString(
-            Constants.RESPONSE_SCRIPT_PATH_KEY));
-
-    nodePathLabel.setText(
-        api.persistence().extensionData().getString(
-          Constants.PROJECT_NODE_PATH_KEY
-        )
-    );
-
-    pythonPathLabel.setText(
-        api.persistence().extensionData().getString(
-            Constants.PROJECT_PYTHON_PATH_KEY
-        )
-    );
-
-    globalNodeLabel.setText(
-        api.persistence().preferences().getString(
-            Constants.GLOBAL_NODE_PATH_KEY
-        )
-    );
-
-    globalPythonLabel.setText(
-        api.persistence().preferences().getString(
-            Constants.GLOBAL_PYTHON_PATH_KEY
-        )
-    );
-
     loadCurrentSettings();
 
     this.encryptorsPanel.setBorder(new TitledBorder("Encryptors"));
@@ -289,7 +257,6 @@ public class MainTab {
   }
 
   public void loadCurrentSettings() {
-
     Boolean requestStatus = this.api.persistence().extensionData().getBoolean(
         Constants.REQUEST_CHECKBOX_STATUS_KEY
     );
@@ -315,6 +282,38 @@ public class MainTab {
     setScopeList("scope", scope.get("scope"));
     setScopeList("blacklist", scope.get("blacklist"));
     setScopeList("force", scope.get("force"));
+
+    requetsPathLabel.setText(
+        api.persistence().extensionData().getString(
+            Constants.REQUEST_SCRIPT_PATH_KEY));
+
+    responsePathLabel.setText(
+        api.persistence().extensionData().getString(
+            Constants.RESPONSE_SCRIPT_PATH_KEY));
+
+    nodePathLabel.setText(
+        api.persistence().extensionData().getString(
+            Constants.PROJECT_NODE_PATH_KEY
+        )
+    );
+
+    pythonPathLabel.setText(
+        api.persistence().extensionData().getString(
+            Constants.PROJECT_PYTHON_PATH_KEY
+        )
+    );
+
+    globalNodeLabel.setText(
+        api.persistence().preferences().getString(
+            Constants.GLOBAL_NODE_PATH_KEY
+        )
+    );
+
+    globalPythonLabel.setText(
+        api.persistence().preferences().getString(
+            Constants.GLOBAL_PYTHON_PATH_KEY
+        )
+    );
   }
 
   public void saveCurrentSettings() {

@@ -14,10 +14,12 @@ public class Extension implements BurpExtension {
     MainTab tab = new MainTab(api);
 
     api.userInterface().registerSuiteTab("Stripper", tab.panel1);
-    api.userInterface()
-        .registerContextMenuItemsProvider(new MyContextMenus(api, tab));
+    api.userInterface().registerContextMenuItemsProvider(
+        new MyContextMenus(api, tab));
     api.userInterface().registerHttpRequestEditorProvider(
         new MyHttpRequestEditorProvider(api));
+    api.userInterface().registerHttpResponseEditorProvider(
+        new MyHttpResponseEditorProvider(api));
 
     api.http().registerHttpHandler(new MyHttpHandler(api, tab));
 

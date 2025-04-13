@@ -1,5 +1,4 @@
 import burp.api.montoya.MontoyaApi;
-import burp.api.montoya.persistence.PersistedList;
 import burp.api.montoya.ui.editor.extension.EditorCreationContext;
 import burp.api.montoya.ui.editor.extension.ExtensionProvidedHttpRequestEditor;
 import burp.api.montoya.ui.editor.extension.HttpRequestEditorProvider;

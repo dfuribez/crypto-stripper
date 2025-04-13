@@ -1,23 +1,22 @@
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.http.message.HttpRequestResponse;
-import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.persistence.PersistedList;
 import burp.api.montoya.ui.Selection;
 import burp.api.montoya.ui.editor.extension.EditorCreationContext;
-import burp.api.montoya.ui.editor.extension.ExtensionProvidedHttpRequestEditor;
+import burp.api.montoya.ui.editor.extension.ExtensionProvidedHttpResponseEditor;
 
 import java.awt.*;
 import java.util.HashMap;
 
-public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
+public class MyCustomResponseEditor implements ExtensionProvidedHttpResponseEditor {
   MontoyaApi api;
   EditorCreationContext creationContext;
   EditorTab editorTab;
 
+  HttpRequestResponse currentResponse;
 
-  private HttpRequestResponse currentRequest;
-
-  public MyCustomEditorTab(
+  public MyCustomResponseEditor(
       MontoyaApi api,
       EditorCreationContext editorCreationContext
   ) {
@@ -27,15 +26,15 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
   }
 
   @Override
-  public HttpRequest getRequest() {
-    return this.currentRequest.request();
+  public HttpResponse getResponse() {
+    return this.currentResponse.response();
   }
 
   @Override
   public void setRequestResponse(HttpRequestResponse requestResponse) {
-    this.currentRequest = requestResponse;
+    this.currentResponse = requestResponse;
     this.editorTab.setRequestResponse(requestResponse);
-    this.editorTab.setCommand(requestResponse.request().toByteArray());
+    this.editorTab.setCommand(requestResponse.response().toByteArray());
   }
 
   @Override
@@ -44,7 +43,8 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
         Utils.removeQueryFromUrl(requestResponse.request().url());
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());
-    this.currentRequest = requestResponse;
+
+    this.currentResponse = requestResponse;
     this.editorTab.setRequestResponse(requestResponse);
     return scope.get("scope").contains(url);
   }
@@ -66,6 +66,6 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
 
   @Override
   public boolean isModified() {
-    return this.editorTab.contentEditor.isModified();
+    return false;
   }
 }

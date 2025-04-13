@@ -21,9 +21,7 @@ public class Utils {
       List headers) {
     ArrayList<String> o = new ArrayList<String>();
     for (Object header : headers) {
-      if (!header.toString().startsWith(":")) {
         o.add(header.toString());
-      }
     }
 
     return o;

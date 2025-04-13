@@ -303,7 +303,9 @@ public class MainTab {
     settings.setForceIntercept(scope.get("force").toArray(new String[0]));
 
     JFileChooser fileChooser = new JFileChooser();
-    //fileChooser.setFileFilter();
+    fileChooser.setFileFilter(new FileNameExtensionFilter(
+        "JSON, configuration files",
+        "json"));
     int response = fileChooser.showSaveDialog(null);
 
     if (response != JFileChooser.APPROVE_OPTION) {

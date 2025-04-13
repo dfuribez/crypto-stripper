@@ -17,7 +17,9 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
   private PersistedList blackList;
   private PersistedList forceIntercept;
 
-  MyCustomEditorTab(
+  private HttpRequestResponse currentRequest;
+
+  public MyCustomEditorTab(
       MontoyaApi api,
       EditorCreationContext editorCreationContext,
       PersistedList scope,
@@ -26,30 +28,29 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
   ) {
     this.api = api;
     this.creationContext = editorCreationContext;
-    this.editorTab = new EditorTab();
+    this.editorTab = new EditorTab(api);
     this.scope = scope;
     this.blackList = blackList;
     this.forceIntercept = forceIntercept;
   }
 
-
   @Override
   public HttpRequest getRequest() {
-    return null;
+    return this.currentRequest.request();
   }
 
   @Override
   public void setRequestResponse(HttpRequestResponse requestResponse) {
-
+    this.currentRequest = requestResponse;
   }
 
   @Override
   public boolean isEnabledFor(HttpRequestResponse requestResponse) {
     String url =
         Utils.removeQueryFromUrl(requestResponse.request().url());
-
+    this.currentRequest = requestResponse;
     if (this.scope.contains(url)) {
-      this.editorTab.setCommand(requestResponse.request().toString());
+      this.editorTab.setCommand(requestResponse.request().toByteArray());
       return true;
     }
 

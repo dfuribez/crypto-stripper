@@ -7,33 +7,16 @@ import burp.api.montoya.ui.editor.extension.HttpRequestEditorProvider;
 public class MyHttpRequestEditorProvider implements HttpRequestEditorProvider {
 
   private final MontoyaApi api;
-  private PersistedList scope;
-  private PersistedList blackList;
-  private PersistedList forceIntercept;
 
-  MyHttpRequestEditorProvider(
-      MontoyaApi api,
-      PersistedList scope,
-      PersistedList blackList,
-      PersistedList forceIntercept
-  ) {
+  MyHttpRequestEditorProvider(MontoyaApi api) {
     this.api = api;
-    this.scope = scope;
-    this.blackList = blackList;
-    this.forceIntercept = forceIntercept;
   }
 
   @Override
   public ExtensionProvidedHttpRequestEditor provideHttpRequestEditor(
       EditorCreationContext creationContext
   ) {
-    return new MyCustomEditorTab(
-        this.api,
-        creationContext,
-        this.scope,
-        this.blackList,
-        this.forceIntercept
-    );
+    return new MyCustomEditorTab(this.api, creationContext);
   }
 
 }

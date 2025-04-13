@@ -7,31 +7,22 @@ import burp.api.montoya.ui.editor.extension.EditorCreationContext;
 import burp.api.montoya.ui.editor.extension.ExtensionProvidedHttpRequestEditor;
 
 import java.awt.*;
+import java.util.HashMap;
 
 public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
   MontoyaApi api;
   EditorCreationContext creationContext;
   EditorTab editorTab;
 
-  private PersistedList scope;
-  private PersistedList blackList;
-  private PersistedList forceIntercept;
-
   private HttpRequestResponse currentRequest;
 
   public MyCustomEditorTab(
       MontoyaApi api,
-      EditorCreationContext editorCreationContext,
-      PersistedList scope,
-      PersistedList blackList,
-      PersistedList forceIntercept
+      EditorCreationContext editorCreationContext
   ) {
     this.api = api;
     this.creationContext = editorCreationContext;
     this.editorTab = new EditorTab(api);
-    this.scope = scope;
-    this.blackList = blackList;
-    this.forceIntercept = forceIntercept;
   }
 
   @Override
@@ -50,13 +41,11 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
   public boolean isEnabledFor(HttpRequestResponse requestResponse) {
     String url =
         Utils.removeQueryFromUrl(requestResponse.request().url());
+    HashMap<String, PersistedList<String>> scope =
+        Utils.loadScope(api.persistence().extensionData());
     this.currentRequest = requestResponse;
     this.editorTab.setRequestResponse(requestResponse);
-    if (this.scope.contains(url)) {
-      return true;
-    }
-
-    return false;
+    return scope.get("scope").contains(url);
   }
 
   @Override

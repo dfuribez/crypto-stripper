@@ -28,12 +28,7 @@ public class Extension implements BurpExtension {
     api.userInterface()
         .registerContextMenuItemsProvider(new MyContextMenus(api, tab));
     api.userInterface().registerHttpRequestEditorProvider(
-        new MyHttpRequestEditorProvider(
-            api,
-            stripperScope,
-            stripperBlackList,
-            stripperForceIntercept
-        ));
+        new MyHttpRequestEditorProvider(api));
 
     api.http().registerHttpHandler(new MyHttpHandler(
         api,

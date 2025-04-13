@@ -1,5 +1,6 @@
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.ui.editor.RawEditor;
 
 import javax.swing.*;
@@ -7,6 +8,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 
 public class EditorTab {
   public JPanel panel1;
@@ -25,11 +27,14 @@ public class EditorTab {
   RawEditor stdOutEditor;
 
 
+  HttpRequestResponse requestResponse;
+
+
   EditorTab(MontoyaApi api) {
+    this.api = api;
     this.commandPanel.setBorder(new TitledBorder("Command:"));
     this.stdErrPanel.setBorder(new TitledBorder("stderr:"));
     this.stdOutPanel.setBorder(new TitledBorder("stdout:"));
-
 
     this.contentEditor = api.userInterface().createRawEditor();
     this.stdErrEditor = api.userInterface().createRawEditor();
@@ -48,17 +53,45 @@ public class EditorTab {
     this.stdErrPanel.add(this.stdErrEditor.uiComponent(), gbc);
     this.stdOutPanel.add(this.stdOutEditor.uiComponent(), gbc);
 
+    testEncryptionButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        execute("encrypt");
+      }
+    });
     testDecryptionButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        stdOutText.setText("");
+        execute("decrypt");
       }
     });
   }
 
+  public void setRequestResponse(
+      HttpRequestResponse requestResponse
+  ) {
+    this.requestResponse = requestResponse;
+  }
+
+  private void execute(String action) {
+    HashMap<String, String> prepared =
+        Utils.prepareRequestForExecutor(
+            this.requestResponse.request(), 0);
+
+    ExecutorResponse executed = Executor.execute(
+        this.api,
+        action,
+        "request",
+        prepared
+    );
+
+    this.stdOutEditor.setContents(ByteArray.byteArray(
+        executed.getError().getBytes()));
+    this.stdErrEditor.setContents(ByteArray.byteArray(
+        executed.getStdErr().getBytes()));
+  }
 
   public void setCommand(ByteArray content) {
-    //this.commandTextArea.setText(command);
     this.contentEditor.setContents(content);
   }
 }

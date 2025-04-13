@@ -42,6 +42,8 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
   @Override
   public void setRequestResponse(HttpRequestResponse requestResponse) {
     this.currentRequest = requestResponse;
+    this.editorTab.setRequestResponse(requestResponse);
+    this.editorTab.setCommand(requestResponse.request().toByteArray());
   }
 
   @Override
@@ -49,8 +51,8 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
     String url =
         Utils.removeQueryFromUrl(requestResponse.request().url());
     this.currentRequest = requestResponse;
+    this.editorTab.setRequestResponse(requestResponse);
     if (this.scope.contains(url)) {
-      this.editorTab.setCommand(requestResponse.request().toByteArray());
       return true;
     }
 
@@ -74,6 +76,6 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
 
   @Override
   public boolean isModified() {
-    return false;
+    return this.editorTab.contentEditor.isModified();
   }
 }

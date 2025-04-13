@@ -2,12 +2,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ExecutorResponse {
-  private String body;
+  private String body = "";
   private List<String> headers;
   private List<HashMap<String, String>> urlParameters;
-  private String error;
+  private String error = "";
   private Boolean replaceResponse = false;
-  private String stdErr;
+  private String stdErr = "";
 
   public String getStdErr() {
     return stdErr;

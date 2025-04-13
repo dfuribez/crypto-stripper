@@ -14,18 +14,12 @@ import java.util.HashMap;
 
 
 class MyHttpHandler implements HttpHandler {
-  public PersistedList<String> stripperScope;
 
   MontoyaApi api;
   MainTab mainTab;
 
-  public MyHttpHandler(
-      MontoyaApi api,
-      MainTab gui,
-      PersistedList<String> stripperScope
-  ) {
+  public MyHttpHandler(MontoyaApi api, MainTab gui) {
     this.api = api;
-    this.stripperScope = stripperScope;
     this.mainTab = gui;
   }
 
@@ -43,9 +37,10 @@ class MyHttpHandler implements HttpHandler {
     }
 
     String url = Utils.removeQueryFromUrl(requestToBeSent.url());
-
+    HashMap<String, PersistedList<String>> scope =
+        Utils.loadScope(api.persistence().extensionData());
     if (this.mainTab.requestCheckBox.isSelected() &&
-      this.stripperScope.contains(url)
+      scope.get("scope").contains(url)
     ) {
 
       HashMap<String, String> preparedToExecute =
@@ -70,9 +65,10 @@ class MyHttpHandler implements HttpHandler {
   ) {
     String url = Utils.removeQueryFromUrl(
         responseReceived.initiatingRequest().url());
-
+    HashMap<String, PersistedList<String>> scope =
+        Utils.loadScope(api.persistence().extensionData());
     if (this.mainTab.responseCheckBox.isSelected()
-        && this.stripperScope.contains(url)
+        && scope.get("scope").contains(url)
     ) {
       HashMap<String, String> preparedToExecute =
           Utils.prepareResponseForExecutor(responseReceived);

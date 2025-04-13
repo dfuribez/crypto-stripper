@@ -30,11 +30,7 @@ public class Extension implements BurpExtension {
     api.userInterface().registerHttpRequestEditorProvider(
         new MyHttpRequestEditorProvider(api));
 
-    api.http().registerHttpHandler(new MyHttpHandler(
-        api,
-        tab,
-        stripperScope
-    ));
+    api.http().registerHttpHandler(new MyHttpHandler(api, tab));
 
     api.proxy().registerRequestHandler(new ProxyHttpRequestHandler(
         api,

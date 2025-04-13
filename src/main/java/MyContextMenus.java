@@ -15,23 +15,14 @@ import java.util.List;
 
 public class MyContextMenus  implements ContextMenuItemsProvider {
   private final MontoyaApi api;
-  public PersistedList<String> stripperScope;
-  public PersistedList<String> blackList;
-  public PersistedList<String> forceInterceptList;
   private MainTab mainTab;
 
   public MyContextMenus(
       MontoyaApi api,
-      MainTab tab,
-      PersistedList<String> stripperScope,
-      PersistedList<String> stripperBlackList,
-      PersistedList<String> stripperForceIntercept
+      MainTab tab
   ) {
     this.api = api;
     this.mainTab = tab;
-    this.stripperScope = stripperScope;
-    this.blackList = stripperBlackList;
-    this.forceInterceptList = stripperForceIntercept;
   }
 
   public void updateStripperScope(
@@ -43,17 +34,20 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
     PersistedList<String> target;
     String key;
 
+    HashMap<String, PersistedList<String>> scope =
+        Utils.loadScope(this.api.persistence().extensionData());
+
     switch (source) {
       case "blacklist":
-        target = this.blackList;
+        target = scope.get("blacklist");
         key = Constants.STRIPPER_BLACK_LIST_KEY;
         break;
       case "force":
-        target = this.forceInterceptList;
+        target = scope.get("force");
         key = Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY;
         break;
       case "scope":
-        target = this.stripperScope;
+        target = scope.get("scope");
         key = Constants.STRIPPER_SCOPE_LIST_KEY;
         break;
       default:
@@ -70,9 +64,8 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
         .extensionData()
         .setStringList(key, target);
 
-    this.mainTab.setScopeList("force", this.forceInterceptList);
-    this.mainTab.setScopeList("blacklist", this.blackList);
-    this.mainTab.setScopeList("scope", this.stripperScope);
+    this.mainTab.loadCurrentSettings();
+
   }
 
   public void decryptRequest(
@@ -117,11 +110,14 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
             .url()
     );
 
+    HashMap<String, PersistedList<String>> scope =
+        Utils.loadScope(this.api.persistence().extensionData());
+
     if (event.isFromTool(ToolType.PROXY, ToolType.REPEATER) &&
         event.isFrom(InvocationType.MESSAGE_EDITOR_REQUEST)
     ) {
 
-      if (this.stripperScope.contains(url)) {
+      if (scope.get("scope").contains(url)) {
         JMenuItem item = new JMenuItem("Decrypt");
         item.addActionListener(
             l -> this.decryptRequest(requestResponse));
@@ -134,7 +130,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
             InvocationType.MESSAGE_EDITOR_REQUEST,
             InvocationType.MESSAGE_VIEWER_REQUEST)
     ) {
-      if (this.stripperScope.contains(url)) {
+      if (scope.get("scope").contains(url)) {
         JMenuItem removeScopeItem = new JMenuItem("Remove from scope");
         removeScopeItem.addActionListener(
             l -> this.updateStripperScope(
@@ -147,7 +143,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
                 "scope", "add", url));
         menuItemList.add(item);
       }
-      if (this.blackList.contains(url)) {
+      if (scope.get("blacklist").contains(url)) {
         JMenuItem removeFromBlacklistItem =
             new JMenuItem("Remove endpoint from blacklist");
         removeFromBlacklistItem.addActionListener(
@@ -163,7 +159,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
         menuItemList.add(addToBlacklistItem);
       }
 
-      if (this.forceInterceptList.contains(url)) {
+      if (scope.get("force").contains(url)) {
         JMenuItem removeFromBlacklistItem =
             new JMenuItem("Do not force interception");
         removeFromBlacklistItem.addActionListener(

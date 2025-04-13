@@ -33,13 +33,7 @@ public class Extension implements BurpExtension {
 
     api.userInterface().registerSuiteTab("Stripper", tab.panel1);
     api.userInterface()
-        .registerContextMenuItemsProvider(new MyContextMenus(
-            api,
-            tab,
-            stripperScope,
-            stripperBlackList,
-            stripperForceIntercept
-        ));
+        .registerContextMenuItemsProvider(new MyContextMenus(api, tab));
     api.userInterface().registerHttpRequestEditorProvider(
         new MyHttpRequestEditorProvider(
             api,

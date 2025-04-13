@@ -1,11 +1,13 @@
+import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.http.handler.HttpResponseReceived;
 import burp.api.montoya.http.message.HttpHeader;
 import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.HttpParameterType;
 import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
-import burp.api.montoya.persistence.PersistedObject;
 import burp.api.montoya.http.message.responses.HttpResponse;
+import burp.api.montoya.persistence.PersistedList;
+import burp.api.montoya.persistence.PersistedObject;
 import burp.api.montoya.persistence.Persistence;
 import com.google.gson.Gson;
 
@@ -190,14 +192,14 @@ public class Utils {
     }
 
     String globalPython = persistence.preferences().getString(
-        Constants.GLOBAL_PYTHON_PATH);
+        Constants.GLOBAL_PYTHON_PATH_KEY);
     String globalNode = persistence.preferences().getString(
-        Constants.GLOBAL_NODE_PATH);
+        Constants.GLOBAL_NODE_PATH_KEY);
 
     String nodePath = persistence.extensionData().getString(
-        Constants.PROJECT_NODE_PATH);
+        Constants.PROJECT_NODE_PATH_KEY);
     String pythonPath = persistence.extensionData().getString(
-        Constants.PROJECT_PYTHON_PATH);
+        Constants.PROJECT_PYTHON_PATH_KEY);
 
     if (!checkFileExists(pythonPath)) {
       pythonPath = globalPython;
@@ -219,6 +221,41 @@ public class Utils {
     }
 
     return null;
+  }
+
+  public static HashMap<String, PersistedList<String>> loadScope(PersistedObject extensionData) {
+
+    HashMap<String, PersistedList<String>> output = new HashMap<>();
+
+    PersistedList<String> stripperScope =
+        extensionData.getStringList(
+            Constants.STRIPPER_SCOPE_LIST_KEY);
+
+    PersistedList<String> stripperBlackList =
+        extensionData.getStringList(
+            Constants.STRIPPER_BLACK_LIST_KEY);
+
+    PersistedList<String> stripperForceIntercept =
+        extensionData.getStringList(
+            Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY);
+
+    if (stripperScope == null) {
+      stripperScope = PersistedList.persistedStringList();
+    }
+
+    if (stripperBlackList == null) {
+      stripperBlackList = PersistedList.persistedStringList();
+    }
+
+    if (stripperForceIntercept == null) {
+      stripperForceIntercept = PersistedList.persistedStringList();
+    }
+
+    output.put("scope", stripperScope);
+    output.put("blacklist", stripperBlackList);
+    output.put("force", stripperForceIntercept);
+
+    return output;
   }
 
 }

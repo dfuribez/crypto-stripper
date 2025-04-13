@@ -6,6 +6,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 
 public class MainTab {
   public JPanel panel1;
@@ -58,33 +59,33 @@ public class MainTab {
 
     requetsPathLabel.setText(
         api.persistence().extensionData().getString(
-            Constants.REQUEST_SCRIPT_PATH));
+            Constants.REQUEST_SCRIPT_PATH_KEY));
 
     responsePathLabel.setText(
         api.persistence().extensionData().getString(
-            Constants.RESPONSE_SCRIPT_PATH));
+            Constants.RESPONSE_SCRIPT_PATH_KEY));
 
     nodePathLabel.setText(
         api.persistence().extensionData().getString(
-          Constants.PROJECT_NODE_PATH
+          Constants.PROJECT_NODE_PATH_KEY
         )
     );
 
     pythonPathLabel.setText(
         api.persistence().extensionData().getString(
-            Constants.PROJECT_PYTHON_PATH
+            Constants.PROJECT_PYTHON_PATH_KEY
         )
     );
 
     globalNodeLabel.setText(
         api.persistence().preferences().getString(
-            Constants.GLOBAL_NODE_PATH
+            Constants.GLOBAL_NODE_PATH_KEY
         )
     );
 
     globalPythonLabel.setText(
         api.persistence().preferences().getString(
-            Constants.GLOBAL_PYTHON_PATH
+            Constants.GLOBAL_PYTHON_PATH_KEY
         )
     );
 
@@ -108,7 +109,7 @@ public class MainTab {
         }
 
         api.persistence().extensionData().setString(
-            Constants.REQUEST_SCRIPT_PATH, path);
+            Constants.REQUEST_SCRIPT_PATH_KEY, path);
         requetsPathLabel.setText(path);
       }
     });
@@ -126,7 +127,7 @@ public class MainTab {
         }
 
         api.persistence().extensionData().setString(
-            Constants.RESPONSE_SCRIPT_PATH, path);
+            Constants.RESPONSE_SCRIPT_PATH_KEY, path);
         responsePathLabel.setText(path);
       }
     });
@@ -138,7 +139,7 @@ public class MainTab {
 
         if (!path.isEmpty()) {
           api.persistence().extensionData().setString(
-              Constants.PROJECT_NODE_PATH, path);
+              Constants.PROJECT_NODE_PATH_KEY, path);
           nodePathLabel.setText(path);
         }
       }
@@ -151,7 +152,7 @@ public class MainTab {
 
         if (!path.isEmpty()) {
           api.persistence().extensionData().setString(
-              Constants.PROJECT_PYTHON_PATH, path);
+              Constants.PROJECT_PYTHON_PATH_KEY, path);
           pythonPathLabel.setText(path);
         }
       }
@@ -160,7 +161,7 @@ public class MainTab {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         api.persistence().extensionData().setString(
-            Constants.PROJECT_NODE_PATH, "node");
+            Constants.PROJECT_NODE_PATH_KEY, "node");
         nodePathLabel.setText("node");
       }
     });
@@ -168,7 +169,7 @@ public class MainTab {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         api.persistence().extensionData().setString(
-            Constants.PROJECT_PYTHON_PATH, "python");
+            Constants.PROJECT_PYTHON_PATH_KEY, "python");
         pythonPathLabel.setText("python");
       }
     });
@@ -200,7 +201,7 @@ public class MainTab {
         }
 
         api.persistence().preferences().setString(
-            Constants.GLOBAL_NODE_PATH, path);
+            Constants.GLOBAL_NODE_PATH_KEY, path);
         globalNodeLabel.setText(path);
       }
     });
@@ -214,7 +215,7 @@ public class MainTab {
         }
 
         api.persistence().preferences().setString(
-            Constants.GLOBAL_PYTHON_PATH, path);
+            Constants.GLOBAL_PYTHON_PATH_KEY, path);
         globalPythonLabel.setText(path);
       }
     });
@@ -236,6 +237,12 @@ public class MainTab {
         saveCurrentSettings();
       }
     });
+    clearScopeButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        clearSettings();
+      }
+    });
   }
 
   private String openChooser(
@@ -252,18 +259,62 @@ public class MainTab {
     return "";
   }
 
+  public void clearSettings() {
+    boolean enableRequest = true;
+    boolean enableResponse = true;
+    boolean forceInterceptionScope = false;
+
+    this.api.persistence().extensionData().setBoolean(
+        Constants.REQUEST_CHECKBOX_STATUS_KEY, enableRequest
+    );
+
+    this.api.persistence().extensionData().setBoolean(
+        Constants.RESPONSE_CHECKBOX_STATUS_KEY, enableResponse
+    );
+
+    this.api.persistence().extensionData().setBoolean(
+        Constants.FORCE_CHECKBOX_STATUS_KEY, forceInterceptionScope
+    );
+
+    this.api.persistence().extensionData().setString(
+        Constants.RESPONSE_SCRIPT_PATH_KEY, ""
+    );
+
+    this.api.persistence().extensionData().setString(
+        Constants.REQUEST_SCRIPT_PATH_KEY, ""
+    );
+
+    this.api.persistence().extensionData().setStringList(
+        Constants.STRIPPER_SCOPE_LIST_KEY, PersistedList.persistedStringList()
+    );
+
+    this.api.persistence().extensionData().setStringList(
+        Constants.STRIPPER_BLACK_LIST_KEY, PersistedList.persistedStringList()
+    );
+
+    this.api.persistence().extensionData().setStringList(
+        Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY, PersistedList.persistedStringList()
+    );
+
+    this.stripperBlackList = PersistedList.persistedStringList();
+    this.stripperforce = PersistedList.persistedStringList();
+    this.stripperScope = PersistedList.persistedStringList();
+
+    loadCurrentSettings();
+  }
+
   public void loadCurrentSettings() {
 
     Boolean requestStatus = this.api.persistence().extensionData().getBoolean(
-        Constants.PERSISTANCE_REQUEST_CHECKBOX_STATUS
+        Constants.REQUEST_CHECKBOX_STATUS_KEY
     );
 
     Boolean responseStatus = this.api.persistence().extensionData().getBoolean(
-        Constants.PERSISTANCE_RESPONSE_CHECKBOX_STATUS
+        Constants.RESPONSE_CHECKBOX_STATUS_KEY
     );
 
     Boolean forceStatus = this.api.persistence().extensionData().getBoolean(
-        Constants.PERSISTANCE_FORCE_CHECKBOX_STATUS
+        Constants.FORCE_CHECKBOX_STATUS_KEY
     );
 
     requestStatus = requestStatus == null ? true : requestStatus;
@@ -273,6 +324,9 @@ public class MainTab {
     requestCheckBox.setSelected(requestStatus);
     responseCheckBox.setSelected(responseStatus);
     forceInterceptInScopeCheckbox.setSelected(forceStatus);
+    setScopeList("scope", this.stripperScope);
+    setScopeList("blacklist", this.stripperBlackList);
+    setScopeList("force", this.stripperforce);
   }
 
   public void saveCurrentSettings() {
@@ -281,13 +335,13 @@ public class MainTab {
     boolean forceCheckboxStatus = forceInterceptInScopeCheckbox.isSelected();
 
     this.api.persistence().extensionData().setBoolean(
-        Constants.PERSISTANCE_FORCE_CHECKBOX_STATUS,
+        Constants.FORCE_CHECKBOX_STATUS_KEY,
         forceCheckboxStatus);
     this.api.persistence().extensionData().setBoolean(
-        Constants.PERSISTANCE_REQUEST_CHECKBOX_STATUS,
+        Constants.REQUEST_CHECKBOX_STATUS_KEY,
         requestCheckboxStatus);
     this.api.persistence().extensionData().setBoolean(
-        Constants.PERSISTANCE_RESPONSE_CHECKBOX_STATUS,
+        Constants.RESPONSE_CHECKBOX_STATUS_KEY,
         responseCheckboxStatus);
   }
 
@@ -302,7 +356,7 @@ public class MainTab {
       case "scope":
         target = this.scopeList;
         array = this.stripperScope;
-        key = Constants.STRIPPER_SCOPE_KEY;
+        key = Constants.STRIPPER_SCOPE_LIST_KEY;
         break;
       case "blacklist":
         target = this.blackList;
@@ -312,7 +366,7 @@ public class MainTab {
       case "force":
         target = this.forceInterceptList;
         array = this.stripperforce;
-        key = Constants.STRIPPER_FORCE_INTERCEPT;
+        key = Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY;
         break;
       default:
         return;

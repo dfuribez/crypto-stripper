@@ -28,10 +28,10 @@ public final class Executor {
 
     if ("request".equals(source)) {
       scriptToExecute = api.persistence().extensionData().getString(
-          Constants.REQUEST_SCRIPT_PATH);
+          Constants.REQUEST_SCRIPT_PATH_KEY);
     } else {
       scriptToExecute = api.persistence().extensionData().getString(
-          Constants.RESPONSE_SCRIPT_PATH);
+          Constants.RESPONSE_SCRIPT_PATH_KEY);
     }
 
     command = Utils.getCommandFromPath(

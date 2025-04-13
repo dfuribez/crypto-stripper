@@ -50,11 +50,11 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
         break;
       case "force":
         target = this.forceInterceptList;
-        key = Constants.STRIPPER_FORCE_INTERCEPT;
+        key = Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY;
         break;
       case "scope":
         target = this.stripperScope;
-        key = Constants.STRIPPER_SCOPE_KEY;
+        key = Constants.STRIPPER_SCOPE_LIST_KEY;
         break;
       default:
         return;
@@ -71,7 +71,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
         .setStringList(key, target);
 
     this.mainTab.setScopeList("force", this.forceInterceptList);
-    this.mainTab.setScopeList("black", this.blackList);
+    this.mainTab.setScopeList("blacklist", this.blackList);
     this.mainTab.setScopeList("scope", this.stripperScope);
   }
 

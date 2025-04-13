@@ -2,6 +2,8 @@ import burp.api.montoya.BurpExtension;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.persistence.PersistedList;
 
+import java.util.HashMap;
+
 public class Extension implements BurpExtension {
 
   public boolean forceInterceptInScope = false;
@@ -9,29 +11,12 @@ public class Extension implements BurpExtension {
   @Override
   public void initialize(MontoyaApi api) {
 
-    PersistedList<String> stripperScope =
-        api.persistence().extensionData().getStringList(
-            Constants.STRIPPER_SCOPE_KEY);
+    HashMap<String, PersistedList<String>> scope =
+        Utils.loadScope(api.persistence().extensionData());
 
-    PersistedList<String> stripperBlackList =
-        api.persistence().extensionData().getStringList(
-            Constants.STRIPPER_BLACK_LIST_KEY);
-
-    PersistedList<String> stripperForceIntercept =
-        api.persistence().extensionData().getStringList(
-            Constants.STRIPPER_FORCE_INTERCEPT);
-
-    if (stripperScope == null) {
-      stripperScope = PersistedList.persistedStringList();
-    }
-
-    if (stripperBlackList == null) {
-      stripperBlackList = PersistedList.persistedStringList();
-    }
-
-    if (stripperForceIntercept == null) {
-      stripperForceIntercept = PersistedList.persistedStringList();
-    }
+    PersistedList<String> stripperScope = scope.get("scope");
+    PersistedList<String> stripperBlackList = scope.get("blacklist");
+    PersistedList<String> stripperForceIntercept = scope.get("force");
 
     api.extension().setName("Crypto Stripper");
 

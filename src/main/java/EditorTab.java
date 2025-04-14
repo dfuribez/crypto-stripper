@@ -50,6 +50,7 @@ public class EditorTab {
 
     this.stdOutEditor.setEditable(false);
     this.stdErrEditor.setEditable(false);
+    this.contentEditor.setEditable(false);
 
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.gridx = 0;

@@ -49,7 +49,7 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
     }
 
     if (scope.get("blacklist").contains(url)) {
-      ProxyRequestReceivedAction.doNotIntercept(interceptedRequest);
+      return ProxyRequestReceivedAction.doNotIntercept(interceptedRequest);
     }
 
     if (this.mainTab.requestCheckBox.isSelected() &&

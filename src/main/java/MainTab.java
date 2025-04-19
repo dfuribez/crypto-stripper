@@ -59,9 +59,9 @@ public class MainTab {
 
     loadCurrentSettings();
 
-    this.encryptorsPanel.setBorder(new TitledBorder("Encryptors"));
-    this.pathsPanel.setBorder(new TitledBorder("Project Paths"));
-    this.globalBinariesPanel.setBorder(new TitledBorder("Global Paths"));
+    this.encryptorsPanel.setBorder(new TitledBorder("Transformers:"));
+    this.pathsPanel.setBorder(new TitledBorder("Project Paths:"));
+    this.globalBinariesPanel.setBorder(new TitledBorder("Global Paths:"));
 
     this.scopeListPanel.setBorder(new TitledBorder("Scope:"));
     this.blackListPanel.setBorder(new TitledBorder("Black List"));

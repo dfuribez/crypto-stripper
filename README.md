@@ -33,23 +33,23 @@ style D text-align:right
 This process is automatic and transparent for the pentester so tools like burp's intruder, SQLMap, fuzzers, etc can be used along with this extension.
 
 >[!IMPORTANT]
->\* the stripper scope is not the same as burp's scope you can read more about this [here](https://)
+>\* the stripper scope is not the same as burp's scope you can read more about this
 
 
 # How to start?
 1. Install the latest available release (Burp -> Extensions -> Add)
-2. Set the basic extension settings (transformers and binary paths) [here]()
-3. Program you transformations [here]()
-4. Add the desired endpoint to the stripper scope (right click on the request in proxy/repeater -> Extensions -> Crypto Stripper -> Add to scope) [here]()
+2. Set the basic extension settings (transformers and binary paths)
+3. Program you transformations
+4. Add the desired endpoint to the stripper scope (right click on the request in proxy/repeater -> Extensions -> Crypto Stripper -> Add to scope)
 5. If the request is the original, then decrypt it Right click -> Extensions -> Crypto Stripper -> Decrypt
-6. Test that the transformers work as intended [here]()
+6. Test that the transformers work as intended
 7. Have fun
 
 
 # Examples
-To understand a little better how to play with the extension, a playground is available [here](https:)
+To understand a little better how to play with the extension, a playground is available
 
-- [Bypassing asymmetric encryption]()
-- [Bypassing signature verification]()
-- [Bypassing symmetric encryption]()
-- [Using automatic tools]()
+- Bypassing asymmetric encryption
+- Bypassing signature verification
+- Bypassing symmetric encryption
+- Using automatic tools

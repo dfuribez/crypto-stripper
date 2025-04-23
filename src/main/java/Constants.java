@@ -22,24 +22,30 @@ public class Constants {
   public static String FORCE_CHECKBOX_STATUS_KEY = "forceCheckboxStatus";
 
   public static String JS_TEMPLATE = """
-var jsonData = JSON.parse(atob(process.argv[2]))
+// Crypto Stripper v0.3
+// Examples: https://github.com/dfuribez/crypto-stripper/wiki#examples
 
-var body = jsonData.body
-var headers = JSON.parse(jsonData.headers)
-var urlParameters = JSON.parse(jsonData.urlParameters)
-var url = jsonData.url
-var messageId = jsonData.messageId
+let fs = require("fs");
 
-
-if (jsonData.action == "encrypt") {
-    var enc =  encrypt(body, headers, urlParameters, url, messageId)
-    prepare_return(enc[0], enc[1], enc[2], enc[3])
-} else {
-    var dec = decrypt(body, headers, urlParameters, url, messageId)
-    prepare_return(dec[0], dec[1], dec[2])
+// Function that performs the decryption
+function decrypt(body, headers, params, url, messageId) {
+    console.error("only use console.error to debug")
+    console.error("the use of console.log will cause the process to fail")
+    return [body, headers, params]
 }
 
-function prepare_return(body, headers, params, replaceResponse=false) {
+
+// Function that perform encryption
+function encrypt(body, headers, params, url, messageId) {
+    let replaceResponse = true;  // only used in responses
+    console.error("only use console.error to debug")
+    console.error("the use of console.log will cause the process to fail")
+    return [body, headers, params, replaceResponse];
+}
+
+
+// DON'T TOUCH THIS
+function printJSON(body, headers, params, replaceResponse) {
     console.log(
         Buffer.from(
             JSON.stringify({
@@ -52,68 +58,76 @@ function prepare_return(body, headers, params, replaceResponse=false) {
     )
 }
 
+function main() {
+    var jsonData = JSON.parse(fs.readFileSync(process.argv[2]).toString())
 
-// Function that performs the decryption
-function decrypt(body, headers, params, url, messageId) {
-    console.error("only use console.error to debug")
-    console.error("the use of console.log will cause the process to fail")
-    return [body, headers, params]
+    var body = jsonData.body
+    var headers = JSON.parse(jsonData.headers)
+    var urlParameters = JSON.parse(jsonData.urlParameters)
+    var url = jsonData.url
+    var messageId = jsonData.messageId
+    if (jsonData.action == "encrypt") {
+        printJSON(...encrypt(body, headers, urlParameters, url, messageId))
+    } else {
+        printJSON(...decrypt(body, headers, urlParameters, url, messageId))
+    }
 }
 
-
-// Function that perform encryption
-function encrypt(body, headers, params, url, messageId) {
-    let replaceResponse = false;  // only used in responses
-    return [body, headers, params, replaceResponse];
-}
-
+main()
       """;
 
   public static String PYTHON_TEMPLATE = """
+      # Crypto Stripper v0.3
+      # Examples: https://github.com/dfuribez/crypto-stripper/wiki#examples
+      
       import base64
       import json
       import sys
       
+      def encrypt(body, headers, url_parameters, url, messageid):
+          # implement your code here
+          print("only print to stderr to debug", file=sys.stderr)
+          print("the use of print() will cause the process to fail", file=sys.stderr)
+          return body, headers, url_parameters
       
-      def prepare_return(body, headers, urlparameters, replaceresponse=False):
+      
+      def decrypt(body, headers, url_parameters, url, messageid):
+          # implement your code here
+          print("only print to stderr to debug", file=sys.stderr)
+          print("the use of print() will cause the process to fail", file=sys.stderr)
+          replace_responce = False
+          return body, headers, url_parameters, replace_responce
+      
+      
+      # DON'T MODIFY THIS
+      def print_json(body, headers, url_parameters, replace_response=False):
           print(
               base64.b64encode(
                   json.dumps({
                       "body": body,
                       "headers": headers,
-                      "urlParameters": urlparameters,
-                      "replaceResponce": replaceresponse
+                      "urlParameters": url_parameters,
+                      "replaceResponce": replace_response
                       }
                   ).encode("utf8")
               ).decode()
           )
       
+      with open(sys.argv[1]) as file:
+          json_content = json.load(file)
       
-      def encrypt(body, headers, urlparameters, url, messageid):
-          # implement your code here
-          return body, headers, urlparameters
+          body = json_content["body"]
+          headers = json.loads(json_content["headers"])
+          url = json_content["url"]
+          urlparameters = json.loads(json_content["urlParameters"])
+          messageid = json_content["messageId"]
       
-      
-      def decrypt(body, headers, urlparameters, url, messageid):
-          # implement your code here
-          replaceresponce = False
-          return body, headers, urlparameters, replaceresponce
-      
-      
-      jsonData = json.loads(base64.b64decode(sys.argv[1]))
-      
-      body = jsonData["body"]
-      headers = json.loads(jsonData["headers"])
-      url = jsonData["url"]
-      urlparameters = json.loads(jsonData["urlParameters"])
-      messageid = jsonData["messageId"]
-      
-      if (jsonData["action"] == "encrypt"):
-          encrypted = encrypt(body, headers, urlparameters, url, messageid)
-          prepare_return(encrypted[0], encrypted[1], encrypted[2])
-      else:
-          decrypted = decrypt(body, headers, urlparameters, url, messageid)
-          prepare_return(decrypted[0], decrypted[1], decrypted[2], decrypted[3])
+          if (json_content["action"] == "encrypt"):
+              encrypted = encrypt(body, headers, urlparameters, url, messageid)
+              print_json(*encrypted)
+          else:
+              decrypted = decrypt(body, headers, urlparameters, url, messageid)
+              print_json(*decrypted)
       
       """;
 }

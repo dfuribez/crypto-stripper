@@ -22,108 +22,57 @@ public class Constants {
   public static String FORCE_CHECKBOX_STATUS_KEY = "forceCheckboxStatus";
 
   public static String JS_TEMPLATE = """
-      // Crypto Stripper
-      // Examples: https://github.com/dfuribez/crypto-stripper/wiki#examples
-      
-      let fs = require("fs");
-      
-      
-      // Function that performs the decryption
-      function decrypt(body, headers, params, url, messageId) {
-          let replaceResponse = true;  // only used in responses
-          console.error("only use console.error to debug")
-          console.error("the use of console.log will cause the process to fail")
-          return [body, headers, params, replaceResponse]
-      }
-      
-      
-      // Function that perform encryption
-      function encrypt(body, headers, params, url, messageId) {
-          return [body, headers, params];
-      }
-      
-      
-      // DON'T TOUCH THIS
-      function printJSON(body, headers, params, replaceResponse=false) {
-          console.log(
-              Buffer.from(
-                  JSON.stringify({
-                      body: body,
-                      headers: headers,
-                      urlParameters: params,
-                      replaceResponse: replaceResponse
-                  })
-              ).toString("base64")
-          )
-      }
-      
-      function main() {
-          var jsonData = JSON.parse(fs.readFileSync(process.argv[2]).toString())
-      
-          var body = jsonData.body
-          var headers = JSON.parse(jsonData.headers)
-          var urlParameters = JSON.parse(jsonData.urlParameters)
-          var url = jsonData.url
-          var messageId = jsonData.messageId
-          if (jsonData.action == "encrypt") {
-              printJSON(...encrypt(body, headers, urlParameters, url, messageId))
-          } else {
-              printJSON(...decrypt(body, headers, urlParameters, url, messageId))
-          }
-      }
-      
-      main()
-      // Crypto Stripper
-      // Examples: https://github.com/dfuribez/crypto-stripper/wiki#examples
-      
-      let fs = require("fs");
-      
-      
-      // Function that performs the decryption
-      function decrypt(body, headers, params, url, messageId) {
-          let replaceResponse = true;  // only used in responses
-          console.error("only use console.error to debug")
-          console.error("the use of console.log will cause the process to fail")
-          return [body, headers, params, replaceResponse]
-      }
-      
-      
-      // Function that perform encryption
-      function encrypt(body, headers, params, url, messageId) {
-          return [body, headers, params];
-      }
-      
-      
-      // DON'T TOUCH THIS
-      function printJSON(body, headers, params, replaceResponse=false) {
-          console.log(
-              Buffer.from(
-                  JSON.stringify({
-                      body: body,
-                      headers: headers,
-                      urlParameters: params,
-                      replaceResponse: replaceResponse
-                  })
-              ).toString("base64")
-          )
-      }
-      
-      function main() {
-          var jsonData = JSON.parse(fs.readFileSync(process.argv[2]).toString())
-      
-          var body = jsonData.body
-          var headers = JSON.parse(jsonData.headers)
-          var urlParameters = JSON.parse(jsonData.urlParameters)
-          var url = jsonData.url
-          var messageId = jsonData.messageId
-          if (jsonData.action == "encrypt") {
-              printJSON(...encrypt(body, headers, urlParameters, url, messageId))
-          } else {
-              printJSON(...decrypt(body, headers, urlParameters, url, messageId))
-          }
-      }
-      
-      main()
+// Crypto Stripper
+// Examples: https://github.com/dfuribez/crypto-stripper/wiki#examples
+
+let fs = require("fs");
+
+
+// Function that performs the decryption
+function decrypt(body, headers, params, url, messageId) {
+    let replaceResponse = true;  // only used in responses
+    console.error("only use console.error to debug")
+    console.error("the use of console.log will cause the process to fail")
+    return [body, headers, params, replaceResponse]
+}
+
+
+// Function that perform encryption
+function encrypt(body, headers, params, url, messageId) {
+    return [body, headers, params];
+}
+
+
+// DON'T TOUCH THIS
+function printJSON(body, headers, params, replaceResponse=false) {
+    console.log(
+        Buffer.from(
+            JSON.stringify({
+                body: body,
+                headers: headers,
+                urlParameters: params,
+                replaceResponse: replaceResponse
+            })
+        ).toString("base64")
+    )
+}
+
+function main() {
+    var jsonData = JSON.parse(fs.readFileSync(process.argv[2]).toString())
+
+    var body = jsonData.body
+    var headers = JSON.parse(jsonData.headers)
+    var urlParameters = JSON.parse(jsonData.urlParameters)
+    var url = jsonData.url
+    var messageId = jsonData.messageId
+    if (jsonData.action == "encrypt") {
+        printJSON(...encrypt(body, headers, urlParameters, url, messageId))
+    } else {
+        printJSON(...decrypt(body, headers, urlParameters, url, messageId))
+    }
+}
+
+main()
       """;
 
   public static String PYTHON_TEMPLATE = """

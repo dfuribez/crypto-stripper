@@ -58,7 +58,7 @@ public class Utils {
     result.put("body", request.bodyToString());
     result.put("headers", headers);
     result.put("urlParameters", urlParameters);
-    result.put("url", request.url());
+    result.put("url", Utils.removeQueryFromUrl(request.url()));
     result.put("messageId", String.valueOf(messageId));
 
     return result;
@@ -224,8 +224,9 @@ public class Utils {
     return null;
   }
 
-  public static HashMap<String, PersistedList<String>> loadScope(PersistedObject extensionData) {
-
+  public static HashMap<String, PersistedList<String>> loadScope(
+      PersistedObject extensionData
+  ) {
     HashMap<String, PersistedList<String>> output = new HashMap<>();
 
     PersistedList<String> stripperScope =

@@ -1,10 +1,9 @@
 import burp.api.montoya.MontoyaApi;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 
 public final class Executor {
@@ -24,7 +23,6 @@ public final class Executor {
     ExecutorResponse response = new ExecutorResponse();
 
     request.put("action", action);
-    String argumentJSON = new Gson().toJson(request);
 
     if ("request".equals(source)) {
       scriptToExecute = api.persistence().extensionData().getString(
@@ -51,10 +49,17 @@ public final class Executor {
     }
 
     try {
+      File temp = File.createTempFile("stripper_", ".json");
+
+      try (Writer writer = new FileWriter(temp)){
+        Gson gson = new GsonBuilder().create();
+        gson.toJson(request, writer);
+      }
+
       ProcessBuilder processBuilder = new ProcessBuilder(
           command,
           scriptToExecute,
-          api.utilities().base64Utils().encodeToString(argumentJSON)
+          temp.getAbsolutePath()
       );
 
       processBuilder.redirectErrorStream(false);
@@ -90,7 +95,8 @@ public final class Executor {
             Constants.STRIPPER_ERROR_TEMPLATE,
             command,
             scriptToExecute,
-            api.utilities().base64Utils().encodeToString(argumentJSON),
+            api.utilities().base64Utils().encodeToString(
+                new Gson().toJson(request)),
             "Script's output is empty or null",
             ""
             ));
@@ -102,6 +108,8 @@ public final class Executor {
           .fromJson(decodedOutput, ExecutorResponse.class);
 
       response.setStdErr(stdErr.toString());
+
+      temp.delete();
       return response;
     } catch (IOException  | IllegalStateException | JsonSyntaxException |
         IllegalArgumentException e) {
@@ -109,7 +117,8 @@ public final class Executor {
           Constants.STRIPPER_ERROR_TEMPLATE,
           command,
           scriptToExecute,
-          api.utilities().base64Utils().encodeToString(argumentJSON),
+          api.utilities().base64Utils().encodeToString(
+              new Gson().toJson(request)),
           e.toString(),
           decodedOutput
       ));

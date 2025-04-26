@@ -1,6 +1,5 @@
 
 import burp.api.montoya.MontoyaApi;
-import burp.api.montoya.core.ToolSource;
 import burp.api.montoya.core.ToolType;
 import burp.api.montoya.http.handler.*;
 import burp.api.montoya.http.message.requests.HttpRequest;
@@ -33,7 +32,7 @@ class MyHttpHandler implements HttpHandler {
         .withRemovedHeader(Constants.STRIPPER_HEADER);
 
     if (requestToBeSent.method().equalsIgnoreCase("options")) {
-      continueWith(modifiedRequest);
+      return continueWith(modifiedRequest);
     }
 
     String url = Utils.removeQueryFromUrl(requestToBeSent.url());

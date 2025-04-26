@@ -52,7 +52,7 @@ class MyHttpHandler implements HttpHandler {
       );
 
       return continueWith(
-          Utils.executorToHttp(modifiedRequest, executorResponse));
+          Utils.executorToHttpRequest(modifiedRequest, executorResponse));
     }
 
     return continueWith(modifiedRequest);

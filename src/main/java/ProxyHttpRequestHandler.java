@@ -65,7 +65,7 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
           preparedForExecute
       );
 
-      HttpRequest decryptedRequest = Utils.executorToHttp(
+      HttpRequest decryptedRequest = Utils.executorToHttpRequest(
           interceptedRequest,
           executorResponse
       );

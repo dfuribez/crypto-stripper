@@ -103,7 +103,7 @@ public class EditorTab {
 
     if (isRequest) {
       HttpRequest request =
-          Utils.executorToHttp(requestResponse.request(), executed);
+          Utils.executorToHttpRequest(requestResponse.request(), executed);
 
       stdOutBox = executed.getError();
 

@@ -84,7 +84,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
       preparedToExecute
     );
 
-    requestResponse.setRequest(Utils.executorToHttp(request, executorResponse));
+    requestResponse.setRequest(Utils.executorToHttpRequest(request, executorResponse));
 
   }
 

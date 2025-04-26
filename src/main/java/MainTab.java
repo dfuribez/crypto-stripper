@@ -364,7 +364,7 @@ public class MainTab {
 
     String path = openChooser(filter, false);
     try (Writer writer = new FileWriter(path, StandardCharsets.UTF_8)) {
-      Gson gson = new GsonBuilder().create();
+      Gson gson = new GsonBuilder().setPrettyPrinting().create();
       gson.toJson(settings, writer);
     } catch (Exception e) {
       this.api.logging().logToError(e.toString());

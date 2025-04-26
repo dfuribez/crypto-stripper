@@ -40,13 +40,19 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
 
   @Override
   public boolean isEnabledFor(HttpRequestResponse requestResponse) {
-    String url =
-        Utils.removeQueryFromUrl(requestResponse.request().url());
-    HashMap<String, PersistedList<String>> scope =
-        Utils.loadScope(api.persistence().extensionData());
-    this.currentRequest = requestResponse;
-    this.editorTab.setRequestResponse(requestResponse);
-    return scope.get("scope").contains(url);
+    try {
+      String url =
+          Utils.removeQueryFromUrl(requestResponse.request().url());
+
+      HashMap<String, PersistedList<String>> scope =
+          Utils.loadScope(api.persistence().extensionData());
+      this.currentRequest = requestResponse;
+      this.editorTab.setRequestResponse(requestResponse);
+      return Utils.isUrlInScope(url, scope.get("scope"));
+    } catch (Exception e){
+      return false;
+    }
+
   }
 
   @Override

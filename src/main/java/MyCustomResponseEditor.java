@@ -46,7 +46,7 @@ public class MyCustomResponseEditor implements ExtensionProvidedHttpResponseEdit
 
     this.currentResponse = requestResponse;
     this.editorTab.setRequestResponse(requestResponse);
-    return scope.get("scope").contains(url);
+    return Utils.isUrlInScope(url, scope.get("scope"));
   }
 
   @Override

@@ -17,19 +17,12 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
   private final MontoyaApi api;
   private MainTab mainTab;
 
-  public MyContextMenus(
-      MontoyaApi api,
-      MainTab tab
-  ) {
+  public MyContextMenus(MontoyaApi api, MainTab tab) {
     this.api = api;
     this.mainTab = tab;
   }
 
-  public void updateStripperScope(
-      String source,
-      String action,
-      String url
-  ) {
+  public void updateStripperScope(String source, String action, String url) {
 
     PersistedList<String> target;
     String key;
@@ -68,47 +61,33 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
 
   }
 
-  public void decryptRequest(
-      MessageEditorHttpRequestResponse requestResponse
-  ){
+  public void decryptRequest(MessageEditorHttpRequestResponse requestResponse){
     HttpRequest request = requestResponse.requestResponse().request();
 
     // TODO: calculate own messageID since the api does not provide it for this object
     HashMap<String, String> preparedToExecute =
         Utils.prepareRequestForExecutor(request, 0);
 
-    ExecutorResponse executorResponse = Executor.execute(
-      this.api,
-      "decrypt",
-      "request",
-      preparedToExecute
-    );
+    ExecutorResponse executorResponse =
+        Executor.execute(api, "decrypt", "request", preparedToExecute);
 
     requestResponse.setRequest(Utils.executorToHttpRequest(request, executorResponse));
-
   }
 
 
   @Override
-  public List<Component> provideMenuItems(
-      ContextMenuEvent event
-  ) {
+  public List<Component> provideMenuItems(ContextMenuEvent event) {
 
     List<Component> menuItemList = new ArrayList<>();
     if (event.messageEditorRequestResponse().isEmpty()) {
       return null;
     }
 
-    MessageEditorHttpRequestResponse requestResponse = event
-        .messageEditorRequestResponse()
-        .get();
+    MessageEditorHttpRequestResponse requestResponse =
+        event.messageEditorRequestResponse().get();
 
-    String url = Utils.removeQueryFromUrl(
-        requestResponse
-            .requestResponse()
-            .request()
-            .url()
-    );
+    String url =
+        Utils.removeQueryFromUrl(requestResponse.requestResponse().request().url());
 
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(this.api.persistence().extensionData());
@@ -117,7 +96,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
         event.isFrom(InvocationType.MESSAGE_EDITOR_REQUEST)
     ) {
 
-      if (scope.get("scope").contains(url)) {
+      if (Utils.isUrlInScope(url, scope.get("scope"))) {
         JMenuItem item = new JMenuItem("Decrypt");
         item.addActionListener(
             l -> this.decryptRequest(requestResponse));
@@ -130,7 +109,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
             InvocationType.MESSAGE_EDITOR_REQUEST,
             InvocationType.MESSAGE_VIEWER_REQUEST)
     ) {
-      if (scope.get("scope").contains(url)) {
+      if (Utils.isUrlInScope(url, scope.get("scope"))) {
         JMenuItem removeScopeItem = new JMenuItem("Remove from scope");
         removeScopeItem.addActionListener(
             l -> this.updateStripperScope(
@@ -143,7 +122,8 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
                 "scope", "add", url));
         menuItemList.add(item);
       }
-      if (scope.get("blacklist").contains(url)) {
+
+      if (Utils.isUrlInScope(url, scope.get("blacklist"))) {
         JMenuItem removeFromBlacklistItem =
             new JMenuItem("Remove endpoint from blacklist");
         removeFromBlacklistItem.addActionListener(
@@ -159,7 +139,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
         menuItemList.add(addToBlacklistItem);
       }
 
-      if (scope.get("force").contains(url)) {
+      if (Utils.isUrlInScope(url, scope.get("force"))) {
         JMenuItem removeFromBlacklistItem =
             new JMenuItem("Do not force interception");
         removeFromBlacklistItem.addActionListener(

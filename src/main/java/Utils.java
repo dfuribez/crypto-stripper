@@ -270,4 +270,12 @@ public class Utils {
     return out;
   }
 
+  public static boolean isUrlInScope(String url, PersistedList<String> scope) {
+    for (String regex : scope) {
+      if (url.matches(regex)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

@@ -50,6 +50,8 @@ public class MainTab {
   private JPanel forceInterceptListPanel;
   private JButton JSTemplateButton;
   private JButton pythonTemplateButton;
+  private JTextField scopeUrlTextField;
+  private JButton addScopeUrlButton;
 
   MontoyaApi api;
 
@@ -148,19 +150,19 @@ public class MainTab {
     deleteSelectedScopeButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        updateScope("scope");
+        updateScope("scope", "delete");
       }
     });
     deleteSelectedBlacklistButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        updateScope("blacklist");
+        updateScope("blacklist", "delete");
       }
     });
     deleteSelectedForceButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        updateScope("force");
+        updateScope("force", "delete");
       }
     });
     chooseNodeGlobalBinaryButton.addActionListener(new ActionListener() {
@@ -259,6 +261,12 @@ public class MainTab {
         }
       }
     });
+    addScopeUrlButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        updateScope("scope", "add");
+      }
+    });
   }
 
   private void importSettings() {
@@ -342,8 +350,8 @@ public class MainTab {
     }
 
     try (Writer writer = new FileWriter(fileChooser.getSelectedFile().getAbsolutePath())) {
-      Gson gson = new GsonBuilder().create();
-      gson.toJson(settings, writer);
+            Gson gson = new GsonBuilder().create();
+            gson.toJson(settings, writer);
     } catch (Exception e) {
       this.api.logging().logToError(e.toString());
     }
@@ -487,57 +495,59 @@ public class MainTab {
         responseCheckboxStatus);
   }
 
-  private void updateScope(
-      String source
-  ) {
+  private void updateScope(String source, String action) {
     JList target;
-    PersistedList<String> array;
+    PersistedList<String> selectedScopeList;
     String key;
+    String addUrl;
 
     HashMap<String, PersistedList<String>> scope =
-        Utils.loadScope(this.api.persistence().extensionData());
+        Utils.loadScope(api.persistence().extensionData());
 
     switch (source) {
       case "scope":
         target = this.scopeList;
-        array = scope.get("scope");
+        selectedScopeList = scope.get("scope");
         key = Constants.STRIPPER_SCOPE_LIST_KEY;
+        addUrl = scopeUrlTextField.getText();
         break;
       case "blacklist":
         target = this.blackList;
-        array = scope.get("blacklist");
+        selectedScopeList = scope.get("blacklist");
         key = Constants.STRIPPER_BLACK_LIST_KEY;
+        addUrl = "";
         break;
       case "force":
         target = this.forceInterceptList;
-        array = scope.get("force");
+        selectedScopeList = scope.get("force");
         key = Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY;
+        addUrl = "";
         break;
       default:
         return;
     }
 
-    DefaultListModel  model = (DefaultListModel) target.getModel();
+    if (action == "delete") {
+      DefaultListModel  model = (DefaultListModel) target.getModel();
 
-    int selectedIndex = target.getSelectedIndex();
+      int selectedIndex = target.getSelectedIndex();
 
-    Object selectedValue = target.getSelectedValue();
+      Object selectedValue = target.getSelectedValue();
 
-    if (selectedIndex != -1) {
-      model.remove(selectedIndex);
-      array.remove(selectedValue.toString());
-      this.api.persistence().extensionData().deleteString(key);
+      if (selectedIndex != -1) {
+        model.remove(selectedIndex);
+        selectedScopeList.remove(selectedValue.toString());
+      }
+    } else {
+      selectedScopeList.add(addUrl);
+      setScopeList(source, selectedScopeList);
     }
+    api.persistence().extensionData().setStringList(key, selectedScopeList);
+
   }
 
-  public void setScopeList(
-      String type,
-      PersistedList<String> scopeListArray
-  ) {
-
-    DefaultListModel<String> listModel =
-        new DefaultListModel<String>();
-
+  public void setScopeList(String type, PersistedList<String> scopeListArray) {
+    DefaultListModel<String> listModel = new DefaultListModel<String>();
     listModel.addAll(scopeListArray);
 
     switch (type) {

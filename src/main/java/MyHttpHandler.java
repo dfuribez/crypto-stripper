@@ -38,18 +38,15 @@ class MyHttpHandler implements HttpHandler {
     String url = Utils.removeQueryFromUrl(requestToBeSent.url());
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());
-    if (this.mainTab.requestCheckBox.isSelected() &&
-      scope.get("scope").contains(url)
+
+    if (this.mainTab.requestCheckBox.isSelected()
+        && Utils.isUrlInScope(url, scope.get("scope"))
     ) {
 
       HashMap<String, String> preparedToExecute =
           Utils.prepareRequestForExecutor(modifiedRequest, requestToBeSent.messageId());
       ExecutorResponse executorResponse = Executor.execute(
-          this.api,
-          "encrypt",
-          "request",
-          preparedToExecute
-      );
+          api, "encrypt", "request", preparedToExecute);
 
       return continueWith(
           Utils.executorToHttpRequest(modifiedRequest, executorResponse));
@@ -66,23 +63,19 @@ class MyHttpHandler implements HttpHandler {
         responseReceived.initiatingRequest().url());
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());
+
     if (this.mainTab.responseCheckBox.isSelected()
-        && scope.get("scope").contains(url)
+        && Utils.isUrlInScope(url, scope.get("scope"))
     ) {
 
       HashMap<String, String> preparedToExecute =
           Utils.prepareResponseForExecutor(responseReceived, url, responseReceived.messageId());
 
       ExecutorResponse executorResponse = Executor.execute(
-          this.api,
-          "decrypt",
-          "response",
-          preparedToExecute
-      );
+          api, "decrypt", "response", preparedToExecute);
 
       HttpResponse response =
           Utils.executorToHttpResponse(responseReceived, executorResponse);
-
 
       if (responseReceived.toolSource().isFromTool(ToolType.PROXY)) {
         if (executorResponse.getReplaceResponse()) {

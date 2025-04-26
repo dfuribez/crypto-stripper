@@ -1,4 +1,6 @@
 import static burp.api.montoya.http.message.HttpHeader.httpHeader;
+import static burp.api.montoya.proxy.http.ProxyRequestReceivedAction.continueWith;
+import static burp.api.montoya.proxy.http.ProxyRequestReceivedAction.intercept;
 
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.Annotations;
@@ -48,48 +50,34 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
       }
     }
 
-    if (scope.get("blacklist").contains(url)) {
+    if (Utils.isUrlInScope(url, scope.get("blacklist"))) {
       return ProxyRequestReceivedAction.doNotIntercept(interceptedRequest);
     }
 
-    if (this.mainTab.requestCheckBox.isSelected() &&
-        scope.get("scope").contains(url)
+    if (this.mainTab.requestCheckBox.isSelected()
+        && Utils.isUrlInScope(url, scope.get("scope"))
     ) {
       HashMap<String, String> preparedForExecute =
           Utils.prepareRequestForExecutor(
               interceptedRequest, interceptedRequest.messageId());
       ExecutorResponse executorResponse = Executor.execute(
-          this.mainTab.api,
-          "decrypt",
-          "request",
-          preparedForExecute
-      );
+          mainTab.api, "decrypt", "request", preparedForExecute);
 
-      HttpRequest decryptedRequest = Utils.executorToHttpRequest(
-          interceptedRequest,
-          executorResponse
-      );
+      HttpRequest decryptedRequest =
+          Utils.executorToHttpRequest(interceptedRequest, executorResponse);
 
       if (this.mainTab.forceInterceptInScopeCheckbox.isSelected()) {
-        return ProxyRequestReceivedAction.intercept(
-            decryptedRequest,
-            annotations);
+        return intercept(decryptedRequest, annotations);
       }
 
-      return ProxyRequestReceivedAction.continueWith(
-          decryptedRequest,
-          annotations);
+      return continueWith(decryptedRequest, annotations);
     }
 
-    if (scope.get("force").contains(url)) {
-      return ProxyRequestReceivedAction.intercept(
-          interceptedRequest,
-          annotations);
+    if (Utils.isUrlInScope(url, scope.get("force"))) {
+      return intercept(interceptedRequest, annotations);
     }
 
-    return ProxyRequestReceivedAction.continueWith(
-        interceptedRequest,
-        annotations);
+    return continueWith(interceptedRequest, annotations);
   }
 
 
@@ -99,4 +87,3 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
     return ProxyRequestToBeSentAction.continueWith(interceptedRequest);
   }
 }
- 

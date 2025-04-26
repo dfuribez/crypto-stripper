@@ -2,6 +2,7 @@ import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
+import burp.api.montoya.ui.editor.EditorOptions;
 import burp.api.montoya.ui.editor.HttpRequestEditor;
 import burp.api.montoya.ui.editor.HttpResponseEditor;
 
@@ -47,8 +48,11 @@ public class EditorTab {
     requestEditor = api.userInterface().createHttpRequestEditor();
     responseEditor = api.userInterface().createHttpResponseEditor();
 
-    requestTransformed = api.userInterface().createHttpRequestEditor();
-    responseTransformed = api.userInterface().createHttpResponseEditor();
+    requestTransformed = api.userInterface().createHttpRequestEditor(
+        EditorOptions.READ_ONLY);
+    responseTransformed = api.userInterface().createHttpResponseEditor(
+        EditorOptions.READ_ONLY);
+
 
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.gridx = 0;

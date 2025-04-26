@@ -378,9 +378,9 @@ public class MainTab {
     int response;
 
     if (isOpenDialog) {
-      response = fileChooser.showOpenDialog(null);
+      response = fileChooser.showOpenDialog(api.userInterface().swingUtils().suiteFrame());
     } else {
-      response = fileChooser.showSaveDialog(null);
+      response = fileChooser.showSaveDialog(api.userInterface().swingUtils().suiteFrame());
     }
 
     if (response == JFileChooser.APPROVE_OPTION) {

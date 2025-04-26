@@ -272,10 +272,23 @@ public class Utils {
 
   public static boolean isUrlInScope(String url, PersistedList<String> scope) {
     for (String regex : scope) {
-      if (url.matches(regex)) {
-        return true;
+      try {
+        if (url.matches(regex)) {
+          return true;
+        }
+      } catch (Exception e) {
+        System.out.println(e);
       }
     }
     return false;
+  }
+
+  public static boolean isValidRegex(String regex) {
+    try {
+      "".matches(regex);
+    } catch (Exception error) {
+      return false;
+    }
+      return true;
   }
 }

@@ -271,6 +271,7 @@ public class MainTab {
       public void actionPerformed(ActionEvent actionEvent) {
         updateScope("scope", "add");
         scopeUrlTextField.setText("");
+
       }
     });
     addBlackListUrlButton.addActionListener(new ActionListener() {
@@ -549,6 +550,17 @@ public class MainTab {
         selectedScopeList.remove(selectedValue.toString());
       }
     } else {
+
+      if (!Utils.isValidRegex(addUrl) || addUrl.isBlank()) {
+        showAlertMessage("Please check your url, it is not a valid regex");
+        return;
+      }
+
+      if (Utils.isUrlInScope(addUrl, selectedScopeList)) {
+        showAlertMessage("Url already in the scope");
+        return;
+      }
+
       selectedScopeList.add(addUrl);
       setScopeList(source, selectedScopeList);
     }
@@ -571,6 +583,10 @@ public class MainTab {
         this.forceInterceptList.setModel(listModel);
         break;
     }
+  }
 
+  private void showAlertMessage(String message) {
+    JOptionPane.showMessageDialog(
+        api.userInterface().swingUtils().suiteFrame(), message);
   }
 }

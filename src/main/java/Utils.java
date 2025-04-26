@@ -10,6 +10,7 @@ import burp.api.montoya.persistence.Persistence;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,7 +56,8 @@ public class Utils {
     String urlParameters = new Gson().toJson(
         parametersToArray(request.parameters(HttpParameterType.URL)));
 
-    result.put("body", request.bodyToString());
+    result.put("body",
+        new String(request.body().getBytes(), StandardCharsets.UTF_8));
     result.put("headers", headers);
     result.put("urlParameters", urlParameters);
     result.put("url", Utils.removeQueryFromUrl(request.url()));
@@ -71,13 +73,13 @@ public class Utils {
   ) {
     HashMap<String, String> result = new HashMap<String, String>();
 
-
     String headers = new Gson().toJson(
         headersToArray(response.headers()));
 
     String urlParameters = new Gson().toJson(null);
 
-    result.put("body", response.bodyToString());
+    result.put("body",
+        new String(response.body().getBytes(), StandardCharsets.UTF_8));
     result.put("headers", headers);
     result.put("urlParameters", urlParameters);
     result.put("url", url);

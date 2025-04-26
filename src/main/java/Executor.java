@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 public final class Executor {
@@ -51,10 +52,9 @@ public final class Executor {
     try {
       File temp = File.createTempFile("stripper_", ".json");
 
-      try (Writer writer = new FileWriter(temp)){
-        Gson gson = new GsonBuilder().create();
-        gson.toJson(request, writer);
-      }
+      Writer writer = new FileWriter(temp, StandardCharsets.UTF_8);
+      Gson gson = new GsonBuilder().create();
+      gson.toJson(request, writer);
 
       ProcessBuilder processBuilder = new ProcessBuilder(
           command,

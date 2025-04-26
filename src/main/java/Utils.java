@@ -185,11 +185,7 @@ public class Utils {
     return url.split("\\?")[0];
   }
 
-  public static String getCommandFromPath(
-      Persistence persistence,
-      String path
-  ) {
-
+  public static String getCommandFromPath(Persistence persistence, String path) {
     if (path == null) {
       return null;
     }

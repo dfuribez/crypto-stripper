@@ -10,17 +10,13 @@ import java.util.HashMap;
 public final class Executor {
 
   public static ExecutorResponse execute(
-      MontoyaApi api,
-      String action,
-      String source,
-      HashMap<String, String> request
-  ) {
+      MontoyaApi api, String action, String source, HashMap<String, String> request) {
     StringBuilder output = new StringBuilder();
     String decodedOutput = "";
     String scriptToExecute;
     String command;
     StringBuilder stdErr = new StringBuilder();
-
+    int numberOfOutputLines = 0;
     ExecutorResponse response = new ExecutorResponse();
 
     request.put("action", action);
@@ -33,9 +29,7 @@ public final class Executor {
           Constants.RESPONSE_SCRIPT_PATH_KEY);
     }
 
-    command = Utils.getCommandFromPath(
-        api.persistence(),
-        scriptToExecute);
+    command = Utils.getCommandFromPath(api.persistence(), scriptToExecute);
 
     if (!Utils.checkFileExists(scriptToExecute)) {
       response.setError(scriptToExecute + " is not a file");
@@ -57,11 +51,8 @@ public final class Executor {
         gson.toJson(request, writer);
       }
 
-      ProcessBuilder processBuilder = new ProcessBuilder(
-          command,
-          scriptToExecute,
-          temp.getAbsolutePath()
-      );
+      ProcessBuilder processBuilder =
+          new ProcessBuilder(command, scriptToExecute, temp.getAbsolutePath());
 
       processBuilder.redirectErrorStream(false);
 
@@ -77,38 +68,29 @@ public final class Executor {
 
       String line;
 
+
       while ((line = reader.readLine()) != null) {
         output.append(line);
+        numberOfOutputLines += 1;
       }
 
       while ((line = errorReader.readLine()) != null) {
         stdErr.append(line + "\n");
       }
 
-      decodedOutput = new String(api
-          .utilities()
-          .base64Utils()
-          .decode(output.toString()).getBytes(),
-          StandardCharsets.UTF_8
-      );
+      decodedOutput =
+          new String(
+              api.utilities().base64Utils().decode(output.toString()).getBytes(),
+              StandardCharsets.UTF_8
+          );
 
       if (decodedOutput.isEmpty()) {
-        response.setError(String.format(
-            Constants.STRIPPER_ERROR_TEMPLATE,
-            command,
-            scriptToExecute,
-            api.utilities().base64Utils().encodeToString(
-                new Gson().toJson(request)),
-            "Script's output is empty or null",
-            ""
-            ));
+        response.setError("Script's output was empty or null");
         response.setStdErr(stdErr.toString());
         return  response;
       }
 
-      response = new  Gson()
-          .fromJson(decodedOutput, ExecutorResponse.class);
-
+      response = new Gson().fromJson(decodedOutput, ExecutorResponse.class);
       response.setStdErr(stdErr.toString());
 
       temp.delete();
@@ -117,13 +99,16 @@ public final class Executor {
         IllegalArgumentException e) {
       response.setError(String.format(
           Constants.STRIPPER_ERROR_TEMPLATE,
-          command,
-          scriptToExecute,
-          api.utilities().base64Utils().encodeToString(
-              new Gson().toJson(request)),
-          e.toString(),
-          decodedOutput
-      ));
+          command, scriptToExecute, "", e.toString(), decodedOutput));
+      stdErr.append("----------- Extension errors -----------" + "\n");
+      stdErr.append("[+] " + e.toString() + "\n");
+
+      if (numberOfOutputLines > 1) {
+        stdErr.append("\n[+] more than one line detected in stdout,"
+            + "please make sure you are not using console.log/print"
+            + "debug only by printing to stderr");
+      }
+
       response.setStdErr(stdErr.toString());
       return  response;
     }

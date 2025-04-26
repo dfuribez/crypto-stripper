@@ -52,9 +52,10 @@ public final class Executor {
     try {
       File temp = File.createTempFile("stripper_", ".json");
 
-      Writer writer = new FileWriter(temp, StandardCharsets.UTF_8);
-      Gson gson = new GsonBuilder().create();
-      gson.toJson(request, writer);
+      try (Writer writer = new FileWriter(temp, StandardCharsets.UTF_8)) {
+        Gson gson = new GsonBuilder().create();
+        gson.toJson(request, writer);
+      }
 
       ProcessBuilder processBuilder = new ProcessBuilder(
           command,
@@ -67,11 +68,11 @@ public final class Executor {
       Process process = processBuilder.start();
 
       BufferedReader reader = new BufferedReader(
-          new InputStreamReader(process.getInputStream())
+          new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)
       );
 
       BufferedReader errorReader = new BufferedReader(
-          new InputStreamReader(process.getErrorStream())
+          new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8)
       );
 
       String line;
@@ -84,11 +85,12 @@ public final class Executor {
         stdErr.append(line + "\n");
       }
 
-      decodedOutput = api
+      decodedOutput = new String(api
           .utilities()
           .base64Utils()
-          .decode(output.toString())
-          .toString();
+          .decode(output.toString()).getBytes(),
+          StandardCharsets.UTF_8
+      );
 
       if (decodedOutput.isEmpty()) {
         response.setError(String.format(

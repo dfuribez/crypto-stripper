@@ -35,7 +35,7 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
   public void setRequestResponse(HttpRequestResponse requestResponse) {
     this.currentRequest = requestResponse;
     this.editorTab.setRequestResponse(requestResponse);
-    this.editorTab.setCommand(requestResponse.request().toByteArray());
+    this.editorTab.setContent(requestResponse.request());
   }
 
   @Override
@@ -66,6 +66,6 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
 
   @Override
   public boolean isModified() {
-    return this.editorTab.contentEditor.isModified();
+    return false;
   }
 }

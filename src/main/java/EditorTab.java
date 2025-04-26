@@ -1,9 +1,9 @@
 import burp.api.montoya.MontoyaApi;
-import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
-import burp.api.montoya.ui.editor.RawEditor;
+import burp.api.montoya.ui.editor.HttpRequestEditor;
+import burp.api.montoya.ui.editor.HttpResponseEditor;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -14,7 +14,6 @@ import java.util.HashMap;
 
 public class EditorTab {
   public JPanel panel1;
-  private JTextArea commandTextArea;
   private JButton testDecryptionButton;
   private JTextArea stdOutText;
   private JPanel commandPanel;
@@ -24,27 +23,32 @@ public class EditorTab {
   private JPanel buttonsPanel;
   private JTextArea stdOutTextArea;
   private JTextArea stdErrTextArea;
+  private JSplitPane outputSplitPane;
+  private JLabel messageLabel;
+  private JSplitPane contentSplitpane;
 
   MontoyaApi api;
-  RawEditor contentEditor;
 
   boolean isRequest;
 
   HttpRequestResponse requestResponse;
 
+  HttpResponseEditor responseEditor;
+  HttpRequestEditor requestEditor;
 
-  EditorTab(
-      MontoyaApi api,
-      boolean isRequest
-  ) {
+  HttpRequestEditor requestTransformed;
+  HttpResponseEditor responseTransformed;
+
+  EditorTab(MontoyaApi api, boolean isRequest) {
     this.isRequest = isRequest;
     this.api = api;
-    commandPanel.setBorder(new TitledBorder("Command:"));
     stdErrPanel.setBorder(new TitledBorder("stderr:"));
-    stdOutPanel.setBorder(new TitledBorder("stdout:"));
 
-    contentEditor = api.userInterface().createRawEditor();
-    contentEditor.setEditable(false);
+    requestEditor = api.userInterface().createHttpRequestEditor();
+    responseEditor = api.userInterface().createHttpResponseEditor();
+
+    requestTransformed = api.userInterface().createHttpRequestEditor();
+    responseTransformed = api.userInterface().createHttpResponseEditor();
 
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.gridx = 0;
@@ -53,7 +57,14 @@ public class EditorTab {
     gbc.weightx = 1.0;
     gbc.weighty = 1.0;
 
-    commandPanel.add(contentEditor.uiComponent(), gbc);
+    if (isRequest) {
+      commandPanel.add(requestEditor.uiComponent(), gbc);
+      stdOutPanel.add(requestTransformed.uiComponent(), gbc);
+    } else {
+      commandPanel.add(responseEditor.uiComponent(), gbc);
+      stdOutPanel.add(responseTransformed.uiComponent(), gbc);
+    }
+    outputSplitPane.setResizeWeight(0.5);
 
     testEncryptionButton.addActionListener(new ActionListener() {
       @Override
@@ -78,13 +89,12 @@ public class EditorTab {
   private void execute(String action) {
     HashMap<String, String> prepared = new HashMap<>();
     String source;
-    String stdOutBox = "";
 
+    updateUi();
     if (isRequest) {
       prepared = Utils.prepareRequestForExecutor(
               requestResponse.request(), 0);
       source = "request";
-
     } else {
       String url =
           Utils.removeQueryFromUrl(requestResponse.request().url());
@@ -93,38 +103,37 @@ public class EditorTab {
       source = "response";
     }
 
-    ExecutorResponse executed = Executor.execute(
-        api,
-        action,
-        source,
-        prepared
-    );
-
+    ExecutorResponse executed = Executor.execute(api, action, source, prepared);
 
     if (isRequest) {
-      HttpRequest request =
-          Utils.executorToHttpRequest(requestResponse.request(), executed);
-
-      stdOutBox = executed.getError();
-
-      if (stdOutBox.isBlank()) {
-        stdOutBox = request.toString();
-      }
+      requestTransformed.setRequest(
+          Utils.executorToHttpRequest(requestResponse.request(), executed));
     } else {
-      HttpResponse response =
-          Utils.executorToHttpResponse(requestResponse.response(), executed);
-      stdOutBox = executed.getError();
-
-      if (stdOutBox.isBlank()) {
-        stdOutBox = response.toString();
-      }
+      responseTransformed.setResponse(
+          Utils.executorToHttpResponse(requestResponse.response(), executed));
     }
 
-    stdOutTextArea.setText(stdOutBox);
     stdErrTextArea.setText(executed.getStdErr());
   }
 
-  public void setCommand(ByteArray content) {
-    contentEditor.setContents(content);
+  public void setContent(HttpRequest request) {
+    requestEditor.setRequest(request);
+    updateUi();
+  }
+
+  public void setContent(HttpResponse response) {
+    responseEditor.setResponse(response);
+    updateUi();
+  }
+
+  private void updateUi() {
+    if (isRequest) {
+      messageLabel.setText(api.persistence().extensionData().getString(
+          Constants.REQUEST_SCRIPT_PATH_KEY));
+    } else {
+      messageLabel.setText(api.persistence().extensionData().getString(
+          Constants.RESPONSE_CHECKBOX_STATUS_KEY));
+
+    }
   }
 }

@@ -34,7 +34,7 @@ public class MyCustomResponseEditor implements ExtensionProvidedHttpResponseEdit
   public void setRequestResponse(HttpRequestResponse requestResponse) {
     this.currentResponse = requestResponse;
     this.editorTab.setRequestResponse(requestResponse);
-    this.editorTab.setCommand(requestResponse.response().toByteArray());
+    this.editorTab.setContent(requestResponse.response());
   }
 
   @Override

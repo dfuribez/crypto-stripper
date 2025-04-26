@@ -13,7 +13,9 @@ import java.io.FileWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainTab {
   public JPanel panel1;
@@ -315,15 +317,15 @@ public class MainTab {
 
       api.persistence().extensionData().setStringList(
           Constants.STRIPPER_SCOPE_LIST_KEY,
-          Utils.arrayToPersisted(jsonSettings.getScope())
+          Utils.arrayToPersisted(cleanScope(jsonSettings.getScope()))
       );
       api.persistence().extensionData().setStringList(
           Constants.STRIPPER_BLACK_LIST_KEY,
-          Utils.arrayToPersisted(jsonSettings.getBlackList())
+          Utils.arrayToPersisted(cleanScope(jsonSettings.getBlackList()))
       );
       api.persistence().extensionData().setStringList(
           Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY,
-          Utils.arrayToPersisted(jsonSettings.getForceIntercept())
+          Utils.arrayToPersisted(cleanScope(jsonSettings.getForceIntercept()))
       );
       loadCurrentSettings();
 
@@ -588,5 +590,15 @@ public class MainTab {
   private void showAlertMessage(String message) {
     JOptionPane.showMessageDialog(
         api.userInterface().swingUtils().suiteFrame(), message);
+  }
+
+  private String[] cleanScope(String[] scopeList) {
+    ArrayList<String> clean = new ArrayList<String>();
+    for (String url : scopeList) {
+      if (Utils.isValidRegex(url)) {
+        clean.add(url);
+      }
+    }
+    return clean.toArray(new String[0]);
   }
 }

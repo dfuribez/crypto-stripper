@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 public class MainTab {
@@ -52,6 +53,10 @@ public class MainTab {
   private JButton pythonTemplateButton;
   private JTextField scopeUrlTextField;
   private JButton addScopeUrlButton;
+  private JTextField blackListUrlTextField;
+  private JButton addBlackListUrlButton;
+  private JTextField forceUrlTextField;
+  private JButton addForceUrlButton;
 
   MontoyaApi api;
 
@@ -265,15 +270,29 @@ public class MainTab {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         updateScope("scope", "add");
+        scopeUrlTextField.setText("");
+      }
+    });
+    addBlackListUrlButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        updateScope("blacklist", "add");
+        blackListUrlTextField.setText("");
+      }
+    });
+    addForceUrlButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        updateScope("force", "add");
+        forceUrlTextField.setText("");
       }
     });
   }
 
   private void importSettings() {
     String path = openChooser(
-        new FileNameExtensionFilter(
-            "JSON, configuration files",
-            "json"), true);
+        new FileNameExtensionFilter("JSON, configuration files", "json"),
+        true);
 
     if (path.isBlank()) {
       return;
@@ -283,32 +302,32 @@ public class MainTab {
       Gson gson = new Gson();
       JsonSettings jsonSettings = gson.fromJson(reader, JsonSettings.class);
 
-      this.api.persistence().extensionData().setBoolean(
+      api.persistence().extensionData().setBoolean(
           Constants.REQUEST_CHECKBOX_STATUS_KEY, jsonSettings.isEnableRequest()
       );
-      this.api.persistence().extensionData().setBoolean(
+      api.persistence().extensionData().setBoolean(
           Constants.RESPONSE_CHECKBOX_STATUS_KEY, jsonSettings.isEnableResponse()
       );
-      this.api.persistence().extensionData().setBoolean(
+      api.persistence().extensionData().setBoolean(
           Constants.FORCE_CHECKBOX_STATUS_KEY, jsonSettings.isEnableForceIntercept()
       );
 
-      this.api.persistence().extensionData().setStringList(
+      api.persistence().extensionData().setStringList(
           Constants.STRIPPER_SCOPE_LIST_KEY,
           Utils.arrayToPersisted(jsonSettings.getScope())
       );
-      this.api.persistence().extensionData().setStringList(
+      api.persistence().extensionData().setStringList(
           Constants.STRIPPER_BLACK_LIST_KEY,
           Utils.arrayToPersisted(jsonSettings.getBlackList())
       );
-      this.api.persistence().extensionData().setStringList(
+      api.persistence().extensionData().setStringList(
           Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY,
           Utils.arrayToPersisted(jsonSettings.getForceIntercept())
       );
       loadCurrentSettings();
 
     } catch (Exception e) {
-      this.api.logging().logToError(e.toString());
+      api.logging().logToError(e.toString());
     }
 
   }
@@ -317,50 +336,41 @@ public class MainTab {
     JsonSettings settings = new JsonSettings();
 
     settings.setEnableRequest(
-        this.api.persistence().extensionData().getBoolean(
+        api.persistence().extensionData().getBoolean(
             Constants.REQUEST_CHECKBOX_STATUS_KEY
         )
     );
     settings.setEnableResponse(
-        this.api.persistence().extensionData().getBoolean(
+        api.persistence().extensionData().getBoolean(
             Constants.RESPONSE_CHECKBOX_STATUS_KEY
         )
     );
     settings.setEnableForceIntercept(
-        this.api.persistence().extensionData().getBoolean(
+        api.persistence().extensionData().getBoolean(
             Constants.FORCE_CHECKBOX_STATUS_KEY
         )
     );
 
     HashMap<String, PersistedList<String>> scope =
-        Utils.loadScope(this.api.persistence().extensionData());
+        Utils.loadScope(api.persistence().extensionData());
 
     settings.setBlackList(scope.get("blacklist").toArray(new String[0]));
     settings.setScope(scope.get("scope").toArray(new String[0]));
     settings.setForceIntercept(scope.get("force").toArray(new String[0]));
 
-    JFileChooser fileChooser = new JFileChooser();
-    fileChooser.setFileFilter(new FileNameExtensionFilter(
-        "JSON, configuration files",
-        "json"));
-    int response = fileChooser.showSaveDialog(null);
+    FileNameExtensionFilter filter =
+        new FileNameExtensionFilter("JSON, configuration files", "json");
 
-    if (response != JFileChooser.APPROVE_OPTION) {
-      return;
-    }
-
-    try (Writer writer = new FileWriter(fileChooser.getSelectedFile().getAbsolutePath())) {
-            Gson gson = new GsonBuilder().create();
-            gson.toJson(settings, writer);
+    String path = openChooser(filter, false);
+    try (Writer writer = new FileWriter(path, StandardCharsets.UTF_8)) {
+      Gson gson = new GsonBuilder().create();
+      gson.toJson(settings, writer);
     } catch (Exception e) {
       this.api.logging().logToError(e.toString());
     }
   }
 
-  private String openChooser(
-      FileNameExtensionFilter filter,
-      boolean isOpenDialog
-  ) {
+  private String openChooser(FileNameExtensionFilter filter, boolean isOpenDialog) {
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setFileFilter(filter);
 
@@ -384,35 +394,35 @@ public class MainTab {
     boolean enableResponse = true;
     boolean forceInterceptionScope = false;
 
-    this.api.persistence().extensionData().setBoolean(
+    api.persistence().extensionData().setBoolean(
         Constants.REQUEST_CHECKBOX_STATUS_KEY, enableRequest
     );
 
-    this.api.persistence().extensionData().setBoolean(
+    api.persistence().extensionData().setBoolean(
         Constants.RESPONSE_CHECKBOX_STATUS_KEY, enableResponse
     );
 
-    this.api.persistence().extensionData().setBoolean(
+    api.persistence().extensionData().setBoolean(
         Constants.FORCE_CHECKBOX_STATUS_KEY, forceInterceptionScope
     );
 
-    this.api.persistence().extensionData().setString(
+    api.persistence().extensionData().setString(
         Constants.RESPONSE_SCRIPT_PATH_KEY, ""
     );
 
-    this.api.persistence().extensionData().setString(
+    api.persistence().extensionData().setString(
         Constants.REQUEST_SCRIPT_PATH_KEY, ""
     );
 
-    this.api.persistence().extensionData().setStringList(
+    api.persistence().extensionData().setStringList(
         Constants.STRIPPER_SCOPE_LIST_KEY, PersistedList.persistedStringList()
     );
 
-    this.api.persistence().extensionData().setStringList(
+    api.persistence().extensionData().setStringList(
         Constants.STRIPPER_BLACK_LIST_KEY, PersistedList.persistedStringList()
     );
 
-    this.api.persistence().extensionData().setStringList(
+    api.persistence().extensionData().setStringList(
         Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY, PersistedList.persistedStringList()
     );
 
@@ -420,20 +430,20 @@ public class MainTab {
   }
 
   public void loadCurrentSettings() {
-    Boolean requestStatus = this.api.persistence().extensionData().getBoolean(
+    Boolean requestStatus = api.persistence().extensionData().getBoolean(
         Constants.REQUEST_CHECKBOX_STATUS_KEY
     );
 
-    Boolean responseStatus = this.api.persistence().extensionData().getBoolean(
+    Boolean responseStatus = api.persistence().extensionData().getBoolean(
         Constants.RESPONSE_CHECKBOX_STATUS_KEY
     );
 
-    Boolean forceStatus = this.api.persistence().extensionData().getBoolean(
+    Boolean forceStatus = api.persistence().extensionData().getBoolean(
         Constants.FORCE_CHECKBOX_STATUS_KEY
     );
 
     HashMap<String, PersistedList<String>> scope =
-        Utils.loadScope(this.api.persistence().extensionData());
+        Utils.loadScope(api.persistence().extensionData());
 
     requestStatus = requestStatus == null ? true : requestStatus;
     responseStatus = responseStatus == null ? true : responseStatus;
@@ -515,13 +525,13 @@ public class MainTab {
         target = this.blackList;
         selectedScopeList = scope.get("blacklist");
         key = Constants.STRIPPER_BLACK_LIST_KEY;
-        addUrl = "";
+        addUrl = blackListUrlTextField.getText();
         break;
       case "force":
         target = this.forceInterceptList;
         selectedScopeList = scope.get("force");
         key = Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY;
-        addUrl = "";
+        addUrl = forceUrlTextField.getText();
         break;
       default:
         return;

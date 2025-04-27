@@ -12,6 +12,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class MyContextMenus  implements ContextMenuItemsProvider {
   private final MontoyaApi api;
@@ -23,12 +24,13 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
   }
 
   public void updateStripperScope(String source, String action, String url) {
-
     PersistedList<String> target;
     String key;
 
     HashMap<String, PersistedList<String>> scope =
-        Utils.loadScope(this.api.persistence().extensionData());
+        Utils.loadScope(api.persistence().extensionData());
+
+    String escapedUrl = Pattern.quote(url);
 
     switch (source) {
       case "blacklist":
@@ -48,25 +50,20 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
     }
 
     if ("add".equals(action)) {
-      target.add(url);
+      target.add(escapedUrl);
     } else {
-      target.remove(url);
+      target.remove(escapedUrl);
     }
 
-    this.api.persistence()
-        .extensionData()
-        .setStringList(key, target);
-
-    this.mainTab.loadCurrentSettings();
-
+    api.persistence().extensionData().setStringList(key, target);
+    mainTab.loadCurrentSettings();
   }
 
   public void decryptRequest(MessageEditorHttpRequestResponse requestResponse){
     HttpRequest request = requestResponse.requestResponse().request();
 
-    // TODO: calculate own messageID since the api does not provide it for this object
     HashMap<String, String> preparedToExecute =
-        Utils.prepareRequestForExecutor(request, 0);
+        Utils.prepareRequestForExecutor(request, -1);
 
     ExecutorResponse executorResponse =
         Executor.execute(api, "decrypt", "request", preparedToExecute);

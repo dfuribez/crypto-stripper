@@ -272,22 +272,18 @@ public class MainTab {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         updateScope("scope", "add");
-        scopeUrlTextField.setText("");
-
       }
     });
     addBlackListUrlButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         updateScope("blacklist", "add");
-        blackListUrlTextField.setText("");
       }
     });
     addForceUrlButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         updateScope("force", "add");
-        forceUrlTextField.setText("");
       }
     });
   }
@@ -510,6 +506,7 @@ public class MainTab {
 
   private void updateScope(String source, String action) {
     JList target;
+    JTextField selectedTextField;
     PersistedList<String> selectedScopeList;
     String key;
     String addUrl;
@@ -522,19 +519,19 @@ public class MainTab {
         target = this.scopeList;
         selectedScopeList = scope.get("scope");
         key = Constants.STRIPPER_SCOPE_LIST_KEY;
-        addUrl = scopeUrlTextField.getText();
+        selectedTextField = scopeUrlTextField;
         break;
       case "blacklist":
         target = this.blackList;
         selectedScopeList = scope.get("blacklist");
         key = Constants.STRIPPER_BLACK_LIST_KEY;
-        addUrl = blackListUrlTextField.getText();
+        selectedTextField = blackListUrlTextField;
         break;
       case "force":
         target = this.forceInterceptList;
         selectedScopeList = scope.get("force");
         key = Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY;
-        addUrl = forceUrlTextField.getText();
+        selectedTextField = forceUrlTextField;
         break;
       default:
         return;
@@ -553,6 +550,7 @@ public class MainTab {
       }
     } else {
 
+      addUrl = selectedTextField.getText();
       if (!Utils.isValidRegex(addUrl) || addUrl.isBlank()) {
         showAlertMessage("Please check your url, it is not a valid regex");
         return;
@@ -565,6 +563,7 @@ public class MainTab {
 
       selectedScopeList.add(addUrl);
       setScopeList(source, selectedScopeList);
+      selectedTextField.setText("");
     }
     api.persistence().extensionData().setStringList(key, selectedScopeList);
 

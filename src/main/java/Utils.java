@@ -18,8 +18,7 @@ import java.util.List;
 
 public class Utils {
 
-  public static ArrayList<String> headersToArray(
-      List headers) {
+  public static ArrayList<String> headersToArray(List headers) {
     ArrayList<String> o = new ArrayList<String>();
     for (Object header : headers) {
         o.add(header.toString());
@@ -29,8 +28,7 @@ public class Utils {
   }
 
   public static List<HashMap<String, String>> parametersToArray(
-      List<ParsedHttpParameter> parameters
-  ) {
+      List<ParsedHttpParameter> parameters) {
     List<HashMap<String, String>> array = new ArrayList<>();
 
     for (ParsedHttpParameter param : parameters) {
@@ -45,9 +43,7 @@ public class Utils {
   }
 
   public static HashMap<String, String> prepareRequestForExecutor(
-      HttpRequest request,
-      int messageId
-  ) {
+      HttpRequest request, int messageId) {
     HashMap<String, String> result = new HashMap<String, String>();
 
     String headers = new Gson().toJson(
@@ -67,10 +63,7 @@ public class Utils {
   }
 
   public static HashMap<String, String> prepareResponseForExecutor(
-      HttpResponse response,
-      String url,
-      int messageId
-  ) {
+      HttpResponse response, String url, int messageId) {
     HashMap<String, String> result = new HashMap<String, String>();
 
     String headers = new Gson().toJson(
@@ -84,6 +77,9 @@ public class Utils {
     result.put("urlParameters", urlParameters);
     result.put("url", url);
     result.put("messageId", String.valueOf(messageId));
+    result.put("statusCode", String.valueOf(response.statusCode()));
+    result.put("reasonPhrase", response.reasonPhrase());
+
 
     return result;
   }
@@ -99,9 +95,7 @@ public class Utils {
     return file.isFile();
   }
 
-  public static List<HttpHeader> listToHttpHeaders(
-      List<String> headersList
-  ) {
+  public static List<HttpHeader> listToHttpHeaders(List<String> headersList) {
     List<HttpHeader> headers = new ArrayList<HttpHeader>();
 
     if (headersList == null || headersList.isEmpty()) {
@@ -116,8 +110,7 @@ public class Utils {
   }
 
   public static List<HttpParameter> listToUrlParams(
-      List<HashMap<String, String>> urlParametersList
-  ) {
+      List<HashMap<String, String>> urlParametersList) {
     List<HttpParameter> urlParameters = new ArrayList<HttpParameter>();
 
     if (urlParametersList == null || urlParametersList.isEmpty()) {
@@ -134,9 +127,7 @@ public class Utils {
   }
 
   public static HttpRequest executorToHttpRequest(
-      HttpRequest request,
-      ExecutorResponse output
-  ) {
+      HttpRequest request, ExecutorResponse output) {
 
     HttpRequest modified = request
         .withRemovedHeaders(request.headers())
@@ -161,13 +152,13 @@ public class Utils {
   }
 
   public static HttpResponse executorToHttpResponse(
-      HttpResponse response,
-      ExecutorResponse output
-  ) {
+      HttpResponse response, ExecutorResponse output) {
 
     HttpResponse modified = response
         .withRemovedHeaders(response.headers())
-        .withAddedHeaders(listToHttpHeaders(output.getHeaders()));
+        .withAddedHeaders(listToHttpHeaders(output.getHeaders()))
+        .withStatusCode(output.getStatusCode())
+        .withReasonPhrase(output.getReasonPhrase());
 
     if (output.getError() != null && !output.getError().isEmpty()) {
       return modified

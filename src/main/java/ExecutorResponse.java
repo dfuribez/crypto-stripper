@@ -8,7 +8,24 @@ public class ExecutorResponse {
   private String error = "";
   private Boolean replaceResponse = false;
   private String stdErr = "";
+  private short statusCode = 0;
+  private String reasonPhrase = "";
 
+  public String getReasonPhrase() {
+    return reasonPhrase;
+  }
+
+  public void setReasonPhrase(String reasonPhrase) {
+    this.reasonPhrase = reasonPhrase;
+  }
+
+  public short getStatusCode() {
+    return statusCode;
+  }
+
+  public void setStatusCode(short statusCode) {
+    this.statusCode = statusCode;
+  }
   public String getStdErr() {
     return stdErr;
   }

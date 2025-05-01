@@ -21,6 +21,8 @@ public class Constants {
   public static String RESPONSE_CHECKBOX_STATUS_KEY = "responseCheckboxStatus";
   public static String FORCE_CHECKBOX_STATUS_KEY = "forceCheckboxStatus";
 
+  public static String[] dangerousPseudoHeaders = {":scheme", ":method", ":path"};
+
   public static String JS_TEMPLATE = """
 // Crypto Stripper
 // Examples: https://github.com/dfuribez/crypto-stripper/wiki#examples

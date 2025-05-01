@@ -11,20 +11,19 @@ import com.google.gson.Gson;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Utils {
 
-  public static ArrayList<String> headersToArray(List headers) {
-    ArrayList<String> o = new ArrayList<String>();
-    for (Object header : headers) {
-        o.add(header.toString());
+  public static ArrayList<String> headersToArray(List<HttpHeader> headersList) {
+    ArrayList<String> headers = new ArrayList<String>();
+    for (HttpHeader header : headersList) {
+      if (!Arrays.asList(Constants.dangerousPseudoHeaders).contains(header.name())) {
+        headers.add(header.toString());
+      }
     }
 
-    return o;
+    return headers;
   }
 
   public static List<HashMap<String, String>> parametersToArray(
@@ -130,14 +129,16 @@ public class Utils {
       HttpRequest request, ExecutorResponse output) {
 
     HttpRequest modified = request
-        .withRemovedHeaders(request.headers())
-        .withRemovedParameters(request.parameters(HttpParameterType.URL))
-        .withHeader(Constants.STRIPPER_HEADER, "true");
+        .withRemovedParameters(request.parameters(HttpParameterType.URL));
 
-
-    for (HttpHeader h : listToHttpHeaders(output.getHeaders())) {
-      modified = modified.withHeader(h);
+    // avoids kettling
+    for (HttpHeader header : request.headers()) {
+      if (!Arrays.asList(Constants.dangerousPseudoHeaders).contains(header.name())) {
+        modified = modified.withRemovedHeader(header.name());
+      }
     }
+
+    modified = modified.withAddedHeaders(listToHttpHeaders(output.getHeaders()));
 
     if (output.getError() != null && !output.getError().isEmpty()) {
       modified = modified
@@ -148,7 +149,8 @@ public class Utils {
 
     return modified
         .withBody(output.getBody())
-        .withAddedParameters(listToUrlParams(output.getUrlParameters()));
+        .withAddedParameters(listToUrlParams(output.getUrlParameters()))
+        .withHeader(Constants.STRIPPER_HEADER, "true");
   }
 
   public static HttpResponse executorToHttpResponse(

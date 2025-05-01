@@ -28,8 +28,7 @@ class MyHttpHandler implements HttpHandler {
   ) {
 
     HttpRequest modifiedRequest = requestToBeSent
-        .withRemovedHeader(Constants.FIREPROXY_HEADER)
-        .withRemovedHeader(Constants.STRIPPER_HEADER);
+        .withRemovedHeader(Constants.FIREPROXY_HEADER);
 
     if (requestToBeSent.method().equalsIgnoreCase("options")) {
       return continueWith(modifiedRequest);
@@ -49,7 +48,8 @@ class MyHttpHandler implements HttpHandler {
           api, "encrypt", "request", preparedToExecute);
 
       return continueWith(
-          Utils.executorToHttpRequest(modifiedRequest, executorResponse));
+          Utils.executorToHttpRequest(modifiedRequest, executorResponse)
+              .withRemovedHeader(Constants.STRIPPER_HEADER));
     }
 
     return continueWith(modifiedRequest);

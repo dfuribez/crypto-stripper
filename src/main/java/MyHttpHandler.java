@@ -44,11 +44,11 @@ class MyHttpHandler implements HttpHandler {
 
       HashMap<String, String> preparedToExecute =
           Utils.prepareRequestForExecutor(modifiedRequest, requestToBeSent.messageId());
-      ExecutorResponse executorResponse = Executor.execute(
+      ExecutorOutput executorOutput = Executor.execute(
           api, "encrypt", "request", preparedToExecute);
 
       return continueWith(
-          Utils.executorToHttpRequest(modifiedRequest, executorResponse)
+          Utils.executorToHttpRequest(modifiedRequest, executorOutput)
               .withRemovedHeader(Constants.STRIPPER_HEADER));
     }
 
@@ -71,14 +71,14 @@ class MyHttpHandler implements HttpHandler {
       HashMap<String, String> preparedToExecute =
           Utils.prepareResponseForExecutor(responseReceived, url, responseReceived.messageId());
 
-      ExecutorResponse executorResponse = Executor.execute(
+      ExecutorOutput executorOutput = Executor.execute(
           api, "decrypt", "response", preparedToExecute);
 
       HttpResponse response =
-          Utils.executorToHttpResponse(responseReceived, executorResponse);
+          Utils.executorToHttpResponse(responseReceived, executorOutput);
 
       if (responseReceived.toolSource().isFromTool(ToolType.PROXY)) {
-        if (executorResponse.getReplaceResponse()) {
+        if (executorOutput.getReplaceResponse()) {
           return continueWith(response);
         } else {
           return continueWith(responseReceived);

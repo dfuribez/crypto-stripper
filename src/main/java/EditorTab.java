@@ -107,7 +107,7 @@ public class EditorTab {
       source = "response";
     }
 
-    ExecutorResponse executed = Executor.execute(api, action, source, prepared);
+    ExecutorOutput executed = Executor.execute(api, action, source, prepared);
 
     if (isRequest) {
       requestTransformed.setRequest(

@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public final class Executor {
 
-  public static ExecutorResponse execute(
+  public static ExecutorOutput execute(
       MontoyaApi api, String action, String source, HashMap<String, String> request) {
     StringBuilder output = new StringBuilder();
     String decodedOutput = "";
@@ -17,7 +17,7 @@ public final class Executor {
     String command;
     StringBuilder stdErr = new StringBuilder();
     int numberOfOutputLines = 0;
-    ExecutorResponse response = new ExecutorResponse();
+    ExecutorOutput response = new ExecutorOutput();
 
     request.put("action", action);
 
@@ -90,7 +90,7 @@ public final class Executor {
         return  response;
       }
 
-      response = new Gson().fromJson(decodedOutput, ExecutorResponse.class);
+      response = new Gson().fromJson(decodedOutput, ExecutorOutput.class);
       response.setStdErr(stdErr.toString());
 
       temp.delete();

@@ -126,7 +126,7 @@ public class Utils {
   }
 
   public static HttpRequest executorToHttpRequest(
-      HttpRequest request, ExecutorResponse output) {
+      HttpRequest request, ExecutorOutput output) {
 
     HttpRequest modified = request
         .withRemovedParameters(request.parameters(HttpParameterType.URL));
@@ -154,7 +154,7 @@ public class Utils {
   }
 
   public static HttpResponse executorToHttpResponse(
-      HttpResponse response, ExecutorResponse output) {
+      HttpResponse response, ExecutorOutput output) {
 
     HttpResponse modified = response
         .withRemovedHeaders(response.headers())

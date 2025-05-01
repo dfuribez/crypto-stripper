@@ -65,7 +65,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
     HashMap<String, String> preparedToExecute =
         Utils.prepareRequestForExecutor(request, -1);
 
-    ExecutorResponse executorResponse =
+    ExecutorOutput executorResponse =
         Executor.execute(api, "decrypt", "request", preparedToExecute);
 
     requestResponse.setRequest(Utils.executorToHttpRequest(request, executorResponse));

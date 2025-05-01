@@ -1,7 +1,7 @@
 import java.util.HashMap;
 import java.util.List;
 
-public class ExecutorResponse {
+public class ExecutorOutput {
   private String body = "";
   private List<String> headers;
   private List<HashMap<String, String>> urlParameters;

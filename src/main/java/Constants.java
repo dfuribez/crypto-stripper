@@ -6,7 +6,7 @@ public class Constants {
   public static String REQUEST_SCRIPT_PATH_KEY = "requestScriptPath";
   public static String RESPONSE_SCRIPT_PATH_KEY = "responseScriptPath";
 
-  public static String STRIPPER_HEADER = "X-Stripper";
+  public static String STRIPPER_HEADER = "X-Crypto-Stripper";
 
   public static String STRIPPER_ERROR_TEMPLATE = "Executing: \n %s %s %s \n Error: \n %s \n Scripts output: \n %s";
 

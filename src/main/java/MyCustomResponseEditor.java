@@ -51,7 +51,7 @@ public class MyCustomResponseEditor implements ExtensionProvidedHttpResponseEdit
 
   @Override
   public String caption() {
-    return "Stripper";
+    return "Stripper preview";
   }
 
   @Override

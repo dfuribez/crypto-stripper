@@ -13,12 +13,7 @@ public class Extension implements BurpExtension {
 
     MainTab tab = new MainTab(api);
 
-    api.logging().logToOutput("""
-        Crypto Stripper by Diego Uribe
-        Version: v0.5-alpha
-        Github: https://github.com/dfuribez/crypto-stripper
-        Documentation: https://github.com/dfuribez/crypto-stripper/wiki
-        """);
+    api.logging().logToOutput(Constants.VERSION);
 
     api.userInterface().registerSuiteTab("Stripper", tab.panel1);
     api.userInterface().registerContextMenuItemsProvider(

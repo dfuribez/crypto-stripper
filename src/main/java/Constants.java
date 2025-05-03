@@ -23,6 +23,14 @@ public class Constants {
 
   public static String[] dangerousPseudoHeaders = {":scheme", ":method", ":path"};
 
+  public static String VERSION = """
+      Crypto Stripper by Diego Uribe
+      Version: v0.5-alpha
+      Github: https://github.com/dfuribez/crypto-stripper
+      Examples: https://github.com/dfuribez/crypto-stripper/wiki
+      Playground: https://github.com/dfuribez/crypto-sripper-playground
+      """;
+
   public static String JS_TEMPLATE = """
 // Crypto Stripper
 // Examples: https://github.com/dfuribez/crypto-stripper/wiki#examples

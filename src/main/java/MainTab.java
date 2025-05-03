@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
@@ -15,7 +16,6 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class MainTab {
   public JPanel panel1;
@@ -59,6 +59,11 @@ public class MainTab {
   private JButton addBlackListUrlButton;
   private JTextField forceUrlTextField;
   private JButton addForceUrlButton;
+  private JTextArea versionTextArea;
+  private JCheckBox enabledCheckBox;
+  private JCheckBox enabledCheckBox1;
+
+  public JCheckBox enableForceCheckbox;
 
   MontoyaApi api;
 
@@ -68,14 +73,39 @@ public class MainTab {
 
     loadCurrentSettings();
 
-    this.encryptorsPanel.setBorder(new TitledBorder("Transformers:"));
-    this.pathsPanel.setBorder(new TitledBorder("Project Paths:"));
-    this.globalBinariesPanel.setBorder(new TitledBorder("Global Paths:"));
+    Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
 
-    this.scopeListPanel.setBorder(new TitledBorder("Scope:"));
-    this.blackListPanel.setBorder(new TitledBorder("Black List"));
-    this.forceInterceptListPanel.setBorder(new TitledBorder("Force intercept:"));
+    this.encryptorsPanel.setBorder(BorderFactory.createCompoundBorder(
+        new TitledBorder(BorderFactory.createEtchedBorder(), "Scripts:"),
+        emptyBorder
+    ));
 
+    this.pathsPanel.setBorder(BorderFactory.createCompoundBorder(
+        new TitledBorder(BorderFactory.createEtchedBorder(), "Project paths:"),
+        emptyBorder
+    ));
+
+    this.globalBinariesPanel.setBorder(BorderFactory.createCompoundBorder(
+            new TitledBorder(BorderFactory.createEtchedBorder(), "Global paths:"),
+            emptyBorder
+        )
+    );
+
+    this.scopeListPanel.setBorder(BorderFactory.createCompoundBorder(
+        new TitledBorder(BorderFactory.createEtchedBorder(), "Scope:"),
+        emptyBorder
+    ));
+    this.blackListPanel.setBorder(BorderFactory.createCompoundBorder(
+        new TitledBorder(BorderFactory.createEtchedBorder(), "Black List:"),
+        emptyBorder
+    ));
+
+    forceInterceptListPanel.setBorder(BorderFactory.createCompoundBorder(
+        new TitledBorder(BorderFactory.createEtchedBorder(), "Force intercept"),
+        emptyBorder
+    ));
+
+    versionTextArea.setText(Constants.VERSION);
 
     RequestFileButton.addActionListener(new ActionListener() {
       @Override

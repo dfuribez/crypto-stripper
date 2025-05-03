@@ -30,7 +30,9 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());
 
-    String escapedUrl = Pattern.quote(url);
+    if (!Utils.isValidRegex(url)) {
+      url = Pattern.quote(url);
+    }
 
     switch (source) {
       case "blacklist":
@@ -50,9 +52,9 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
     }
 
     if ("add".equals(action)) {
-      target.add(escapedUrl);
+      target.add(url);
     } else {
-      target.remove(escapedUrl);
+      target.remove(url);
     }
 
     api.persistence().extensionData().setStringList(key, target);

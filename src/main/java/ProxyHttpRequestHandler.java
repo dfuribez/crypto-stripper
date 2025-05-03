@@ -30,8 +30,7 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
 
   @Override
   public ProxyRequestReceivedAction handleRequestReceived(
-    InterceptedRequest interceptedRequest
-  ) {
+      InterceptedRequest interceptedRequest) {
 
     String url = Utils.removeQueryFromUrl(interceptedRequest.url());
     Annotations annotations = interceptedRequest.annotations();
@@ -50,11 +49,8 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
       }
     }
 
-    if (mainTab.enableBlackListcheckbox.isSelected()
-      && Utils.isUrlInScope(url, scope.get("blacklist"))
-    ) {
-      return ProxyRequestReceivedAction.doNotIntercept(interceptedRequest);
-    }
+    boolean isBlacklisted = mainTab.enableBlackListcheckbox.isSelected()
+        && Utils.isUrlInScope(url, scope.get("blacklist"));
 
     if (this.mainTab.requestCheckBox.isSelected()
         && Utils.isUrlInScope(url, scope.get("scope"))
@@ -68,11 +64,19 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
       HttpRequest decryptedRequest =
           Utils.executorToHttpRequest(interceptedRequest, executorOutput);
 
+      if (isBlacklisted) {
+        return ProxyRequestReceivedAction.doNotIntercept(decryptedRequest, annotations);
+      }
+
       if (this.mainTab.forceInterceptInScopeCheckbox.isSelected()) {
         return intercept(decryptedRequest, annotations);
       }
 
       return continueWith(decryptedRequest, annotations);
+    }
+
+    if (isBlacklisted) {
+      return ProxyRequestReceivedAction.doNotIntercept(interceptedRequest, annotations);
     }
 
     if (mainTab.enableForceinterceptCheckbox.isSelected()

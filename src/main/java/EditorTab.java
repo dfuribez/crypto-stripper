@@ -84,10 +84,11 @@ public class EditorTab {
     });
   }
 
-  public void setRequestResponse(
-      HttpRequestResponse requestResponse
-  ) {
+  public void setRequestResponse(HttpRequestResponse requestResponse) {
     this.requestResponse = requestResponse;
+    requestTransformed.setRequest(null);
+    responseTransformed.setResponse(null);
+    stdErrTextArea.setText("");
   }
 
   private void execute(String action) {

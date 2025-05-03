@@ -17,9 +17,7 @@ public class MyCustomResponseEditor implements ExtensionProvidedHttpResponseEdit
   HttpRequestResponse currentResponse;
 
   public MyCustomResponseEditor(
-      MontoyaApi api,
-      EditorCreationContext editorCreationContext
-  ) {
+      MontoyaApi api, EditorCreationContext editorCreationContext) {
     this.api = api;
     this.creationContext = editorCreationContext;
     this.editorTab = new EditorTab(api, false);

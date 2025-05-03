@@ -60,8 +60,8 @@ public class MainTab {
   private JTextField forceUrlTextField;
   private JButton addForceUrlButton;
   private JTextArea versionTextArea;
-  private JCheckBox enabledCheckBox;
-  private JCheckBox enabledCheckBox1;
+  public JCheckBox enableBlackListcheckbox;
+  public JCheckBox enableForceinterceptCheckbox;
 
   public JCheckBox enableForceCheckbox;
 

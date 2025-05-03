@@ -50,7 +50,9 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
       }
     }
 
-    if (Utils.isUrlInScope(url, scope.get("blacklist"))) {
+    if (mainTab.enableBlackListcheckbox.isSelected()
+      && Utils.isUrlInScope(url, scope.get("blacklist"))
+    ) {
       return ProxyRequestReceivedAction.doNotIntercept(interceptedRequest);
     }
 
@@ -73,7 +75,9 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
       return continueWith(decryptedRequest, annotations);
     }
 
-    if (Utils.isUrlInScope(url, scope.get("force"))) {
+    if (mainTab.enableForceinterceptCheckbox.isSelected()
+        && Utils.isUrlInScope(url, scope.get("force"))
+    ) {
       return intercept(interceptedRequest, annotations);
     }
 

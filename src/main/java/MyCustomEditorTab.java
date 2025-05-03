@@ -57,7 +57,7 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
 
   @Override
   public String caption() {
-    return "Stripper";
+    return "Stripper preview";
   }
 
   @Override

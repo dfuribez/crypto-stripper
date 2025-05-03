@@ -50,11 +50,12 @@ public final class Executor {
         Gson gson = new GsonBuilder().create();
         gson.toJson(request, writer);
       }
-
+      File workingPath = new File(scriptToExecute);
       ProcessBuilder processBuilder =
           new ProcessBuilder(command, scriptToExecute, temp.getAbsolutePath());
 
       processBuilder.redirectErrorStream(false);
+      processBuilder.directory(workingPath.getParentFile());
 
       Process process = processBuilder.start();
 

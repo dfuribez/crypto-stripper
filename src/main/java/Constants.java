@@ -23,6 +23,10 @@ public class Constants {
 
   public static String[] dangerousPseudoHeaders = {":scheme", ":method", ":path"};
 
+  public static String X_STRIPPER_REQUEST_NOT_SELECTED = "Endpoint in scope but request script disabled";
+  public static String X_STRIPPER_RESPONSE_NOT_SELECTED = "Endpoint in scope but response script disabled";
+  public static String X_STRIPPER_ERROR = "An error occurred please check the preview for more details";
+
   public static String VERSION = """
       Crypto Stripper by Diego Uribe
       Version: v0.5-alpha

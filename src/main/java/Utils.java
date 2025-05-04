@@ -128,6 +128,11 @@ public class Utils {
   public static HttpRequest executorToHttpRequest(
       HttpRequest request, ExecutorOutput output) {
 
+    if (output.getError() != null && !output.getError().isEmpty()) {
+      return request
+          .withHeader(Constants.STRIPPER_HEADER, Constants.X_STRIPPER_ERROR);
+    }
+
     HttpRequest modified = request
         .withRemovedParameters(request.parameters(HttpParameterType.URL));
 
@@ -139,13 +144,6 @@ public class Utils {
     }
 
     modified = modified.withAddedHeaders(listToHttpHeaders(output.getHeaders()));
-
-    if (output.getError() != null && !output.getError().isEmpty()) {
-      modified = modified
-          .withHeader(Constants.STRIPPER_HEADER, "error")
-          .withBody(output.getError());
-      return modified;
-    }
 
     return modified
         .withBody(output.getBody())

@@ -38,6 +38,9 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());
 
+    HttpRequest request = interceptedRequest
+        .withMethod(interceptedRequest.method());
+
     if (interceptedRequest.hasHeader(Constants.FIREPROXY_HEADER)) {
       String[] value = interceptedRequest.headerValue(
           Constants.FIREPROXY_HEADER).split(",", 2);
@@ -52,9 +55,9 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
     boolean isBlacklisted = mainTab.enableBlackListcheckbox.isSelected()
         && Utils.isUrlInScope(url, scope.get("blacklist"));
 
-    if (this.mainTab.requestCheckBox.isSelected()
-        && Utils.isUrlInScope(url, scope.get("scope"))
-    ) {
+    boolean isUrlInScope = Utils.isUrlInScope(url, scope.get("scope"));
+
+    if (this.mainTab.requestCheckBox.isSelected() && isUrlInScope) {
       HashMap<String, String> preparedForExecute =
           Utils.prepareRequestForExecutor(
               interceptedRequest, interceptedRequest.messageId());
@@ -75,17 +78,22 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
       return continueWith(decryptedRequest, annotations);
     }
 
+    if (isUrlInScope) {
+      request = request
+          .withHeader(Constants.STRIPPER_HEADER, Constants.X_STRIPPER_REQUEST_NOT_SELECTED);
+    }
+
     if (isBlacklisted) {
-      return ProxyRequestReceivedAction.doNotIntercept(interceptedRequest, annotations);
+      return ProxyRequestReceivedAction.doNotIntercept(request, annotations);
     }
 
     if (mainTab.enableForceinterceptCheckbox.isSelected()
         && Utils.isUrlInScope(url, scope.get("force"))
     ) {
-      return intercept(interceptedRequest, annotations);
+      return intercept(request, annotations);
     }
 
-    return continueWith(interceptedRequest, annotations);
+    return continueWith(request, annotations);
   }
 
 

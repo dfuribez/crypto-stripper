@@ -86,9 +86,6 @@ public class EditorTab {
 
   public void setRequestResponse(HttpRequestResponse requestResponse) {
     this.requestResponse = requestResponse;
-    requestTransformed.setRequest(null);
-    responseTransformed.setResponse(null);
-    stdErrTextArea.setText("");
   }
 
   private void execute(String action) {
@@ -132,6 +129,9 @@ public class EditorTab {
   }
 
   private void updateUi() {
+    requestTransformed.setRequest(null);
+    responseTransformed.setResponse(null);
+    stdErrTextArea.setText("");
     if (isRequest) {
       messageLabel.setText(api.persistence().extensionData().getString(
           Constants.REQUEST_SCRIPT_PATH_KEY));

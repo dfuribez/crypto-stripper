@@ -154,17 +154,16 @@ public class Utils {
   public static HttpResponse executorToHttpResponse(
       HttpResponse response, ExecutorOutput output) {
 
+    if (output.getError() != null && !output.getError().isEmpty()) {
+      return response
+          .withAddedHeader(Constants.STRIPPER_HEADER, Constants.X_STRIPPER_ERROR);
+    }
+
     HttpResponse modified = response
         .withRemovedHeaders(response.headers())
         .withAddedHeaders(listToHttpHeaders(output.getHeaders()))
         .withStatusCode(output.getStatusCode())
         .withReasonPhrase(output.getReasonPhrase());
-
-    if (output.getError() != null && !output.getError().isEmpty()) {
-      return modified
-          .withAddedHeader(Constants.STRIPPER_HEADER, "error")
-          .withBody(output.getError());
-    }
 
     return modified
         .withBody(output.getBody())

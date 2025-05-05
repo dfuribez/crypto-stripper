@@ -24,8 +24,7 @@ class MyHttpHandler implements HttpHandler {
 
   @Override
   public RequestToBeSentAction handleHttpRequestToBeSent(
-      HttpRequestToBeSent requestToBeSent
-  ) {
+      HttpRequestToBeSent requestToBeSent) {
 
     HttpRequest modifiedRequest = requestToBeSent
         .withRemovedHeader(Constants.FIREPROXY_HEADER);
@@ -57,16 +56,18 @@ class MyHttpHandler implements HttpHandler {
 
   @Override
   public ResponseReceivedAction handleHttpResponseReceived(
-      HttpResponseReceived responseReceived
-  ) {
+      HttpResponseReceived responseReceived) {
     String url = Utils.removeQueryFromUrl(
         responseReceived.initiatingRequest().url());
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());
 
-    if (this.mainTab.responseCheckBox.isSelected()
-        && Utils.isUrlInScope(url, scope.get("scope"))
-    ) {
+    HttpResponse response = responseReceived
+        .withStatusCode(responseReceived.statusCode());
+
+    boolean isUrlInScope = Utils.isUrlInScope(url, scope.get("scope"));
+
+    if (this.mainTab.responseCheckBox.isSelected() && isUrlInScope) {
 
       HashMap<String, String> preparedToExecute =
           Utils.prepareResponseForExecutor(responseReceived, url, responseReceived.messageId());
@@ -74,20 +75,25 @@ class MyHttpHandler implements HttpHandler {
       ExecutorOutput executorOutput = Executor.execute(
           api, "decrypt", "response", preparedToExecute);
 
-      HttpResponse response =
+      HttpResponse decryptedResponse =
           Utils.executorToHttpResponse(responseReceived, executorOutput);
 
       if (responseReceived.toolSource().isFromTool(ToolType.PROXY)) {
         if (executorOutput.getReplaceResponse()) {
-          return continueWith(response);
+          return continueWith(decryptedResponse);
         } else {
           return continueWith(responseReceived);
         }
       }
 
-      return continueWith(response);
+      return continueWith(decryptedResponse);
     }
 
-    return continueWith(responseReceived);
+    if (isUrlInScope) {
+      response = response
+          .withAddedHeader(Constants.STRIPPER_HEADER, Constants.X_STRIPPER_RESPONSE_NOT_SELECTED);
+    }
+
+    return continueWith(response);
   }
 }

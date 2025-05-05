@@ -128,8 +128,8 @@ public class EditorTab {
   }
 
   private void updateUi() {
-    requestTransformed.setRequest(null);
-    responseTransformed.setResponse(null);
+    requestTransformed.setRequest(HttpRequest.httpRequest());
+    responseTransformed.setResponse(HttpResponse.httpResponse());
     stdErrTextArea.setText("");
   }
 }

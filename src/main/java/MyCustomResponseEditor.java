@@ -37,6 +37,11 @@ public class MyCustomResponseEditor implements ExtensionProvidedHttpResponseEdit
 
   @Override
   public boolean isEnabledFor(HttpRequestResponse requestResponse) {
+
+    if (requestResponse.request() != null) {
+      return false;
+    }
+
     String url =
         Utils.removeQueryFromUrl(requestResponse.request().url());
     HashMap<String, PersistedList<String>> scope =

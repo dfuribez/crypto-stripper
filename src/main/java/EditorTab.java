@@ -25,7 +25,6 @@ public class EditorTab {
   private JTextArea stdOutTextArea;
   private JTextArea stdErrTextArea;
   private JSplitPane outputSplitPane;
-  private JLabel messageLabel;
   private JSplitPane contentSplitpane;
 
   MontoyaApi api;
@@ -132,13 +131,5 @@ public class EditorTab {
     requestTransformed.setRequest(null);
     responseTransformed.setResponse(null);
     stdErrTextArea.setText("");
-    if (isRequest) {
-      messageLabel.setText(api.persistence().extensionData().getString(
-          Constants.REQUEST_SCRIPT_PATH_KEY));
-    } else {
-      messageLabel.setText(api.persistence().extensionData().getString(
-          Constants.RESPONSE_CHECKBOX_STATUS_KEY));
-
-    }
   }
 }

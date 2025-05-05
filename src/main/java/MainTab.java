@@ -32,8 +32,8 @@ public class MainTab {
   private JButton deleteSelectedForceButton;
   private JButton RequestFileButton;
   private JButton selectResponseScriptButton;
-  private JLabel requetsPathLabel;
-  private JLabel responsePathLabel;
+  //private JLabel requetsPathLabel;
+  //private JLabel responsePathLabel;
   private JPanel pathsPanel;
   private JButton chooseNodeBinaryButto;
   private JButton choosePythonBinaryButton;
@@ -62,6 +62,8 @@ public class MainTab {
   private JTextArea versionTextArea;
   public JCheckBox enableBlackListcheckbox;
   public JCheckBox enableForceinterceptCheckbox;
+  private JTextField requetsPathLabel;
+  private JTextField responsePathLabel;
 
   public JCheckBox enableForceCheckbox;
 

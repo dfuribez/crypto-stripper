@@ -94,13 +94,13 @@ public class EditorTab {
     updateUi();
     if (isRequest) {
       prepared = Utils.prepareRequestForExecutor(
-              requestResponse.request(), -1);
+          requestEditor.getRequest(), -1);
       source = "request";
     } else {
       String url =
           Utils.removeQueryFromUrl(requestResponse.request().url());
       prepared = Utils.prepareResponseForExecutor(
-          requestResponse.response(), url, -1);
+          responseEditor.getResponse(), url, -1);
       source = "response";
     }
 

@@ -10,6 +10,24 @@ public class ExecutorOutput {
   private String stdErr = "";
   private short statusCode = 0;
   private String reasonPhrase = "";
+  private String path = "";
+  private String httpMethod = "";
+
+  public String getHttpMethod() {
+    return httpMethod;
+  }
+
+  public void setHttpMethod(String httpMethod) {
+    this.httpMethod = httpMethod;
+  }
+
+  public String getPath() {
+    return path;
+  }
+
+  public void setPath(String path) {
+    this.path = path;
+  }
 
   public String getReasonPhrase() {
     return reasonPhrase;

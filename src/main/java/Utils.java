@@ -57,6 +57,8 @@ public class Utils {
     result.put("urlParameters", urlParameters);
     result.put("url", Utils.removeQueryFromUrl(request.url()));
     result.put("messageId", String.valueOf(messageId));
+    result.put("httpMethod", request.method());
+    result.put("path", request.path());
 
     return result;
   }
@@ -134,7 +136,9 @@ public class Utils {
     }
 
     HttpRequest modified = request
-        .withRemovedParameters(request.parameters(HttpParameterType.URL));
+        .withRemovedParameters(request.parameters(HttpParameterType.URL))
+        .withPath(output.getPath())
+        .withMethod(output.getHttpMethod());
 
     // avoids kettling
     for (HttpHeader header : request.headers()) {

@@ -38,7 +38,7 @@ public class MyCustomResponseEditor implements ExtensionProvidedHttpResponseEdit
   @Override
   public boolean isEnabledFor(HttpRequestResponse requestResponse) {
 
-    if (requestResponse.request() != null) {
+    if (requestResponse.request() == null) {
       return false;
     }
 
@@ -46,7 +46,7 @@ public class MyCustomResponseEditor implements ExtensionProvidedHttpResponseEdit
         Utils.removeQueryFromUrl(requestResponse.request().url());
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());
-
+    
     this.currentResponse = requestResponse;
     this.editorTab.setRequestResponse(requestResponse);
     return Utils.isUrlInScope(url, scope.get("scope"));

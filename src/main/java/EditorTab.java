@@ -114,9 +114,9 @@ public class EditorTab {
           Utils.executorToHttpResponse(requestResponse.response(), executed));
     }
 
-    stdErrTextArea.setText(executed.getStdErr());
+    stdErrTextArea.setText(executed.getStdErr() + "\n" + executed.getError());
   }
-
+  
   public void setContent(HttpRequest request) {
     requestEditor.setRequest(request);
     updateUi();

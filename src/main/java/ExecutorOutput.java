@@ -14,7 +14,7 @@ public class ExecutorOutput {
   private String httpMethod = "";
 
   public String getHttpMethod() {
-    return httpMethod;
+    return httpMethod.toUpperCase();
   }
 
   public void setHttpMethod(String httpMethod) {

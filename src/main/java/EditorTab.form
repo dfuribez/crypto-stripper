@@ -54,12 +54,10 @@
                         <properties/>
                         <border type="none"/>
                         <children>
-                          <component id="4588d" class="javax.swing.JTextArea" binding="stdErrTextArea">
+                          <component id="8597d" class="javax.swing.JTextPane" binding="stdErrTextArea">
                             <constraints/>
                             <properties>
                               <editable value="false"/>
-                              <lineWrap value="true"/>
-                              <wrapStyleWord value="true"/>
                             </properties>
                           </component>
                         </children>

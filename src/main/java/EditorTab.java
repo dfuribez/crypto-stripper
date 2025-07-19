@@ -8,6 +8,10 @@ import burp.api.montoya.ui.editor.HttpResponseEditor;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,7 +27,7 @@ public class EditorTab {
   private JButton testEncryptionButton;
   private JPanel buttonsPanel;
   private JTextArea stdOutTextArea;
-  private JTextArea stdErrTextArea;
+  private JTextPane stdErrTextArea;
   private JSplitPane outputSplitPane;
   private JSplitPane contentSplitpane;
 
@@ -40,6 +44,12 @@ public class EditorTab {
   HttpResponseEditor responseTransformed;
 
   String toolSource;
+  StyledDocument doc;
+
+  Style warningStyle;
+  Style defaultStyle;
+  Style errorStyle;
+
 
   EditorTab(MontoyaApi api, boolean isRequest, String toolSource) {
     this.isRequest = isRequest;
@@ -57,6 +67,22 @@ public class EditorTab {
     responseTransformed = api.userInterface().createHttpResponseEditor(
         EditorOptions.READ_ONLY);
 
+    int fontSize = UIManager.getFont("TextPane.font").getSize();
+
+    doc = stdErrTextArea.getStyledDocument();
+    warningStyle = doc.addStyle("Orange", null);
+    StyleConstants.setForeground(warningStyle, Color.ORANGE);
+    StyleConstants.setBold(warningStyle, true);
+    StyleConstants.setBackground(warningStyle, Color.BLACK);
+    StyleConstants.setFontSize(warningStyle, fontSize + 2);
+
+    defaultStyle = doc.addStyle("Default", null);
+    StyleConstants.setBold(defaultStyle, false);
+
+    errorStyle = doc.addStyle("Red", null);
+    StyleConstants.setForeground(errorStyle, Color.RED);
+    StyleConstants.setFontSize(errorStyle, fontSize + 2);
+    StyleConstants.setBackground(errorStyle, Color.BLACK);
 
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.gridx = 0;
@@ -119,7 +145,17 @@ public class EditorTab {
           Utils.executorToHttpResponse(requestResponse.response(), executed));
     }
 
-    stdErrTextArea.setText(executed.getStdErr() + "\n" + executed.getError());
+    try {
+      if (!Utils.checkScriptVersion(executed.getVersion())){
+        doc.insertString(doc.getLength(), Constants.SCRIPT_NOT_SUPORTED, warningStyle);
+        doc.insertString(doc.getLength(), "\n\n", defaultStyle);
+      }
+      doc.insertString(doc.getLength(), executed.getStdErr(), defaultStyle);
+      doc.insertString(doc.getLength(), "\n\n", defaultStyle);
+      doc.insertString(doc.getLength(), executed.getError(), errorStyle);
+    } catch (BadLocationException e) {
+      stdErrTextArea.setText(executed.getStdErr() + "\n" + executed.getError());
+    }
   }
 
   public void setContent(HttpRequest request) {

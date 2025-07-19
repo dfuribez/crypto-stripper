@@ -16,6 +16,8 @@ public final class Executor {
     String scriptToExecute;
     String command;
     StringBuilder stdErr = new StringBuilder();
+    StringBuilder error = new StringBuilder();
+
     int numberOfOutputLines = 0;
     ExecutorOutput response = new ExecutorOutput();
 
@@ -91,16 +93,8 @@ public final class Executor {
         return  response;
       }
 
-      String error;
       response = new Gson().fromJson(decodedOutput, ExecutorOutput.class);
-      error = stdErr.toString();
-
-      if (!Utils.checkScriptVersion(response.getVersion())) {
-        error += "[*] The selected script is not compatible with the current stripper version."
-            + "Please update your script to avoid unexpected behavior.";
-      }
-
-      response.setStdErr(error);
+      response.setStdErr(stdErr.toString());
 
       temp.delete();
       return response;
@@ -109,16 +103,18 @@ public final class Executor {
       response.setError(String.format(
           Constants.STRIPPER_ERROR_TEMPLATE,
           command, scriptToExecute, "", e.toString(), decodedOutput));
-      stdErr.append("----------- Extension errors -----------" + "\n");
-      stdErr.append("[+] " + e.toString() + "\n");
+
+      error.append("--------- Extension errors ---------" + "\n");
+      error.append("[+] " + e.toString() + "\n");
 
       if (numberOfOutputLines > 1) {
-        stdErr.append("\n[+] more than one line detected in stdout,"
+        error.append("\n[+] more than one line detected in stdout,"
             + "please make sure you are not using console.log/print"
             + "debug only by printing to stderr");
       }
 
       response.setStdErr(stdErr.toString());
+      response.setError(error.toString());
       return  response;
     }
   }

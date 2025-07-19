@@ -136,8 +136,8 @@ public class Utils {
     }
 
     HttpRequest modified = request
-        .withRemovedParameters(request.parameters(HttpParameterType.URL))
         .withPath(output.getPath())
+        .withRemovedParameters(request.parameters(HttpParameterType.URL))
         .withMethod(output.getHttpMethod());
 
     // avoids kettling

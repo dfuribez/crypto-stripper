@@ -81,11 +81,7 @@ class MyHttpHandler implements HttpHandler {
           Utils.executorToHttpResponse(responseReceived, executorOutput);
 
       if (responseReceived.toolSource().isFromTool(ToolType.PROXY)) {
-        if (executorOutput.getReplaceResponse()) {
           return continueWith(decryptedResponse);
-        } else {
-          return continueWith(responseReceived);
-        }
       }
 
       return continueWith(decryptedResponse);

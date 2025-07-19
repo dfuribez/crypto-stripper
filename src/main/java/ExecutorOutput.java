@@ -6,7 +6,6 @@ public class ExecutorOutput {
   private List<String> headers;
   private List<HashMap<String, String>> urlParameters;
   private String error = "";
-  private Boolean replaceResponse = false;
   private String stdErr = "";
   private short statusCode = 0;
   private String reasonPhrase = "";
@@ -50,14 +49,6 @@ public class ExecutorOutput {
 
   public void setStdErr(String stdErr) {
     this.stdErr = stdErr;
-  }
-
-  public Boolean getReplaceResponse() {
-    return replaceResponse;
-  }
-
-  public void setReplaceResponse(Boolean replaceResponse) {
-    this.replaceResponse = replaceResponse;
   }
 
   public List<HashMap<String, String>> getUrlParameters() {

@@ -1,3 +1,4 @@
+import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.http.message.HttpHeader;
 import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.HttpParameterType;
@@ -10,7 +11,12 @@ import burp.api.montoya.persistence.Persistence;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 public class Utils {
@@ -283,4 +289,20 @@ public class Utils {
     }
       return true;
   }
+
+  public static boolean resourceToFile(MontoyaApi api, String resource, String path) {
+    try (InputStream in = Utils.class.getClassLoader().getResourceAsStream(resource)) {
+      if (in == null) {
+        api.logging().logToError("Error reading template.js");
+        return false;
+      }
+
+      Files.copy(in, Paths.get(path), StandardCopyOption.REPLACE_EXISTING);
+      return true;
+    } catch (IOException e) {
+      api.logging().logToError(e.toString());
+      return false;
+    }
+  }
+
 }

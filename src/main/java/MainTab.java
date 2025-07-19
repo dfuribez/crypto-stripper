@@ -277,11 +277,7 @@ public class MainTab {
         if (path.isBlank()) {
           return;
         }
-        try (Writer writer = new FileWriter(path)) {
-          writer.write(Constants.JS_TEMPLATE);
-        } catch (Exception e) {
-          api.logging().logToError(e.toString());
-        }
+        Utils.resourceToFile(api, "template.js", path);
       }
     });
     pythonTemplateButton.addActionListener(new ActionListener() {
@@ -293,11 +289,9 @@ public class MainTab {
         if (path.isBlank()) {
           return;
         }
-        try (Writer writer = new FileWriter(path)) {
-          writer.write(Constants.PYTHON_TEMPLATE);
-        } catch (Exception e) {
-          api.logging().logToError(e.toString());
-        }
+
+        Utils.resourceToFile(api, "template.py", path);
+
       }
     });
     addScopeUrlButton.addActionListener(new ActionListener() {

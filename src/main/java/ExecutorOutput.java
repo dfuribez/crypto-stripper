@@ -11,6 +11,15 @@ public class ExecutorOutput {
   private String reasonPhrase = "";
   private String path = "";
   private String httpMethod = "";
+  private short version;
+
+  public short getVersion() {
+    return version;
+  }
+
+  public void setVersion(short version) {
+    this.version = version;
+  }
 
   public String getHttpMethod() {
     return httpMethod.toUpperCase();

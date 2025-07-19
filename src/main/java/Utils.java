@@ -305,4 +305,7 @@ public class Utils {
     }
   }
 
+  public static boolean checkScriptVersion(short version) {
+    return version >= 1;
+  }
 }

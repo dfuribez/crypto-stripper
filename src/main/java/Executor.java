@@ -91,8 +91,16 @@ public final class Executor {
         return  response;
       }
 
+      String error;
       response = new Gson().fromJson(decodedOutput, ExecutorOutput.class);
-      response.setStdErr(stdErr.toString());
+      error = stdErr.toString();
+
+      if (!Utils.checkScriptVersion(response.getVersion())) {
+        error += "[*] The selected script is not compatible with the current stripper version."
+            + "Please update your script to avoid unexpected behavior.";
+      }
+
+      response.setStdErr(error);
 
       temp.delete();
       return response;

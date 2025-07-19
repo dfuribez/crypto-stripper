@@ -33,7 +33,8 @@ function printJSON(body, headers, urlParameters, httpMethod, path, statusCode, r
           statusCode: statusCode,
           reasonPhrase: reasonPhrase,
           httpMethod: httpMethod,
-          path: path
+          path: path,
+          version: 1
         }
       )
     ).toString("base64")

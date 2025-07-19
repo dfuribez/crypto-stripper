@@ -32,7 +32,8 @@ def print_json(body, headers, url_parameters, http_method, path, status_code, re
                 "statusCode": status_code,
                 "reasonPhrase": reason_phrase,
                 "httpMethod": http_method,
-                "path": path
+                "path": path,
+                "version": 1
                 }
             ).encode("utf8")
         ).decode()

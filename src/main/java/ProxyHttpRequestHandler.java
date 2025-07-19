@@ -60,7 +60,7 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
     if (this.mainTab.requestCheckBox.isSelected() && isUrlInScope) {
       HashMap<String, String> preparedForExecute =
           Utils.prepareRequestForExecutor(
-              interceptedRequest, interceptedRequest.messageId());
+              interceptedRequest, interceptedRequest.messageId(), "proxy");
       ExecutorOutput executorOutput = Executor.execute(
           mainTab.api, "decrypt", "request", preparedForExecute);
 

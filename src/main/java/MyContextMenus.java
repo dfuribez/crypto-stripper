@@ -61,11 +61,11 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
     mainTab.loadCurrentSettings();
   }
 
-  public void decryptRequest(MessageEditorHttpRequestResponse requestResponse){
+  public void decryptRequest(MessageEditorHttpRequestResponse requestResponse, String source){
     HttpRequest request = requestResponse.requestResponse().request();
 
     HashMap<String, String> preparedToExecute =
-        Utils.prepareRequestForExecutor(request, -1);
+        Utils.prepareRequestForExecutor(request, -1, source);
 
     ExecutorOutput executorResponse =
         Executor.execute(api, "decrypt", "request", preparedToExecute);
@@ -91,6 +91,8 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(this.api.persistence().extensionData());
 
+    String source = event.toolType().toolName().toLowerCase();
+
     if (event.isFromTool(ToolType.PROXY, ToolType.REPEATER) &&
         event.isFrom(InvocationType.MESSAGE_EDITOR_REQUEST)
     ) {
@@ -98,7 +100,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
       if (Utils.isUrlInScope(url, scope.get("scope"))) {
         JMenuItem item = new JMenuItem("Decrypt");
         item.addActionListener(
-            l -> this.decryptRequest(requestResponse));
+            l -> this.decryptRequest(requestResponse, source));
         menuItemList.add(item);
       }
     }

@@ -17,13 +17,13 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
 
   private HttpRequestResponse currentRequest;
 
-  public MyCustomEditorTab(
-      MontoyaApi api,
-      EditorCreationContext editorCreationContext
-  ) {
+  public MyCustomEditorTab(MontoyaApi api, EditorCreationContext editorCreationContext) {
     this.api = api;
     this.creationContext = editorCreationContext;
-    this.editorTab = new EditorTab(api, true);
+
+    String source = editorCreationContext.toolSource().toolType().toolName().toLowerCase();
+
+    this.editorTab = new EditorTab(api, true, source);
   }
 
   @Override

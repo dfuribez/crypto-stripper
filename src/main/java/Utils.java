@@ -42,7 +42,7 @@ public class Utils {
   }
 
   public static HashMap<String, String> prepareRequestForExecutor(
-      HttpRequest request, int messageId) {
+      HttpRequest request, int messageId, String source) {
     HashMap<String, String> result = new HashMap<String, String>();
 
     String headers = new Gson().toJson(
@@ -59,12 +59,13 @@ public class Utils {
     result.put("messageId", String.valueOf(messageId));
     result.put("httpMethod", request.method());
     result.put("path", request.path());
+    result.put("toolSource", source);
 
     return result;
   }
 
   public static HashMap<String, String> prepareResponseForExecutor(
-      HttpResponse response, String url, int messageId) {
+      HttpResponse response, String url, int messageId, String source) {
     HashMap<String, String> result = new HashMap<String, String>();
 
     String headers = new Gson().toJson(
@@ -80,6 +81,7 @@ public class Utils {
     result.put("messageId", String.valueOf(messageId));
     result.put("statusCode", String.valueOf(response.statusCode()));
     result.put("reasonPhrase", response.reasonPhrase());
+    result.put("toolSource", source);
 
 
     return result;

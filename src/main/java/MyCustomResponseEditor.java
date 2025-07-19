@@ -16,11 +16,11 @@ public class MyCustomResponseEditor implements ExtensionProvidedHttpResponseEdit
 
   HttpRequestResponse currentResponse;
 
-  public MyCustomResponseEditor(
-      MontoyaApi api, EditorCreationContext editorCreationContext) {
+  public MyCustomResponseEditor(MontoyaApi api, EditorCreationContext editorCreationContext) {
     this.api = api;
     this.creationContext = editorCreationContext;
-    this.editorTab = new EditorTab(api, false);
+    String tool = editorCreationContext.toolSource().toolType().toolName().toLowerCase();
+    this.editorTab = new EditorTab(api, false, tool);
   }
 
   @Override

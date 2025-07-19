@@ -40,9 +40,9 @@ class MyHttpHandler implements HttpHandler {
     if (this.mainTab.requestCheckBox.isSelected()
         && Utils.isUrlInScope(url, scope.get("scope"))
     ) {
-
+      String toolName = requestToBeSent.toolSource().toolType().toolName().toLowerCase();
       HashMap<String, String> preparedToExecute =
-          Utils.prepareRequestForExecutor(modifiedRequest, requestToBeSent.messageId());
+          Utils.prepareRequestForExecutor(modifiedRequest, requestToBeSent.messageId(), toolName);
       ExecutorOutput executorOutput = Executor.execute(
           api, "encrypt", "request", preparedToExecute);
 
@@ -69,8 +69,10 @@ class MyHttpHandler implements HttpHandler {
 
     if (this.mainTab.responseCheckBox.isSelected() && isUrlInScope) {
 
+      String source = responseReceived.toolSource().toolType().toolName().toLowerCase();
+
       HashMap<String, String> preparedToExecute =
-          Utils.prepareResponseForExecutor(responseReceived, url, responseReceived.messageId());
+          Utils.prepareResponseForExecutor(responseReceived, url, responseReceived.messageId(), source);
 
       ExecutorOutput executorOutput = Executor.execute(
           api, "decrypt", "response", preparedToExecute);

@@ -39,9 +39,14 @@ public class EditorTab {
   HttpRequestEditor requestTransformed;
   HttpResponseEditor responseTransformed;
 
-  EditorTab(MontoyaApi api, boolean isRequest) {
+  String toolSource;
+
+  EditorTab(MontoyaApi api, boolean isRequest, String toolSource) {
     this.isRequest = isRequest;
     this.api = api;
+
+    this.toolSource = toolSource;
+
     stdErrPanel.setBorder(new TitledBorder("stderr:"));
 
     requestEditor = api.userInterface().createHttpRequestEditor();
@@ -94,13 +99,13 @@ public class EditorTab {
     updateUi();
     if (isRequest) {
       prepared = Utils.prepareRequestForExecutor(
-          requestEditor.getRequest(), -1);
+          requestEditor.getRequest(), -1, toolSource);
       source = "request";
     } else {
       String url =
           Utils.removeQueryFromUrl(requestResponse.request().url());
       prepared = Utils.prepareResponseForExecutor(
-          responseEditor.getResponse(), url, -1);
+          responseEditor.getResponse(), url, -1, toolSource);
       source = "response";
     }
 
@@ -116,7 +121,7 @@ public class EditorTab {
 
     stdErrTextArea.setText(executed.getStdErr() + "\n" + executed.getError());
   }
-  
+
   public void setContent(HttpRequest request) {
     requestEditor.setRequest(request);
     updateUi();

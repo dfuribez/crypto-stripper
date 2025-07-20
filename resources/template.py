@@ -6,23 +6,23 @@ import json
 import sys
 
 
-def encrypt(body, headers, url_parameters, http_method, path, status_code, reason_phrase, url, messageid, source):
+def encrypt(body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase, url, messageid, source):
     # implement your code here
     print("only print to stderr to debug", file=sys.stderr)
     print("the use of print() will cause the process to fail", file=sys.stderr)
 
-    return body, headers, url_parameters, http_method, path, status_code, reason_phrase
+    return body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase
 
 
-def decrypt(body, headers, url_parameters, http_method, path, status_code, reason_phrase, url, messageid, source):
+def decrypt(body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase, url, messageid, source):
     # implement your code here
     print("only print to stderr to debug", file=sys.stderr)
     print("the use of print() will cause the process to fail", file=sys.stderr)
-    return body, headers, url_parameters, http_method, path, status_code, reason_phrase, replace_response
+    return body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase
 
 
 # DON'T MODIFY THIS
-def print_json(body, headers, url_parameters, http_method, path, status_code, reason_phrase):
+def print_json(body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase):
     print(
         base64.b64encode(
             json.dumps({
@@ -33,7 +33,10 @@ def print_json(body, headers, url_parameters, http_method, path, status_code, re
                 "reasonPhrase": reason_phrase,
                 "httpMethod": http_method,
                 "path": path,
-                "version": 1
+                "host": host,
+                "port": port,
+                "secure": secure,
+                "version": 2
                 }
             ).encode("utf8")
         ).decode()
@@ -53,10 +56,13 @@ with open(sys.argv[1]) as file:
     http_method = json_content.get("httpMethod", "")
     path = json_content.get("path", "")
     source = json_content.get("toolSource")
+    host = json_content.get("host")
+    port = json_content.get("port")
+    secure = json_content.get("secure")
 
     if (json_content["action"] == "encrypt"):
-        encrypted = encrypt(body, headers, url_parameters, http_method, path, status_code, reason_phrase, url, messageid, source)
+        encrypted = encrypt(body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase, url, messageid, source)
         print_json(*encrypted)
     else:
-        decrypted = decrypt(body, headers, url_parameters, http_method, path, status_code, reason_phrase, url, messageid, source)
+        decrypted = decrypt(body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase, url, messageid, source)
         print_json(*decrypted)

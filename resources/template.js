@@ -3,26 +3,27 @@
 
 let fs = require("fs");
 
+
 // Function that performs the decryption
-async function decrypt(body, headers, urlParameters, httpMethod, path, statusCode, reasonPhrase, url, messageId, source) {
+async function decrypt(body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, url, messageId, source) {
   console.error("only use console.error to debug")
   console.error("the use of console.log will cause the process to fail")
 
-  return [body, headers, urlParameters, httpMethod, path, statusCode, reasonPhrase]
+  return [body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase]
 }
 
 
 // Function that perform encryption
-async function encrypt(body, headers, urlParameters, httpMethod, path, statusCode, reasonPhrase, url, messageId, source) {
+async function encrypt(body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, url, messageId, source) {
   console.error("only use console.error to debug")
   console.error("the use of console.log will cause the process to fail")
 
-  return [body, headers, urlParameters, httpMethod, path, statusCode, reasonPhrase];
+  return [body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase];
 }
 
 
 // DON'T TOUCH THIS
-function printJSON(body, headers, urlParameters, httpMethod, path, statusCode, reasonPhrase) {
+function printJSON(body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase) {
   console.log(
     Buffer.from(
       JSON.stringify(
@@ -34,7 +35,10 @@ function printJSON(body, headers, urlParameters, httpMethod, path, statusCode, r
           reasonPhrase: reasonPhrase,
           httpMethod: httpMethod,
           path: path,
-          version: 1
+          version: 2,
+          host: host,
+          port: port,
+          secure: secure
         }
       )
     ).toString("base64")
@@ -55,12 +59,15 @@ async function main() {
   var httpMethod = jsonData.httpMethod
   var path = jsonData.path
   var source = jsonData.toolSource
+  var host = jsonData.host
+  var port = jsonData.port
+  var secure = jsonData.secure
 
   if (jsonData.action == "encrypt") {
-    var enc = await encrypt(body, headers, urlParameters, httpMethod, path, statusCode, reasonPhrase, url, messageId, source)
+    var enc = await encrypt(body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, url, messageId, source)
     printJSON(...enc)
   } else {
-    var dec = await decrypt(body, headers, urlParameters, httpMethod, path, statusCode, reasonPhrase, url, messageId, source)
+    var dec = await decrypt(body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, url, messageId, source)
     printJSON(...dec)
   }
 }

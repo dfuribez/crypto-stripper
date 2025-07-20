@@ -19,6 +19,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 
+import static burp.api.montoya.http.HttpService.httpService;
+
 public class Utils {
 
   public static ArrayList<String> headersToArray(List<HttpHeader> headersList) {
@@ -66,6 +68,9 @@ public class Utils {
     result.put("httpMethod", request.method());
     result.put("path", request.path());
     result.put("toolSource", source);
+    result.put("host", request.httpService().host());
+    result.put("port", String.valueOf(request.httpService().port()));
+    result.put("secure", String.valueOf(request.httpService().secure()));
 
     return result;
   }
@@ -144,6 +149,7 @@ public class Utils {
     }
 
     HttpRequest modified = request
+        .withService(httpService(output.getHost(), output.getPort(), output.isSecure()))
         .withPath(output.getPath())
         .withRemovedParameters(request.parameters(HttpParameterType.URL))
         .withMethod(output.getHttpMethod());
@@ -306,6 +312,6 @@ public class Utils {
   }
 
   public static boolean checkScriptVersion(short version) {
-    return version >= 1;
+    return version >= 2;
   }
 }

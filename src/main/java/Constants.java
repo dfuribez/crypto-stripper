@@ -37,4 +37,14 @@ public class Constants {
 
   public static String SCRIPT_NOT_SUPORTED = "The selected script is not compatible with the current Stripper version."
       + "\nPlease update your script to avoid unexpected behavior.";
+
+  public static String PASS_THROUGH = """
+      {
+          "enabled": true,
+          "host": "^%s$",
+          "port": "^%s$",
+          "file":".*",
+          "protocol": "any"
+      }
+      """;
 }

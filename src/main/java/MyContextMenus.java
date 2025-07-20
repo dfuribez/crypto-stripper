@@ -6,6 +6,7 @@ import burp.api.montoya.ui.contextmenu.ContextMenuEvent;
 import burp.api.montoya.ui.contextmenu.ContextMenuItemsProvider;
 import burp.api.montoya.ui.contextmenu.InvocationType;
 import burp.api.montoya.ui.contextmenu.MessageEditorHttpRequestResponse;
+import com.google.gson.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -155,6 +156,29 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
                 "force", "add", url));
         menuItemList.add(addToBlacklistItem);
       }
+
+      JMenuItem addToPassThrough = new JMenuItem("Add host to Burp's pass through");
+      addToPassThrough.addActionListener(l -> {
+        String host = requestResponse.requestResponse().request().httpService().host()
+            .replace(".", "\\\\.");
+        int port = requestResponse.requestResponse().request().httpService().port();
+        String pass = String.format(Constants.PASS_THROUGH, host, port);
+
+        String current = api.burpSuite().exportProjectOptionsAsJson();
+
+        JsonObject root = JsonParser.parseString(current).getAsJsonObject();
+
+        JsonArray rules = root
+            .getAsJsonObject("proxy")
+            .getAsJsonObject("ssl_pass_through")
+            .getAsJsonArray("rules");
+
+        rules.add(JsonParser.parseString(pass).getAsJsonObject());
+
+        String test = new Gson().toJson(root);
+        api.burpSuite().importProjectOptionsFromJson(test);
+      });
+      menuItemList.add(addToPassThrough);
 
       return menuItemList;
     }

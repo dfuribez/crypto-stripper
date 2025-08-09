@@ -8,22 +8,23 @@ import burp.api.montoya.ui.editor.extension.ExtensionProvidedHttpRequestEditor;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
-  MontoyaApi api;
+  MontoyaApi montoyaApi;
   EditorCreationContext creationContext;
   EditorTab editorTab;
 
 
   private HttpRequestResponse currentRequest;
 
-  public MyCustomEditorTab(MontoyaApi api, EditorCreationContext editorCreationContext) {
-    this.api = api;
+  public MyCustomEditorTab(MontoyaApi montoyaApi, EditorCreationContext editorCreationContext) {
+    this.montoyaApi = montoyaApi;
     this.creationContext = editorCreationContext;
 
     String source = editorCreationContext.toolSource().toolType().toolName().toLowerCase();
 
-    this.editorTab = new EditorTab(api, true, source);
+    this.editorTab = new EditorTab(montoyaApi, true, source);
   }
 
   @Override
@@ -45,10 +46,12 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
           Utils.removeQueryFromUrl(requestResponse.request().url());
 
       HashMap<String, PersistedList<String>> scope =
-          Utils.loadScope(api.persistence().extensionData());
+          Utils.loadScope(montoyaApi.persistence().extensionData());
       this.currentRequest = requestResponse;
       this.editorTab.setRequestResponse(requestResponse);
-      return Utils.isUrlInScope(url, scope.get("scope"));
+
+      return Utils.isUrlInScope(url, scope.get("scope"))
+          && !Objects.equals(creationContext.toolSource().toolType().toolName(), "Extensions");
     } catch (Exception e){
       return false;
     }

@@ -1,10 +1,10 @@
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ToolType;
+import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.persistence.PersistedList;
 import burp.api.montoya.ui.contextmenu.ContextMenuEvent;
 import burp.api.montoya.ui.contextmenu.ContextMenuItemsProvider;
-import burp.api.montoya.ui.contextmenu.InvocationType;
 import burp.api.montoya.ui.contextmenu.MessageEditorHttpRequestResponse;
 import com.google.gson.*;
 
@@ -16,11 +16,11 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class MyContextMenus  implements ContextMenuItemsProvider {
-  private final MontoyaApi api;
+  private final MontoyaApi montoyaApi;
   private MainTab mainTab;
 
   public MyContextMenus(MontoyaApi api, MainTab tab) {
-    this.api = api;
+    this.montoyaApi = api;
     this.mainTab = tab;
   }
 
@@ -29,7 +29,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
     String key;
 
     HashMap<String, PersistedList<String>> scope =
-        Utils.loadScope(api.persistence().extensionData());
+        Utils.loadScope(montoyaApi.persistence().extensionData());
 
     if (!Utils.isValidRegex(url)) {
       url = Pattern.quote(url);
@@ -58,7 +58,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
       target.remove(url);
     }
 
-    api.persistence().extensionData().setStringList(key, target);
+    montoyaApi.persistence().extensionData().setStringList(key, target);
     mainTab.loadCurrentSettings();
   }
 
@@ -69,7 +69,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
         Utils.prepareRequestForExecutor(request, -1, source);
 
     ExecutorOutput executorResponse =
-        Executor.execute(api, "decrypt", "request", preparedToExecute);
+        Executor.execute(montoyaApi, "decrypt", "request", preparedToExecute);
 
     requestResponse.setRequest(Utils.executorToHttpRequest(request, executorResponse));
   }
@@ -77,94 +77,81 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
 
   @Override
   public List<Component> provideMenuItems(ContextMenuEvent event) {
-
     List<Component> menuItemList = new ArrayList<>();
-    if (event.messageEditorRequestResponse().isEmpty()) {
-      return null;
+
+    HttpRequestResponse requestResponse = null;
+    MessageEditorHttpRequestResponse editorHttpRequestResponse;
+
+    if (event.messageEditorRequestResponse().isPresent()) {
+      requestResponse = event.messageEditorRequestResponse().get().requestResponse();
+      editorHttpRequestResponse = event.messageEditorRequestResponse().get();
+    } else {
+      editorHttpRequestResponse = null;
+      requestResponse = event.selectedRequestResponses().getFirst();
     }
 
-    MessageEditorHttpRequestResponse requestResponse =
-        event.messageEditorRequestResponse().get();
-
-    String url =
-        Utils.removeQueryFromUrl(requestResponse.requestResponse().request().url());
+    String url = Utils.removeQueryFromUrl(requestResponse.request().url());
 
     HashMap<String, PersistedList<String>> scope =
-        Utils.loadScope(this.api.persistence().extensionData());
+        Utils.loadScope(this.montoyaApi.persistence().extensionData());
 
     String source = event.toolType().toolName().toLowerCase();
 
-    if (event.isFromTool(ToolType.PROXY, ToolType.REPEATER) &&
-        event.isFrom(InvocationType.MESSAGE_EDITOR_REQUEST)
-    ) {
-
+    if (event.isFromTool(ToolType.PROXY, ToolType.REPEATER) && editorHttpRequestResponse != null) {
       if (Utils.isUrlInScope(url, scope.get("scope"))) {
         JMenuItem item = new JMenuItem("Decrypt");
         item.addActionListener(
-            l -> this.decryptRequest(requestResponse, source));
+            l -> this.decryptRequest(editorHttpRequestResponse, source));
         menuItemList.add(item);
       }
     }
 
-    if (event.isFromTool(ToolType.PROXY, ToolType.REPEATER)
-        && event.isFrom(
-            InvocationType.MESSAGE_EDITOR_REQUEST,
-            InvocationType.MESSAGE_VIEWER_REQUEST)
-    ) {
+    if (event.isFromTool(ToolType.PROXY, ToolType.REPEATER, ToolType.TARGET, ToolType.LOGGER)) {
       if (Utils.isUrlInScope(url, scope.get("scope"))) {
         JMenuItem removeScopeItem = new JMenuItem("Remove from scope");
         removeScopeItem.addActionListener(
-            l -> this.updateStripperScope(
-                "scope", "remove", url));
+            l -> this.updateStripperScope("scope", "remove", url));
         menuItemList.add(removeScopeItem);
       } else {
         JMenuItem item = new JMenuItem("Add url to scope");
         item.addActionListener(
-            l -> this.updateStripperScope(
-                "scope", "add", url));
+            l -> this.updateStripperScope("scope", "add", url));
         menuItemList.add(item);
       }
 
       if (Utils.isUrlInScope(url, scope.get("blacklist"))) {
-        JMenuItem removeFromBlacklistItem =
-            new JMenuItem("Remove endpoint from blacklist");
+        JMenuItem removeFromBlacklistItem = new JMenuItem("Remove endpoint from blacklist");
         removeFromBlacklistItem.addActionListener(
-            l -> this.updateStripperScope(
-                "blacklist", "remove", url));
+            l -> this.updateStripperScope("blacklist", "remove", url));
         menuItemList.add(removeFromBlacklistItem);
       } else {
-        JMenuItem addToBlacklistItem =
-            new JMenuItem("Add endpoint to blacklist");
+        JMenuItem addToBlacklistItem = new JMenuItem("Add endpoint to blacklist");
         addToBlacklistItem.addActionListener(
-            l -> this.updateStripperScope(
-                "blacklist", "add", url));
+            l -> this.updateStripperScope("blacklist", "add", url));
         menuItemList.add(addToBlacklistItem);
       }
 
       if (Utils.isUrlInScope(url, scope.get("force"))) {
-        JMenuItem removeFromBlacklistItem =
-            new JMenuItem("Do not force interception");
+        JMenuItem removeFromBlacklistItem = new JMenuItem("Do not force interception");
         removeFromBlacklistItem.addActionListener(
-            l -> this.updateStripperScope(
-                "force", "remove", url));
+            l -> this.updateStripperScope("force", "remove", url));
         menuItemList.add(removeFromBlacklistItem);
       } else {
-        JMenuItem addToBlacklistItem =
-            new JMenuItem("Force interception this endpoint");
+        JMenuItem addToBlacklistItem = new JMenuItem("Force interception this endpoint");
         addToBlacklistItem.addActionListener(
-            l -> this.updateStripperScope(
-                "force", "add", url));
+            l -> this.updateStripperScope("force", "add", url));
         menuItemList.add(addToBlacklistItem);
       }
 
       JMenuItem addToPassThrough = new JMenuItem("Add host to Burp's pass through");
+      HttpRequestResponse finalRequestResponse = requestResponse;
       addToPassThrough.addActionListener(l -> {
-        String host = requestResponse.requestResponse().request().httpService().host()
+        String host = finalRequestResponse.request().httpService().host()
             .replace(".", "\\\\.");
-        int port = requestResponse.requestResponse().request().httpService().port();
+        int port = finalRequestResponse.request().httpService().port();
         String pass = String.format(Constants.PASS_THROUGH, host, port);
 
-        String current = api.burpSuite().exportProjectOptionsAsJson();
+        String current = montoyaApi.burpSuite().exportProjectOptionsAsJson();
 
         JsonObject root = JsonParser.parseString(current).getAsJsonObject();
 
@@ -176,14 +163,12 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
         rules.add(JsonParser.parseString(pass).getAsJsonObject());
 
         String test = new Gson().toJson(root);
-        api.burpSuite().importProjectOptionsFromJson(test);
+        montoyaApi.burpSuite().importProjectOptionsFromJson(test);
       });
       menuItemList.add(addToPassThrough);
 
       return menuItemList;
     }
-
     return null;
   }
-
 }

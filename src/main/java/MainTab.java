@@ -75,6 +75,8 @@ public class MainTab {
 
     loadCurrentSettings();
 
+    setAltText();
+
     Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
 
     this.encryptorsPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -94,16 +96,16 @@ public class MainTab {
     );
 
     this.scopeListPanel.setBorder(BorderFactory.createCompoundBorder(
-        new TitledBorder(BorderFactory.createEtchedBorder(), "Scope:"),
+        new TitledBorder(BorderFactory.createEtchedBorder(), "Scope: (?)"),
         emptyBorder
     ));
     this.blackListPanel.setBorder(BorderFactory.createCompoundBorder(
-        new TitledBorder(BorderFactory.createEtchedBorder(), "Black List:"),
+        new TitledBorder(BorderFactory.createEtchedBorder(), "Black List: (?)"),
         emptyBorder
     ));
 
     forceInterceptListPanel.setBorder(BorderFactory.createCompoundBorder(
-        new TitledBorder(BorderFactory.createEtchedBorder(), "Force intercept"),
+        new TitledBorder(BorderFactory.createEtchedBorder(), "Force intercept: (?)"),
         emptyBorder
     ));
 
@@ -408,7 +410,6 @@ public class MainTab {
   }
 
   private String openChooser(FileNameExtensionFilter filter, boolean isOpenDialog) {
-
     fileChooser.setFileFilter(filter);
 
     int response;
@@ -627,6 +628,20 @@ public class MainTab {
   private void showAlertMessage(String message) {
     JOptionPane.showMessageDialog(
         api.userInterface().swingUtils().suiteFrame(), message);
+  }
+
+  private void setAltText() {
+    forceInterceptInScopeCheckbox.setToolTipText("Intercept in-scope requests even when the proxy is set to not intercept.");
+    requestCheckBox.setToolTipText("Enable Stripper for requests.");
+    responseCheckBox.setToolTipText("Enable Stripper for responses.");
+    globalBinariesPanel.setToolTipText("Binary paths persist across all projects but are overwritten if a project-specific path is set.");
+    pathsPanel.setToolTipText("Project-specific paths will override the Global path for this project only.");
+    scopeListPanel.setToolTipText("Any endpoint in this list will trigger Stripper's main functionality.");
+    blackListPanel.setToolTipText("Endpoints in this list will be excluded from interception by Burp.");
+    forceInterceptListPanel.setToolTipText("Endpoints in this list will be intercepted even if the proxy is set to not intercept.");
+    addScopeUrlButton.setToolTipText("Add a new endpoint. Regular expressions are supported.");
+    addBlackListUrlButton.setToolTipText("Add a new endpoint. Regular expressions are supported.");
+    addForceUrlButton.setToolTipText("Add a new endpoint. Regular expressions are supported.");
   }
 
   private String[] cleanScope(String[] scopeList) {

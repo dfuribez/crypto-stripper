@@ -7,12 +7,10 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,6 +62,8 @@ public class MainTab {
   public JCheckBox enableForceinterceptCheckbox;
   private JTextField requetsPathLabel;
   private JTextField responsePathLabel;
+  private JButton openRequestButton;
+  private JButton openResponseButton;
 
   public JCheckBox enableForceCheckbox;
 
@@ -310,6 +310,18 @@ public class MainTab {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         updateScope("force", "add");
+      }
+    });
+    openRequestButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        Utils.openFolder(requetsPathLabel.getText());
+      }
+    });
+    openResponseButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        Utils.openFolder(responsePathLabel.getText());
       }
     });
   }

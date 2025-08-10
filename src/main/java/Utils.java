@@ -10,6 +10,7 @@ import burp.api.montoya.persistence.PersistedObject;
 import burp.api.montoya.persistence.Persistence;
 import com.google.gson.Gson;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.List;
 
 import static burp.api.montoya.http.HttpService.httpService;
 
@@ -313,5 +315,17 @@ public class Utils {
 
   public static boolean checkScriptVersion(short version) {
     return version >= 2;
+  }
+
+  public static void openFolder(String path) {
+    if (Desktop.isDesktopSupported()) {
+      File file = new File(path);
+      Desktop desktop = Desktop.getDesktop();
+      try {
+        desktop.open(new File(file.getParent()));
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
   }
 }

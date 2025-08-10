@@ -5,7 +5,7 @@ import base64
 import json
 import sys
 
-
+#  Learn more: https://github.com/dfuribez/crypto-stripper/wiki/Stripper-scripts
 def encrypt(body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase, url, messageid, source):
     # implement your code here
     print("only print to stderr to debug", file=sys.stderr)
@@ -14,6 +14,7 @@ def encrypt(body, headers, url_parameters, http_method, host, port, secure, path
     return body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase
 
 
+#  Learn more: https://github.com/dfuribez/crypto-stripper/wiki/Stripper-scripts
 def decrypt(body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase, url, messageid, source):
     # implement your code here
     print("only print to stderr to debug", file=sys.stderr)

@@ -5,6 +5,7 @@ let fs = require("fs");
 
 
 // Function that performs the decryption
+// Learn more: https://github.com/dfuribez/crypto-stripper/wiki/Stripper-scripts
 async function decrypt(body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, url, messageId, source) {
   console.error("only use console.error to debug")
   console.error("the use of console.log will cause the process to fail")
@@ -14,6 +15,7 @@ async function decrypt(body, headers, urlParameters, httpMethod, host, port, sec
 
 
 // Function that perform encryption
+// Learn more: https://github.com/dfuribez/crypto-stripper/wiki/Stripper-scripts
 async function encrypt(body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, url, messageId, source) {
   console.error("only use console.error to debug")
   console.error("the use of console.log will cause the process to fail")

@@ -1,15 +1,13 @@
 import burp.api.montoya.MontoyaApi;
-import burp.api.montoya.core.ByteArray;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.awt.event.*;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Random;
 
 public class InsertDialog extends JDialog {
@@ -27,19 +25,26 @@ public class InsertDialog extends JDialog {
   private JButton insertFileButton;
   private JPanel filePanel;
   private JButton insertRandomButton;
+  private JPanel encodersPanel;
 
   static byte[] selectedText;
   MontoyaApi montoyaApi;
 
   JFileChooser fileChooser = new JFileChooser();
+  Frame burpMainFrame;
+
   private static final String URL_SAFE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
   private static final Random RANDOM = new Random();
 
 
   public InsertDialog(MontoyaApi montoyaApi) {
-    super(montoyaApi.userInterface().swingUtils().suiteFrame(), "Insert payload", false);
+    super(montoyaApi.userInterface().swingUtils().suiteFrame(), "Insert payload", true);
+
+    this.montoyaApi = montoyaApi;
+    this.burpMainFrame = montoyaApi.userInterface().swingUtils().suiteFrame();
+
+    setLocationRelativeTo(this.burpMainFrame);
     setContentPane(contentPane);
-    setModal(true);
     getRootPane().setDefaultButton(buttonOK);
 
     Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
@@ -51,6 +56,11 @@ public class InsertDialog extends JDialog {
 
     filePanel.setBorder(BorderFactory.createCompoundBorder(
         new TitledBorder(BorderFactory.createEtchedBorder(), "File:"),
+        emptyBorder
+    ));
+
+    encodersPanel.setBorder(BorderFactory.createCompoundBorder(
+        new TitledBorder(BorderFactory.createEtchedBorder(), "Output encoding:"),
         emptyBorder
     ));
 
@@ -72,18 +82,17 @@ public class InsertDialog extends JDialog {
       }
     });
 
-
     contentPane.registerKeyboardAction(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         onCancel();
       }
     }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-    setLocationRelativeTo(getParent());
+
     insertFileButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        int response = fileChooser.showOpenDialog(montoyaApi.userInterface().swingUtils().suiteFrame());
+        int response = fileChooser.showOpenDialog(burpMainFrame);
 
         if (response == JFileChooser.APPROVE_OPTION) {
           String path = fileChooser.getSelectedFile().getAbsolutePath();
@@ -93,7 +102,6 @@ public class InsertDialog extends JDialog {
           } catch (Exception e) {
             montoyaApi.logging().logToError("Could not open file: " + path);
             montoyaApi.logging().logToError(e.toString());
-
           }
         }
         dispose();
@@ -113,7 +121,6 @@ public class InsertDialog extends JDialog {
         if (length > 0) {
           selectedText = generate(length).getBytes(StandardCharsets.UTF_8);
         }
-
         dispose();
       }
     });

@@ -68,7 +68,7 @@ public class MainTab {
   public JCheckBox enableForceCheckbox;
 
   MontoyaApi api;
-
+  JFileChooser fileChooser = new JFileChooser();
 
   public MainTab(MontoyaApi api) {
     this.api = api;
@@ -408,7 +408,7 @@ public class MainTab {
   }
 
   private String openChooser(FileNameExtensionFilter filter, boolean isOpenDialog) {
-    JFileChooser fileChooser = new JFileChooser();
+
     fileChooser.setFileFilter(filter);
 
     int response;

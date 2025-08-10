@@ -45,8 +45,10 @@ public final class Executor {
       return response;
     }
 
+    File temp = null;
+
     try {
-      File temp = File.createTempFile("stripper_", ".json");
+      temp = File.createTempFile("stripper_", ".json");
 
       try (Writer writer = new FileWriter(temp, StandardCharsets.UTF_8)) {
         Gson gson = new GsonBuilder().create();
@@ -87,6 +89,10 @@ public final class Executor {
               StandardCharsets.UTF_8
           );
 
+      if (!temp.delete()) {
+        api.logging().logToError("Could not delete: " + temp.getAbsolutePath());
+      }
+
       if (decodedOutput.isEmpty()) {
         response.setError("Script's output was empty or null");
         response.setStdErr(stdErr.toString());
@@ -96,7 +102,6 @@ public final class Executor {
       response = new Gson().fromJson(decodedOutput, ExecutorOutput.class);
       response.setStdErr(stdErr.toString());
 
-      temp.delete();
       return response;
     } catch (IOException  | IllegalStateException | JsonSyntaxException |
         IllegalArgumentException e) {
@@ -111,6 +116,12 @@ public final class Executor {
         error.append("\n[+] more than one line detected in stdout,"
             + "please make sure you are not using console.log/print"
             + "debug only by printing to stderr");
+      }
+
+      if (temp != null) {
+        if (!temp.delete()) {
+          api.logging().logToError("Could not delete: " + temp.getAbsolutePath());
+        }
       }
 
       response.setStdErr(stdErr.toString());

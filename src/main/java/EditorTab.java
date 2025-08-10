@@ -139,10 +139,10 @@ public class EditorTab {
 
     if (isRequest) {
       requestTransformed.setRequest(
-          Utils.executorToHttpRequest(requestResponse.request(), executed));
+          Utils.executorToHttpRequest(requestEditor.getRequest(), executed));
     } else {
       responseTransformed.setResponse(
-          Utils.executorToHttpResponse(requestResponse.response(), executed));
+          Utils.executorToHttpResponse(responseEditor.getResponse(), executed));
     }
 
     try {

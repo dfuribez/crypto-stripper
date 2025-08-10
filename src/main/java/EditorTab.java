@@ -30,6 +30,7 @@ public class EditorTab {
   private JTextPane stdErrTextArea;
   private JSplitPane outputSplitPane;
   private JSplitPane contentSplitpane;
+  private JButton openScriptButton;
 
   MontoyaApi api;
 
@@ -112,6 +113,18 @@ public class EditorTab {
         execute("decrypt");
       }
     });
+    openScriptButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        String path;
+        if (isRequest) {
+          path = api.persistence().extensionData().getString(Constants.REQUEST_SCRIPT_PATH_KEY);
+        } else {
+          path = api.persistence().extensionData().getString(Constants.RESPONSE_SCRIPT_PATH_KEY);
+        }
+        Utils.openFolder(path);
+      }
+    });
   }
 
   public void setRequestResponse(HttpRequestResponse requestResponse) {
@@ -146,7 +159,8 @@ public class EditorTab {
     }
 
     try {
-      if (!Utils.checkScriptVersion(executed.getVersion())){
+      if (!Utils.checkScriptVersion(executed.getVersion())
+      && executed.getError().isBlank()){
         doc.insertString(doc.getLength(), Constants.SCRIPT_NOT_SUPORTED, warningStyle);
         doc.insertString(doc.getLength(), "\n\n", defaultStyle);
       }

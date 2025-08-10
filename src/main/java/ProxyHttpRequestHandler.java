@@ -56,6 +56,7 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
         && Utils.isUrlInScope(url, scope.get("blacklist"));
 
     boolean isUrlInScope = Utils.isUrlInScope(url, scope.get("scope"));
+    boolean isUrlInForce = Utils.isUrlInScope(url, scope.get("force"));
 
     if (this.mainTab.requestCheckBox.isSelected() && isUrlInScope) {
       HashMap<String, String> preparedForExecute =
@@ -71,7 +72,8 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
         return ProxyRequestReceivedAction.doNotIntercept(decryptedRequest, annotations);
       }
 
-      if (this.mainTab.forceInterceptInScopeCheckbox.isSelected()) {
+      if (this.mainTab.forceInterceptInScopeCheckbox.isSelected()
+          || (isUrlInForce && mainTab.enableForceinterceptCheckbox.isSelected())) {
         return intercept(decryptedRequest, annotations);
       }
 
@@ -87,9 +89,7 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
       return ProxyRequestReceivedAction.doNotIntercept(request, annotations);
     }
 
-    if (mainTab.enableForceinterceptCheckbox.isSelected()
-        && Utils.isUrlInScope(url, scope.get("force"))
-    ) {
+    if (mainTab.enableForceinterceptCheckbox.isSelected() && isUrlInForce) {
       return intercept(request, annotations);
     }
 

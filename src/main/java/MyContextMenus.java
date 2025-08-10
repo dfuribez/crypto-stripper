@@ -121,12 +121,16 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
 
         byte[] toInsert = InsertDialog.selectedText;
 
+        if (toInsert == null) { return; }
+
         if (insertDialog.base64RadioButton.isSelected()) {
-          toInsert = montoyaApi.utilities().base64Utils().encodeToString(ByteArray.byteArray(toInsert)).getBytes();
+          toInsert = montoyaApi.utilities().base64Utils().encodeToString(
+              ByteArray.byteArray(toInsert)).getBytes();
         }
 
         if (insertDialog.URLEncodeRadioButton.isSelected()) {
-          toInsert = URLEncoder.encode(new String(toInsert, StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8);
+          toInsert = URLEncoder.encode(
+              new String(toInsert, StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8);
         }
 
         byte[] s = Arrays.copyOfRange(content, 0, cursorPosition);

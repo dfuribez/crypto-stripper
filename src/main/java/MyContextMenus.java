@@ -1,4 +1,5 @@
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.core.ToolType;
 import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.http.message.requests.HttpRequest;
@@ -10,7 +11,10 @@ import com.google.gson.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -18,10 +22,12 @@ import java.util.regex.Pattern;
 public class MyContextMenus  implements ContextMenuItemsProvider {
   private final MontoyaApi montoyaApi;
   private MainTab mainTab;
+  InsertDialog insertDialog;
 
   public MyContextMenus(MontoyaApi api, MainTab tab) {
     this.montoyaApi = api;
     this.mainTab = tab;
+    insertDialog = new InsertDialog(montoyaApi);
   }
 
   public void updateStripperScope(String source, String action, String url) {
@@ -104,6 +110,38 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
             l -> this.decryptRequest(editorHttpRequestResponse, source));
         menuItemList.add(item);
       }
+
+      JMenuItem insertPayload = new JMenuItem("Insert payload");
+      insertPayload.addActionListener(l -> {
+        int cursorPosition = editorHttpRequestResponse.caretPosition();
+        byte[] content = editorHttpRequestResponse.requestResponse().request().toByteArray().getBytes();
+
+        insertDialog.pack();
+        insertDialog.setVisible(true);
+
+        byte[] toInsert = InsertDialog.selectedText;
+
+        if (insertDialog.base64RadioButton.isSelected()) {
+          toInsert = montoyaApi.utilities().base64Utils().encodeToString(ByteArray.byteArray(toInsert)).getBytes();
+        }
+
+        if (insertDialog.URLEncodeRadioButton.isSelected()) {
+          toInsert = URLEncoder.encode(new String(toInsert, StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8);
+        }
+
+        byte[] s = Arrays.copyOfRange(content, 0, cursorPosition);
+        byte[] f = Arrays.copyOfRange(content, cursorPosition, content.length);
+
+        byte[] nRequest = new byte[s.length + toInsert.length + f.length];
+
+        System.arraycopy(s, 0, nRequest, 0, s.length);
+        System.arraycopy(toInsert, 0, nRequest, s.length, toInsert.length);
+        System.arraycopy(f, 0, nRequest, s.length + toInsert.length, f.length);
+
+        editorHttpRequestResponse.setRequest(
+            HttpRequest.httpRequest(ByteArray.byteArray(nRequest)));
+      });
+      menuItemList.add(insertPayload);
     }
 
     if (event.isFromTool(ToolType.PROXY, ToolType.REPEATER, ToolType.TARGET, ToolType.LOGGER)) {

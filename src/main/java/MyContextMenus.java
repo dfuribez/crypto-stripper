@@ -222,11 +222,17 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
 
 
     menuItemList.add(decryptMenu);
+
+    menuItemList.add(new JSeparator());
     menuItemList.add(stripperScopeMenu);
     menuItemList.add(stripperBlackListMenu);
     menuItemList.add(stripperForceMenu);
+
+    menuItemList.add(new JSeparator());
     menuItemList.add(addToPassThroughMenu);
     menuItemList.add(burpScopeMenu);
+
+    menuItemList.add(new JSeparator());
     menuItemList.add(insertPayloadMenu);
 
     return menuItemList;

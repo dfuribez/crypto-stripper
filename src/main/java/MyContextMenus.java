@@ -103,15 +103,13 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
 
     String source = event.toolType().toolName().toLowerCase();
 
-    JMenuItem insertPayload = null;
+    JMenuItem insertPayloadMenu = null;
     JMenuItem decryptMenu = null;
-    JMenuItem removeScopeItem = null;
-    JMenuItem addUrlToScopeMenu = null;
-    JMenuItem removeFromBlacklistItem = null;
-    JMenuItem dontForceInterceptionMenu = null;
-    JMenuItem addToBlacklistItem = null;
-    JMenuItem addToForceInterceptMenu = null;
-    JMenuItem addToPassThrough = null;
+    JMenuItem stripperScopeMenu = null;
+    JMenuItem stripperBlackListMenu = null;
+    JMenuItem stripperForceMenu = null;
+    JMenuItem addToPassThroughMenu = null;
+    JMenuItem burpScopeMenu = null;
 
 
     if (event.isFromTool(ToolType.PROXY, ToolType.REPEATER) && editorHttpRequestResponse != null) {
@@ -121,8 +119,8 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
             l -> this.decryptRequest(editorHttpRequestResponse, source));
       }
 
-      insertPayload = new JMenuItem("Insert payload");
-      insertPayload.addActionListener(l -> {
+      insertPayloadMenu = new JMenuItem("Insert payload");
+      insertPayloadMenu.addActionListener(l -> {
         int cursorPosition = editorHttpRequestResponse.caretPosition();
         byte[] content = editorHttpRequestResponse.requestResponse().request().toByteArray().getBytes();
 
@@ -159,38 +157,48 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
 
     if (event.isFromTool(ToolType.PROXY, ToolType.REPEATER, ToolType.TARGET, ToolType.LOGGER)) {
       if (Utils.isUrlInScope(url, scope.get("scope"))) {
-        removeScopeItem = new JMenuItem("Remove from scope");
-        removeScopeItem.addActionListener(
+        stripperScopeMenu = new JMenuItem("Remove from scope");
+        stripperScopeMenu.addActionListener(
             l -> this.updateStripperScope("scope", "remove", url));
       } else {
-        addUrlToScopeMenu = new JMenuItem("Add url to scope");
-        addUrlToScopeMenu.addActionListener(
+        stripperScopeMenu = new JMenuItem("Add url to scope");
+        stripperScopeMenu.addActionListener(
             l -> this.updateStripperScope("scope", "add", url));
       }
 
       if (Utils.isUrlInScope(url, scope.get("blacklist"))) {
-        removeFromBlacklistItem = new JMenuItem("Remove endpoint from blacklist");
-        removeFromBlacklistItem.addActionListener(
+        stripperBlackListMenu = new JMenuItem("Remove endpoint from blacklist");
+        stripperBlackListMenu.addActionListener(
             l -> this.updateStripperScope("blacklist", "remove", url));
       } else {
-        addToBlacklistItem = new JMenuItem("Add endpoint to blacklist");
-        addToBlacklistItem.addActionListener(
+        stripperBlackListMenu = new JMenuItem("Add endpoint to blacklist");
+        stripperBlackListMenu.addActionListener(
             l -> this.updateStripperScope("blacklist", "add", url));
       }
 
       if (Utils.isUrlInScope(url, scope.get("force"))) {
-        dontForceInterceptionMenu = new JMenuItem("Do not force interception");
-        dontForceInterceptionMenu.addActionListener(
+        stripperForceMenu = new JMenuItem("Do not force interception");
+        stripperForceMenu.addActionListener(
             l -> this.updateStripperScope("force", "remove", url));
       } else {
-        addToForceInterceptMenu = new JMenuItem("Force interception this endpoint");
-        addToForceInterceptMenu.addActionListener(
+        stripperForceMenu = new JMenuItem("Force interception this endpoint");
+        stripperForceMenu.addActionListener(
             l -> this.updateStripperScope("force", "add", url));
       }
 
-      addToPassThrough = new JMenuItem("Add host to Burp's pass through");
+      if (montoyaApi.scope().isInScope(url)) {
+        burpScopeMenu = new JMenuItem("Exclude URL from Burp's scope");
+        burpScopeMenu.addActionListener(
+            l -> montoyaApi.scope().excludeFromScope(Utils.removePathFromURL(url)));
+      } else {
+        burpScopeMenu = new JMenuItem("Include URL to Burp's scope");
+        burpScopeMenu.addActionListener(
+            l -> montoyaApi.scope().includeInScope(Utils.removePathFromURL(url)));
+      }
+
+      addToPassThroughMenu = new JMenuItem("Add host to Burp's pass through");
       HttpRequestResponse finalRequestResponse = requestResponse;
-      addToPassThrough.addActionListener(l -> {
+      addToPassThroughMenu.addActionListener(l -> {
         String host = finalRequestResponse.request().httpService().host()
             .replace(".", "\\\\.");
         int port = finalRequestResponse.request().httpService().port();
@@ -214,18 +222,12 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
 
 
     menuItemList.add(decryptMenu);
-
-    menuItemList.add(addUrlToScopeMenu);
-    menuItemList.add(removeScopeItem);
-
-    menuItemList.add(addToBlacklistItem);
-    menuItemList.add(removeFromBlacklistItem);
-
-    menuItemList.add(addToForceInterceptMenu);
-    menuItemList.add(dontForceInterceptionMenu);
-
-    menuItemList.add(addToPassThrough);
-    menuItemList.add(insertPayload);
+    menuItemList.add(stripperScopeMenu);
+    menuItemList.add(stripperBlackListMenu);
+    menuItemList.add(stripperForceMenu);
+    menuItemList.add(addToPassThroughMenu);
+    menuItemList.add(burpScopeMenu);
+    menuItemList.add(insertPayloadMenu);
 
     return menuItemList;
   }

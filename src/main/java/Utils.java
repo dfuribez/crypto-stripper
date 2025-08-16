@@ -14,6 +14,10 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -328,4 +332,22 @@ public class Utils {
       }
     }
   }
+
+  public static String removePathFromURL(String url) {
+    try {
+      URI uri = new URI(url);
+      return new URI(
+          uri.getScheme(),
+          uri.getUserInfo(),
+          uri.getHost(),
+          uri.getPort(),
+          null,
+          null,
+          null
+      ).toString();
+    } catch (URISyntaxException e) {
+      return null;
+    }
+  }
+
 }

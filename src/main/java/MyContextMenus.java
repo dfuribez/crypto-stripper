@@ -6,6 +6,7 @@ import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.persistence.PersistedList;
 import burp.api.montoya.ui.contextmenu.ContextMenuEvent;
 import burp.api.montoya.ui.contextmenu.ContextMenuItemsProvider;
+import burp.api.montoya.ui.contextmenu.InvocationType;
 import burp.api.montoya.ui.contextmenu.MessageEditorHttpRequestResponse;
 import com.google.gson.*;
 
@@ -77,7 +78,12 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
     ExecutorOutput executorResponse =
         Executor.execute(montoyaApi, "decrypt", "request", preparedToExecute);
 
-    requestResponse.setRequest(Utils.executorToHttpRequest(request, executorResponse));
+    try {
+      requestResponse.setRequest(Utils.executorToHttpRequest(request, executorResponse));
+    } catch (Exception e) {
+      montoyaApi.logging().logToError("MyContextMenus.decryptRequest: " + e.toString());
+    }
+
   }
 
 
@@ -113,7 +119,10 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
 
 
     if (event.isFromTool(ToolType.PROXY, ToolType.REPEATER) && editorHttpRequestResponse != null) {
-      if (Utils.isUrlInScope(url, scope.get("scope"))) {
+      if (Utils.isUrlInScope(url, scope.get("scope"))
+          && !event.isFrom(InvocationType.MESSAGE_VIEWER_REQUEST)
+          && !event.isFrom(InvocationType.MESSAGE_VIEWER_RESPONSE)
+      ) {
         decryptMenu = new JMenuItem("Decrypt");
         decryptMenu.addActionListener(
             l -> this.decryptRequest(editorHttpRequestResponse, source));
@@ -163,7 +172,11 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
       } else {
         stripperScopeMenu = new JMenuItem("Add url to scope");
         stripperScopeMenu.addActionListener(
-            l -> this.updateStripperScope("scope", "add", url));
+            l -> {
+              this.updateStripperScope("scope", "add", url);
+              this.decryptRequest(editorHttpRequestResponse, source);
+            }
+        );
       }
 
       if (Utils.isUrlInScope(url, scope.get("blacklist"))) {

@@ -11,7 +11,7 @@ def encrypt(body, headers, url_parameters, http_method, host, port, secure, path
     print("only print to stderr to debug", file=sys.stderr)
     print("the use of print() will cause the process to fail", file=sys.stderr)
 
-    return body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase
+    return body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase, event_log
 
 
 #  Learn more: https://github.com/dfuribez/crypto-stripper/wiki/Stripper-scripts
@@ -19,11 +19,11 @@ def decrypt(body, headers, url_parameters, http_method, host, port, secure, path
     # implement your code here
     print("only print to stderr to debug", file=sys.stderr)
     print("the use of print() will cause the process to fail", file=sys.stderr)
-    return body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase
+    return body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase, event_log
 
 
 # DON'T MODIFY THIS
-def print_json(body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase):
+def print_json(body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase, event_log=None):
     print(
         base64.b64encode(
             json.dumps({
@@ -37,7 +37,8 @@ def print_json(body, headers, url_parameters, http_method, host, port, secure, p
                 "host": host,
                 "port": port,
                 "secure": secure,
-                "version": 2
+                "version": 3,
+                "eventLog": event_log
                 }
             ).encode("utf8")
         ).decode()

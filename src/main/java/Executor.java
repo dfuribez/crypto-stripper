@@ -102,6 +102,10 @@ public final class Executor {
       response = new Gson().fromJson(decodedOutput, ExecutorOutput.class);
       response.setStdErr(stdErr.toString());
 
+      if (response.getEventLog() != null && !response.getEventLog().isEmpty()) {
+        api.logging().raiseInfoEvent(response.getEventLog());
+      }
+
       return response;
     } catch (IOException  | IllegalStateException | JsonSyntaxException |
         IllegalArgumentException e) {

@@ -15,7 +15,15 @@ public class ExecutorOutput {
   private String host;
   private int port;
   private boolean secure;
+  private String eventLog;
 
+  public String getEventLog() {
+    return eventLog;
+  }
+
+  public void setEventLog(String eventLog) {
+    this.eventLog = eventLog;
+  }
 
   public boolean isSecure() {
     return secure;

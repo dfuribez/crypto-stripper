@@ -10,6 +10,7 @@ async function decrypt(body, headers, urlParameters, httpMethod, host, port, sec
   console.error("only use console.error to debug")
   console.error("the use of console.log will cause the process to fail")
 
+  eventLog = ""
   return [body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, eventLog]
 }
 
@@ -20,6 +21,7 @@ async function encrypt(body, headers, urlParameters, httpMethod, host, port, sec
   console.error("only use console.error to debug")
   console.error("the use of console.log will cause the process to fail")
 
+  eventLog = ""  
   return [body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, eventLog];
 }
 

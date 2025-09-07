@@ -11,6 +11,7 @@ def encrypt(body, headers, url_parameters, http_method, host, port, secure, path
     print("only print to stderr to debug", file=sys.stderr)
     print("the use of print() will cause the process to fail", file=sys.stderr)
 
+    event_log = ""
     return body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase, event_log
 
 
@@ -19,6 +20,8 @@ def decrypt(body, headers, url_parameters, http_method, host, port, secure, path
     # implement your code here
     print("only print to stderr to debug", file=sys.stderr)
     print("the use of print() will cause the process to fail", file=sys.stderr)
+    event_log = ""
+
     return body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase, event_log
 
 

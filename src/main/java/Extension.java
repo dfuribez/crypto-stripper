@@ -1,8 +1,5 @@
 import burp.api.montoya.BurpExtension;
 import burp.api.montoya.MontoyaApi;
-import burp.api.montoya.persistence.PersistedList;
-
-import java.util.HashMap;
 
 public class Extension implements BurpExtension {
 

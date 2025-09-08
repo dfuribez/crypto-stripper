@@ -34,14 +34,14 @@ public final class Executor {
     command = Utils.getCommandFromPath(api.persistence(), scriptToExecute);
 
     if (!Utils.checkFileExists(scriptToExecute)) {
-      response.setError(scriptToExecute + " is not a file");
+      response.error = scriptToExecute + " is not a file";
       return response;
     }
 
     if (command == null) {
-      response.setError("The selected script: "
+      response.error = "The selected script: "
           + scriptToExecute
-          + " does not have a valid extension");
+          + " does not have a valid extension";
       return response;
     }
 
@@ -94,24 +94,24 @@ public final class Executor {
       }
 
       if (decodedOutput.isEmpty()) {
-        response.setError("Script's output was empty or null");
-        response.setStdErr(stdErr.toString());
+        response.error = "Script's output was empty or null";
+        response.stdErr = stdErr.toString();
         return  response;
       }
 
       response = new Gson().fromJson(decodedOutput, ExecutorOutput.class);
-      response.setStdErr(stdErr.toString());
+      response.stdErr = stdErr.toString();
 
-      if (response.getEventLog() != null && !response.getEventLog().isEmpty()) {
-        api.logging().raiseInfoEvent(response.getEventLog());
+      if (response.eventLog != null && !response.eventLog.isEmpty()) {
+        api.logging().raiseInfoEvent(response.eventLog);
       }
 
       return response;
     } catch (IOException  | IllegalStateException | JsonSyntaxException |
         IllegalArgumentException e) {
-      response.setError(String.format(
+      response.error = String.format(
           Constants.STRIPPER_ERROR_TEMPLATE,
-          command, scriptToExecute, "", e, decodedOutput));
+          command, scriptToExecute, "", e, decodedOutput);
 
       error.append("--------- Extension errors ---------").append("\n");
       error.append("[+]").append(e).append("\n");
@@ -128,8 +128,8 @@ public final class Executor {
         }
       }
 
-      response.setStdErr(stdErr.toString());
-      response.setError(error.toString());
+      response.stdErr = stdErr.toString();
+      response.error = error.toString();
       return  response;
     }
   }

@@ -146,16 +146,16 @@ public class EditorTab {
     }
 
     try {
-      if (!Utils.checkScriptVersion(executed.getVersion())
-      && executed.getError().isBlank()){
+      if (!Utils.checkScriptVersion(executed.version)
+      && executed.error.isBlank()){
         doc.insertString(doc.getLength(), Constants.SCRIPT_NOT_SUPORTED, warningStyle);
         doc.insertString(doc.getLength(), "\n\n", defaultStyle);
       }
-      doc.insertString(doc.getLength(), executed.getStdErr(), defaultStyle);
+      doc.insertString(doc.getLength(), executed.stdErr, defaultStyle);
       doc.insertString(doc.getLength(), "\n\n", defaultStyle);
-      doc.insertString(doc.getLength(), executed.getError(), errorStyle);
+      doc.insertString(doc.getLength(), executed.error, errorStyle);
     } catch (BadLocationException e) {
-      stdErrTextArea.setText(executed.getStdErr() + "\n" + executed.getError());
+      stdErrTextArea.setText(executed.stdErr + "\n" + executed.error);
     }
   }
 

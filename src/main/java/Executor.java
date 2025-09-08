@@ -80,7 +80,7 @@ public final class Executor {
       }
 
       while ((line = errorReader.readLine()) != null) {
-        stdErr.append(line + "\n");
+        stdErr.append(line).append("\n");
       }
 
       decodedOutput =
@@ -111,10 +111,10 @@ public final class Executor {
         IllegalArgumentException e) {
       response.setError(String.format(
           Constants.STRIPPER_ERROR_TEMPLATE,
-          command, scriptToExecute, "", e.toString(), decodedOutput));
+          command, scriptToExecute, "", e, decodedOutput));
 
-      error.append("--------- Extension errors ---------" + "\n");
-      error.append("[+] " + e.toString() + "\n");
+      error.append("--------- Extension errors ---------").append("\n");
+      error.append("[+]").append(e).append("\n");
 
       if (numberOfOutputLines > 1) {
         error.append("\n[+] more than one line detected in stdout,"

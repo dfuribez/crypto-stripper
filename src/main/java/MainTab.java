@@ -239,26 +239,26 @@ public class MainTab {
       JsonSettings jsonSettings = gson.fromJson(reader, JsonSettings.class);
 
       api.persistence().extensionData().setBoolean(
-          Constants.REQUEST_CHECKBOX_STATUS_KEY, jsonSettings.isEnableRequest()
+          Constants.REQUEST_CHECKBOX_STATUS_KEY, jsonSettings.enableRequest
       );
       api.persistence().extensionData().setBoolean(
-          Constants.RESPONSE_CHECKBOX_STATUS_KEY, jsonSettings.isEnableResponse()
+          Constants.RESPONSE_CHECKBOX_STATUS_KEY, jsonSettings.enableResponse
       );
       api.persistence().extensionData().setBoolean(
-          Constants.FORCE_CHECKBOX_STATUS_KEY, jsonSettings.isEnableForceIntercept()
+          Constants.FORCE_CHECKBOX_STATUS_KEY, jsonSettings.enableForceIntercept
       );
 
       api.persistence().extensionData().setStringList(
           Constants.STRIPPER_SCOPE_LIST_KEY,
-          Utils.arrayToPersisted(cleanScope(jsonSettings.getScope()))
+          Utils.arrayToPersisted(cleanScope(jsonSettings.scope))
       );
       api.persistence().extensionData().setStringList(
           Constants.STRIPPER_BLACK_LIST_KEY,
-          Utils.arrayToPersisted(cleanScope(jsonSettings.getBlackList()))
+          Utils.arrayToPersisted(cleanScope(jsonSettings.blackList))
       );
       api.persistence().extensionData().setStringList(
           Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY,
-          Utils.arrayToPersisted(cleanScope(jsonSettings.getForceIntercept()))
+          Utils.arrayToPersisted(cleanScope(jsonSettings.forceIntercept))
       );
       loadCurrentSettings();
 
@@ -271,28 +271,25 @@ public class MainTab {
   private void exportSettings() {
     JsonSettings settings = new JsonSettings();
 
-    settings.setEnableRequest(
+    settings.enableRequest =
         api.persistence().extensionData().getBoolean(
             Constants.REQUEST_CHECKBOX_STATUS_KEY
-        )
-    );
-    settings.setEnableResponse(
+        );
+    settings.enableResponse =
         api.persistence().extensionData().getBoolean(
             Constants.RESPONSE_CHECKBOX_STATUS_KEY
-        )
-    );
-    settings.setEnableForceIntercept(
+        );
+    settings.enableForceIntercept =
         api.persistence().extensionData().getBoolean(
             Constants.FORCE_CHECKBOX_STATUS_KEY
-        )
-    );
+        );
 
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());
 
-    settings.setBlackList(scope.get("blacklist").toArray(new String[0]));
-    settings.setScope(scope.get("scope").toArray(new String[0]));
-    settings.setForceIntercept(scope.get("force").toArray(new String[0]));
+    settings.blackList = scope.get("blacklist").toArray(new String[0]);
+    settings.scope = scope.get("scope").toArray(new String[0]);
+    settings.forceIntercept = scope.get("force").toArray(new String[0]);
 
     FileNameExtensionFilter filter =
         new FileNameExtensionFilter("JSON, configuration files", "json");

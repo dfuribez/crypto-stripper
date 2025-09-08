@@ -1,4 +1,3 @@
-import static burp.api.montoya.http.message.HttpHeader.httpHeader;
 import static burp.api.montoya.proxy.http.ProxyRequestReceivedAction.continueWith;
 import static burp.api.montoya.proxy.http.ProxyRequestReceivedAction.intercept;
 

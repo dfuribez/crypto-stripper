@@ -147,16 +147,16 @@ public class Utils {
   public static HttpRequest executorToHttpRequest(
       HttpRequest request, ExecutorOutput output) {
 
-    if (output.getError() != null && !output.getError().isEmpty()) {
+    if (output.error != null && !output.error.isEmpty()) {
       return request
           .withHeader(Constants.STRIPPER_HEADER, Constants.X_STRIPPER_ERROR);
     }
 
     HttpRequest modified = request
-        .withService(httpService(output.getHost(), output.getPort(), output.isSecure()))
-        .withPath(output.getPath())
+        .withService(httpService(output.host, output.port, output.secure))
+        .withPath(output.path)
         .withRemovedParameters(request.parameters(HttpParameterType.URL))
-        .withMethod(output.getHttpMethod());
+        .withMethod(output.httpMethod);
 
     // avoids kettling
     for (HttpHeader header : request.headers()) {
@@ -165,30 +165,30 @@ public class Utils {
       }
     }
 
-    modified = modified.withAddedHeaders(listToHttpHeaders(output.getHeaders()));
+    modified = modified.withAddedHeaders(listToHttpHeaders(output.headers));
 
     return modified
-        .withBody(output.getBody())
-        .withAddedParameters(listToUrlParams(output.getUrlParameters()))
+        .withBody(output.body)
+        .withAddedParameters(listToUrlParams(output.urlParameters))
         .withHeader(Constants.STRIPPER_HEADER, "true");
   }
 
   public static HttpResponse executorToHttpResponse(
       HttpResponse response, ExecutorOutput output) {
 
-    if (output.getError() != null && !output.getError().isEmpty()) {
+    if (output.error != null && !output.error.isEmpty()) {
       return response
           .withAddedHeader(Constants.STRIPPER_HEADER, Constants.X_STRIPPER_ERROR);
     }
 
     HttpResponse modified = response
         .withRemovedHeaders(response.headers())
-        .withAddedHeaders(listToHttpHeaders(output.getHeaders()))
-        .withStatusCode(output.getStatusCode())
-        .withReasonPhrase(output.getReasonPhrase());
+        .withAddedHeaders(listToHttpHeaders(output.headers))
+        .withStatusCode(output.statusCode)
+        .withReasonPhrase(output.reasonPhrase);
 
     return modified
-        .withBody(output.getBody())
+        .withBody(output.body)
         .withAddedHeader(Constants.STRIPPER_HEADER, "true");
 
   }

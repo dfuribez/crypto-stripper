@@ -64,17 +64,9 @@ public class InsertDialog extends JDialog {
         emptyBorder
     ));
 
-    buttonOK.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        onOK();
-      }
-    });
+    buttonOK.addActionListener(e -> onOK());
 
-    buttonCancel.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        onCancel();
-      }
-    });
+    buttonCancel.addActionListener(e -> onCancel());
 
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
@@ -82,47 +74,40 @@ public class InsertDialog extends JDialog {
       }
     });
 
-    contentPane.registerKeyboardAction(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        onCancel();
-      }
-    }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    contentPane.registerKeyboardAction(e -> onCancel(),
+        KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+        JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+    );
 
 
-    insertFileButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        int response = fileChooser.showOpenDialog(burpMainFrame);
+    insertFileButton.addActionListener(actionEvent -> {
+      int response = fileChooser.showOpenDialog(burpMainFrame);
 
-        if (response == JFileChooser.APPROVE_OPTION) {
-          String path = fileChooser.getSelectedFile().getAbsolutePath();
-
-          try {
-            selectedText = Files.readAllBytes(Paths.get(path));
-          } catch (Exception e) {
-            montoyaApi.logging().logToError("Could not open file: " + path);
-            montoyaApi.logging().logToError(e.toString());
-          }
-        }
-        dispose();
-      }
-    });
-    insertRandomButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        int length;
+      if (response == JFileChooser.APPROVE_OPTION) {
+        String path = fileChooser.getSelectedFile().getAbsolutePath();
 
         try {
-          length = Integer.parseInt(textLenght.getText());
-        } catch (NumberFormatException e) {
-          length = 0;
+          InsertDialog.selectedText = Files.readAllBytes(Paths.get(path));
+        } catch (Exception e) {
+          montoyaApi.logging().logToError("Could not open file: " + path);
+          montoyaApi.logging().logToError(e.toString());
         }
-
-        if (length > 0) {
-          selectedText = generate(length).getBytes(StandardCharsets.UTF_8);
-        }
-        dispose();
       }
+      dispose();
+    });
+    insertRandomButton.addActionListener(actionEvent -> {
+      int length;
+
+      try {
+        length = Integer.parseInt(textLenght.getText());
+      } catch (NumberFormatException e) {
+        length = 0;
+      }
+
+      if (length > 0) {
+        selectedText = generate(length).getBytes(StandardCharsets.UTF_8);
+      }
+      dispose();
     });
   }
 

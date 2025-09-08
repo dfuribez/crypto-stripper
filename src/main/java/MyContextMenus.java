@@ -70,6 +70,10 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
   }
 
   public void decryptRequest(MessageEditorHttpRequestResponse requestResponse, String source){
+    if (requestResponse == null) {
+      return;
+    }
+
     HttpRequest request = requestResponse.requestResponse().request();
 
     HashMap<String, String> preparedToExecute =
@@ -81,7 +85,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
     try {
       requestResponse.setRequest(Utils.executorToHttpRequest(request, executorResponse));
     } catch (Exception e) {
-      montoyaApi.logging().logToError("MyContextMenus.decryptRequest: " + e.toString());
+      montoyaApi.logging().logToError("MyContextMenus.decryptRequest: " + e);
     }
 
   }
@@ -147,7 +151,9 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
 
         if (insertDialog.URLEncodeRadioButton.isSelected()) {
           toInsert = URLEncoder.encode(
-              new String(toInsert, StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8);
+              new String(toInsert, StandardCharsets.UTF_8),
+              StandardCharsets.UTF_8
+          ).getBytes(StandardCharsets.UTF_8);
         }
 
         byte[] s = Arrays.copyOfRange(content, 0, cursorPosition);

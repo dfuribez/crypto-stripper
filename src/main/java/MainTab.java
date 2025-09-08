@@ -14,6 +14,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class MainTab {
   public JPanel panel1;
@@ -21,17 +22,15 @@ public class MainTab {
   public JCheckBox requestCheckBox;
   public JCheckBox responseCheckBox;
   public JCheckBox forceInterceptInScopeCheckbox;
-  private JList scopeList;
-  private JList blackList;
-  private JList forceInterceptList;
+  private JList<String> scopeList;
+  private JList<String> blackList;
+  private JList<String> forceInterceptList;
   private JButton restoreSettingsButton;
   private JButton deleteSelectedScopeButton;
   private JButton deleteSelectedBlacklistButton;
   private JButton deleteSelectedForceButton;
   private JButton RequestFileButton;
   private JButton selectResponseScriptButton;
-  //private JLabel requetsPathLabel;
-  //private JLabel responsePathLabel;
   private JPanel pathsPanel;
   private JButton chooseNodeBinaryButto;
   private JButton choosePythonBinaryButton;
@@ -428,20 +427,16 @@ public class MainTab {
   }
 
   public void clearSettings() {
-    boolean enableRequest = true;
-    boolean enableResponse = true;
-    boolean forceInterceptionScope = false;
-
     api.persistence().extensionData().setBoolean(
-        Constants.REQUEST_CHECKBOX_STATUS_KEY, enableRequest
+        Constants.REQUEST_CHECKBOX_STATUS_KEY, true
     );
 
     api.persistence().extensionData().setBoolean(
-        Constants.RESPONSE_CHECKBOX_STATUS_KEY, enableResponse
+        Constants.RESPONSE_CHECKBOX_STATUS_KEY, true
     );
 
     api.persistence().extensionData().setBoolean(
-        Constants.FORCE_CHECKBOX_STATUS_KEY, forceInterceptionScope
+        Constants.FORCE_CHECKBOX_STATUS_KEY, false
     );
 
     api.persistence().extensionData().setString(
@@ -483,9 +478,9 @@ public class MainTab {
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());
 
-    requestStatus = requestStatus == null ? true : requestStatus;
-    responseStatus = responseStatus == null ? true : responseStatus;
-    forceStatus = forceStatus == null ? false : forceStatus;
+    requestStatus = requestStatus == null || requestStatus;
+    responseStatus = responseStatus == null || responseStatus;
+    forceStatus = forceStatus != null && forceStatus;
 
     requestCheckBox.setSelected(requestStatus);
     responseCheckBox.setSelected(responseStatus);
@@ -544,7 +539,7 @@ public class MainTab {
   }
 
   private void updateScope(String source, String action) {
-    JList target;
+    JList<String> target;
     JTextField selectedTextField;
     PersistedList<String> selectedScopeList;
     String key;
@@ -576,8 +571,8 @@ public class MainTab {
         return;
     }
 
-    if (action == "delete") {
-      DefaultListModel  model = (DefaultListModel) target.getModel();
+    if (Objects.equals(action, "delete")) {
+      DefaultListModel model = (DefaultListModel) target.getModel();
 
       int selectedIndex = target.getSelectedIndex();
 

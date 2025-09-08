@@ -8,8 +8,6 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -110,221 +108,121 @@ public class MainTab {
 
     versionTextArea.setText(Constants.VERSION);
 
-    RequestFileButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-            "Python, JavaScript files",
-            "py", "js");
-        String path = openChooser(filter, true);
+    RequestFileButton.addActionListener(actionEvent -> {
+      FileNameExtensionFilter filter = new FileNameExtensionFilter(
+          "Python, JavaScript files",
+          "py", "js");
+      String path = openChooser(filter, true);
 
-        if (path.isBlank()) {
-          return;
-        }
+      if (path.isBlank()) {
+        return;
+      }
 
+      api.persistence().extensionData().setString(
+          Constants.REQUEST_SCRIPT_PATH_KEY, path);
+      requetsPathLabel.setText(path);
+    });
+
+    selectResponseScriptButton.addActionListener(actionEvent -> {
+      FileNameExtensionFilter filter = new FileNameExtensionFilter(
+          "Python, JavaScript files",
+          "py", "js");
+      String path = openChooser(filter, true);
+
+      if (path.isBlank()) {
+        return;
+      }
+
+      api.persistence().extensionData().setString(
+          Constants.RESPONSE_SCRIPT_PATH_KEY, path);
+      responsePathLabel.setText(path);
+    });
+
+    chooseNodeBinaryButto.addActionListener(actionEvent -> {
+      String path = openChooser(null, true);
+
+      if (!path.isEmpty()) {
         api.persistence().extensionData().setString(
-            Constants.REQUEST_SCRIPT_PATH_KEY, path);
-        requetsPathLabel.setText(path);
+            Constants.PROJECT_NODE_PATH_KEY, path);
+        nodePathLabel.setText(path);
       }
     });
 
-    selectResponseScriptButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-            "Python, JavaScript files",
-            "py", "js");
-        String path = openChooser(filter, true);
+    choosePythonBinaryButton.addActionListener(actionEvent -> {
+      String path = openChooser(null, true);
 
-        if (path.isBlank()) {
-          return;
-        }
-
+      if (!path.isEmpty()) {
         api.persistence().extensionData().setString(
-            Constants.RESPONSE_SCRIPT_PATH_KEY, path);
-        responsePathLabel.setText(path);
+            Constants.PROJECT_PYTHON_PATH_KEY, path);
+        pythonPathLabel.setText(path);
       }
     });
+    setNodeDefaultButton.addActionListener(actionEvent -> {
+      api.persistence().extensionData().setString(
+          Constants.PROJECT_NODE_PATH_KEY, "");
+      nodePathLabel.setText("");
+    });
+    setPythonDefaultButton.addActionListener(actionEvent -> {
+      api.persistence().extensionData().setString(
+          Constants.PROJECT_PYTHON_PATH_KEY, "");
+      pythonPathLabel.setText("");
+    });
+    deleteSelectedScopeButton.addActionListener(actionEvent -> updateScope("scope", "delete"));
+    deleteSelectedBlacklistButton.addActionListener(actionEvent -> updateScope("blacklist", "delete"));
+    deleteSelectedForceButton.addActionListener(actionEvent -> updateScope("force", "delete"));
+    chooseNodeGlobalBinaryButton.addActionListener(actionEvent -> {
+      String path = openChooser(null, true);
 
-    chooseNodeBinaryButto.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        String path = openChooser(null, true);
+      if (path.isBlank()) {
+        return;
+      }
 
-        if (!path.isEmpty()) {
-          api.persistence().extensionData().setString(
-              Constants.PROJECT_NODE_PATH_KEY, path);
-          nodePathLabel.setText(path);
-        }
-      }
+      api.persistence().preferences().setString(
+          Constants.GLOBAL_NODE_PATH_KEY, path);
+      globalNodeLabel.setText(path);
     });
+    choosePythonGlobalBinaryButton.addActionListener(actionEvent -> {
+      String path = openChooser(null, true);
 
-    choosePythonBinaryButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        String path = openChooser(null, true);
+      if (path.isBlank()) {
+        return;
+      }
 
-        if (!path.isEmpty()) {
-          api.persistence().extensionData().setString(
-              Constants.PROJECT_PYTHON_PATH_KEY, path);
-          pythonPathLabel.setText(path);
-        }
-      }
+      api.persistence().preferences().setString(
+          Constants.GLOBAL_PYTHON_PATH_KEY, path);
+      globalPythonLabel.setText(path);
     });
-    setNodeDefaultButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        api.persistence().extensionData().setString(
-            Constants.PROJECT_NODE_PATH_KEY, "");
-        nodePathLabel.setText("");
+    requestCheckBox.addActionListener(actionEvent -> saveCurrentSettings());
+    responseCheckBox.addActionListener(actionEvent -> saveCurrentSettings());
+    forceInterceptInScopeCheckbox.addActionListener(actionEvent -> saveCurrentSettings());
+    restoreSettingsButton.addActionListener(actionEvent -> clearSettings());
+    exportScopeButton.addActionListener(actionEvent -> exportSettings());
+    importSettingsButton.addActionListener(actionEvent -> importSettings());
+    JSTemplateButton.addActionListener(actionEvent -> {
+      FileNameExtensionFilter filter = new FileNameExtensionFilter(
+          "JavaScript files", "js");
+      String path = openChooser(filter, false);
+      if (path.isBlank()) {
+        return;
       }
+      Utils.resourceToFile(api, "template.js", path);
     });
-    setPythonDefaultButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        api.persistence().extensionData().setString(
-            Constants.PROJECT_PYTHON_PATH_KEY, "");
-        pythonPathLabel.setText("");
+    pythonTemplateButton.addActionListener(actionEvent -> {
+      FileNameExtensionFilter filter = new FileNameExtensionFilter(
+          "Python files", "py");
+      String path = openChooser(filter, false);
+      if (path.isBlank()) {
+        return;
       }
-    });
-    deleteSelectedScopeButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        updateScope("scope", "delete");
-      }
-    });
-    deleteSelectedBlacklistButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        updateScope("blacklist", "delete");
-      }
-    });
-    deleteSelectedForceButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        updateScope("force", "delete");
-      }
-    });
-    chooseNodeGlobalBinaryButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        String path = openChooser(null, true);
 
-        if (path.isBlank()) {
-          return;
-        }
+      Utils.resourceToFile(api, "template.py", path);
 
-        api.persistence().preferences().setString(
-            Constants.GLOBAL_NODE_PATH_KEY, path);
-        globalNodeLabel.setText(path);
-      }
     });
-    choosePythonGlobalBinaryButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        String path = openChooser(null, true);
-
-        if (path.isBlank()) {
-          return;
-        }
-
-        api.persistence().preferences().setString(
-            Constants.GLOBAL_PYTHON_PATH_KEY, path);
-        globalPythonLabel.setText(path);
-      }
-    });
-    requestCheckBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        saveCurrentSettings();
-      }
-    });
-    responseCheckBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        saveCurrentSettings();
-      }
-    });
-    forceInterceptInScopeCheckbox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        saveCurrentSettings();
-      }
-    });
-    restoreSettingsButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        clearSettings();
-      }
-    });
-    exportScopeButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        exportSettings();
-      }
-    });
-    importSettingsButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        importSettings();
-      }
-    });
-    JSTemplateButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-            "JavaScript files", "js");
-        String path = openChooser(filter, false);
-        if (path.isBlank()) {
-          return;
-        }
-        Utils.resourceToFile(api, "template.js", path);
-      }
-    });
-    pythonTemplateButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-            "Python files", "py");
-        String path = openChooser(filter, false);
-        if (path.isBlank()) {
-          return;
-        }
-
-        Utils.resourceToFile(api, "template.py", path);
-
-      }
-    });
-    addScopeUrlButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        updateScope("scope", "add");
-      }
-    });
-    addBlackListUrlButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        updateScope("blacklist", "add");
-      }
-    });
-    addForceUrlButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        updateScope("force", "add");
-      }
-    });
-    openRequestButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        Utils.openFolder(requetsPathLabel.getText());
-      }
-    });
-    openResponseButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        Utils.openFolder(responsePathLabel.getText());
-      }
-    });
+    addScopeUrlButton.addActionListener(actionEvent -> updateScope("scope", "add"));
+    addBlackListUrlButton.addActionListener(actionEvent -> updateScope("blacklist", "add"));
+    addForceUrlButton.addActionListener(actionEvent -> updateScope("force", "add"));
+    openRequestButton.addActionListener(actionEvent -> Utils.openFolder(requetsPathLabel.getText()));
+    openResponseButton.addActionListener(actionEvent -> Utils.openFolder(responsePathLabel.getText()));
   }
 
   private void importSettings() {

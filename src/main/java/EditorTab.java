@@ -101,29 +101,16 @@ public class EditorTab {
     }
     outputSplitPane.setResizeWeight(0.5);
 
-    testEncryptionButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        execute("encrypt");
+    testEncryptionButton.addActionListener(actionEvent -> execute("encrypt"));
+    testDecryptionButton.addActionListener(actionEvent -> execute("decrypt"));
+    openScriptButton.addActionListener(actionEvent -> {
+      String path;
+      if (isRequest) {
+        path = api.persistence().extensionData().getString(Constants.REQUEST_SCRIPT_PATH_KEY);
+      } else {
+        path = api.persistence().extensionData().getString(Constants.RESPONSE_SCRIPT_PATH_KEY);
       }
-    });
-    testDecryptionButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        execute("decrypt");
-      }
-    });
-    openScriptButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        String path;
-        if (isRequest) {
-          path = api.persistence().extensionData().getString(Constants.REQUEST_SCRIPT_PATH_KEY);
-        } else {
-          path = api.persistence().extensionData().getString(Constants.RESPONSE_SCRIPT_PATH_KEY);
-        }
-        Utils.openFolder(path);
-      }
+      Utils.openFolder(path);
     });
   }
 

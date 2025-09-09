@@ -14,6 +14,7 @@ import burp.api.montoya.proxy.http.InterceptedRequest;
 import burp.api.montoya.proxy.http.ProxyRequestHandler;
 import burp.api.montoya.proxy.http.ProxyRequestReceivedAction;
 import burp.api.montoya.proxy.http.ProxyRequestToBeSentAction;
+import models.ExecutorOutput;
 
 
 class ProxyHttpRequestHandler implements ProxyRequestHandler {

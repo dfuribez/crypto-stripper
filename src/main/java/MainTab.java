@@ -2,12 +2,12 @@ import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.persistence.PersistedList;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import models.JsonSettings;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;

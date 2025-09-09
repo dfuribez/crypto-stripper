@@ -13,20 +13,16 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 
 public class EditorTab {
   public JPanel panel1;
   private JButton testDecryptionButton;
-  private JTextArea stdOutText;
   private JPanel commandPanel;
   private JPanel stdOutPanel;
   private JPanel stdErrPanel;
   private JButton testEncryptionButton;
   private JPanel buttonsPanel;
-  private JTextArea stdOutTextArea;
   private JTextPane stdErrTextArea;
   private JSplitPane outputSplitPane;
   private JSplitPane contentSplitpane;
@@ -119,7 +115,7 @@ public class EditorTab {
   }
 
   private void execute(String action) {
-    HashMap<String, String> prepared = new HashMap<>();
+    HashMap<String, String> prepared;
     String source;
 
     updateUi();
@@ -146,8 +142,7 @@ public class EditorTab {
     }
 
     try {
-      if (!Utils.checkScriptVersion(executed.version)
-      && executed.error.isBlank()){
+      if (!Utils.checkScriptVersion(executed.version) && executed.error.isBlank()){
         doc.insertString(doc.getLength(), Constants.SCRIPT_NOT_SUPORTED, warningStyle);
         doc.insertString(doc.getLength(), "\n\n", defaultStyle);
       }

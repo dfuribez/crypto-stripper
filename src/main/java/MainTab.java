@@ -87,10 +87,9 @@ public class MainTab {
     ));
 
     this.globalBinariesPanel.setBorder(BorderFactory.createCompoundBorder(
-            new TitledBorder(BorderFactory.createEtchedBorder(), "Global paths:"),
-            emptyBorder
-        )
-    );
+        new TitledBorder(BorderFactory.createEtchedBorder(), "Global paths:"),
+        emptyBorder
+        ));
 
     this.scopeListPanel.setBorder(BorderFactory.createCompoundBorder(
         new TitledBorder(BorderFactory.createEtchedBorder(), "Scope: (?)"),
@@ -133,8 +132,7 @@ public class MainTab {
         return;
       }
 
-      api.persistence().extensionData().setString(
-          Constants.RESPONSE_SCRIPT_PATH_KEY, path);
+      api.persistence().extensionData().setString(Constants.RESPONSE_SCRIPT_PATH_KEY, path);
       responsePathLabel.setText(path);
     });
 
@@ -142,8 +140,7 @@ public class MainTab {
       String path = openChooser(null, true);
 
       if (!path.isEmpty()) {
-        api.persistence().extensionData().setString(
-            Constants.PROJECT_NODE_PATH_KEY, path);
+        api.persistence().extensionData().setString(Constants.PROJECT_NODE_PATH_KEY, path);
         nodePathLabel.setText(path);
       }
     });
@@ -152,21 +149,19 @@ public class MainTab {
       String path = openChooser(null, true);
 
       if (!path.isEmpty()) {
-        api.persistence().extensionData().setString(
-            Constants.PROJECT_PYTHON_PATH_KEY, path);
+        api.persistence().extensionData().setString(Constants.PROJECT_PYTHON_PATH_KEY, path);
         pythonPathLabel.setText(path);
       }
     });
     setNodeDefaultButton.addActionListener(actionEvent -> {
-      api.persistence().extensionData().setString(
-          Constants.PROJECT_NODE_PATH_KEY, "");
+      api.persistence().extensionData().setString(Constants.PROJECT_NODE_PATH_KEY, "");
       nodePathLabel.setText("");
     });
     setPythonDefaultButton.addActionListener(actionEvent -> {
-      api.persistence().extensionData().setString(
-          Constants.PROJECT_PYTHON_PATH_KEY, "");
+      api.persistence().extensionData().setString(Constants.PROJECT_PYTHON_PATH_KEY, "");
       pythonPathLabel.setText("");
     });
+
     deleteSelectedScopeButton.addActionListener(actionEvent -> updateScope("scope", "delete"));
     deleteSelectedBlacklistButton.addActionListener(actionEvent -> updateScope("blacklist", "delete"));
     deleteSelectedForceButton.addActionListener(actionEvent -> updateScope("force", "delete"));
@@ -177,8 +172,7 @@ public class MainTab {
         return;
       }
 
-      api.persistence().preferences().setString(
-          Constants.GLOBAL_NODE_PATH_KEY, path);
+      api.persistence().preferences().setString(Constants.GLOBAL_NODE_PATH_KEY, path);
       globalNodeLabel.setText(path);
     });
     choosePythonGlobalBinaryButton.addActionListener(actionEvent -> {
@@ -188,8 +182,7 @@ public class MainTab {
         return;
       }
 
-      api.persistence().preferences().setString(
-          Constants.GLOBAL_PYTHON_PATH_KEY, path);
+      api.persistence().preferences().setString(Constants.GLOBAL_PYTHON_PATH_KEY, path);
       globalPythonLabel.setText(path);
     });
     requestCheckBox.addActionListener(actionEvent -> saveCurrentSettings());
@@ -239,14 +232,11 @@ public class MainTab {
       JsonSettings jsonSettings = gson.fromJson(reader, JsonSettings.class);
 
       api.persistence().extensionData().setBoolean(
-          Constants.REQUEST_CHECKBOX_STATUS_KEY, jsonSettings.enableRequest
-      );
+          Constants.REQUEST_CHECKBOX_STATUS_KEY, jsonSettings.enableRequest);
       api.persistence().extensionData().setBoolean(
-          Constants.RESPONSE_CHECKBOX_STATUS_KEY, jsonSettings.enableResponse
-      );
+          Constants.RESPONSE_CHECKBOX_STATUS_KEY, jsonSettings.enableResponse);
       api.persistence().extensionData().setBoolean(
-          Constants.FORCE_CHECKBOX_STATUS_KEY, jsonSettings.enableForceIntercept
-      );
+          Constants.FORCE_CHECKBOX_STATUS_KEY, jsonSettings.enableForceIntercept);
 
       api.persistence().extensionData().setStringList(
           Constants.STRIPPER_SCOPE_LIST_KEY,
@@ -272,17 +262,11 @@ public class MainTab {
     JsonSettings settings = new JsonSettings();
 
     settings.enableRequest =
-        api.persistence().extensionData().getBoolean(
-            Constants.REQUEST_CHECKBOX_STATUS_KEY
-        );
+        api.persistence().extensionData().getBoolean(Constants.REQUEST_CHECKBOX_STATUS_KEY);
     settings.enableResponse =
-        api.persistence().extensionData().getBoolean(
-            Constants.RESPONSE_CHECKBOX_STATUS_KEY
-        );
+        api.persistence().extensionData().getBoolean(Constants.RESPONSE_CHECKBOX_STATUS_KEY);
     settings.enableForceIntercept =
-        api.persistence().extensionData().getBoolean(
-            Constants.FORCE_CHECKBOX_STATUS_KEY
-        );
+        api.persistence().extensionData().getBoolean(Constants.FORCE_CHECKBOX_STATUS_KEY);
 
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());
@@ -299,7 +283,7 @@ public class MainTab {
       Gson gson = new GsonBuilder().setPrettyPrinting().create();
       gson.toJson(settings, writer);
     } catch (Exception e) {
-      this.api.logging().logToError(e.toString());
+      api.logging().logToError(e.toString());
     }
   }
 
@@ -322,53 +306,37 @@ public class MainTab {
   }
 
   public void clearSettings() {
-    api.persistence().extensionData().setBoolean(
-        Constants.REQUEST_CHECKBOX_STATUS_KEY, true
-    );
+    api.persistence().extensionData().setBoolean(Constants.REQUEST_CHECKBOX_STATUS_KEY, true);
 
-    api.persistence().extensionData().setBoolean(
-        Constants.RESPONSE_CHECKBOX_STATUS_KEY, true
-    );
+    api.persistence().extensionData().setBoolean(Constants.RESPONSE_CHECKBOX_STATUS_KEY, true);
 
-    api.persistence().extensionData().setBoolean(
-        Constants.FORCE_CHECKBOX_STATUS_KEY, false
-    );
+    api.persistence().extensionData().setBoolean(Constants.FORCE_CHECKBOX_STATUS_KEY, false);
 
-    api.persistence().extensionData().setString(
-        Constants.RESPONSE_SCRIPT_PATH_KEY, ""
-    );
+    api.persistence().extensionData().setString(Constants.RESPONSE_SCRIPT_PATH_KEY, "");
 
-    api.persistence().extensionData().setString(
-        Constants.REQUEST_SCRIPT_PATH_KEY, ""
-    );
+    api.persistence().extensionData().setString(Constants.REQUEST_SCRIPT_PATH_KEY, "");
 
     api.persistence().extensionData().setStringList(
-        Constants.STRIPPER_SCOPE_LIST_KEY, PersistedList.persistedStringList()
-    );
+        Constants.STRIPPER_SCOPE_LIST_KEY, PersistedList.persistedStringList());
 
     api.persistence().extensionData().setStringList(
-        Constants.STRIPPER_BLACK_LIST_KEY, PersistedList.persistedStringList()
-    );
+        Constants.STRIPPER_BLACK_LIST_KEY, PersistedList.persistedStringList());
 
     api.persistence().extensionData().setStringList(
-        Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY, PersistedList.persistedStringList()
-    );
+        Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY, PersistedList.persistedStringList());
 
     loadCurrentSettings();
   }
 
   public void loadCurrentSettings() {
     Boolean requestStatus = api.persistence().extensionData().getBoolean(
-        Constants.REQUEST_CHECKBOX_STATUS_KEY
-    );
+        Constants.REQUEST_CHECKBOX_STATUS_KEY);
 
     Boolean responseStatus = api.persistence().extensionData().getBoolean(
-        Constants.RESPONSE_CHECKBOX_STATUS_KEY
-    );
+        Constants.RESPONSE_CHECKBOX_STATUS_KEY);
 
     Boolean forceStatus = api.persistence().extensionData().getBoolean(
-        Constants.FORCE_CHECKBOX_STATUS_KEY
-    );
+        Constants.FORCE_CHECKBOX_STATUS_KEY);
 
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());
@@ -385,36 +353,22 @@ public class MainTab {
     setScopeList("force", scope.get("force"));
 
     requetsPathLabel.setText(
-        api.persistence().extensionData().getString(
-            Constants.REQUEST_SCRIPT_PATH_KEY));
+        api.persistence().extensionData().getString(Constants.REQUEST_SCRIPT_PATH_KEY));
 
     responsePathLabel.setText(
-        api.persistence().extensionData().getString(
-            Constants.RESPONSE_SCRIPT_PATH_KEY));
+        api.persistence().extensionData().getString(Constants.RESPONSE_SCRIPT_PATH_KEY));
 
     nodePathLabel.setText(
-        api.persistence().extensionData().getString(
-            Constants.PROJECT_NODE_PATH_KEY
-        )
-    );
+        api.persistence().extensionData().getString(Constants.PROJECT_NODE_PATH_KEY));
 
     pythonPathLabel.setText(
-        api.persistence().extensionData().getString(
-            Constants.PROJECT_PYTHON_PATH_KEY
-        )
-    );
+        api.persistence().extensionData().getString(Constants.PROJECT_PYTHON_PATH_KEY));
 
     globalNodeLabel.setText(
-        api.persistence().preferences().getString(
-            Constants.GLOBAL_NODE_PATH_KEY
-        )
-    );
+        api.persistence().preferences().getString(Constants.GLOBAL_NODE_PATH_KEY));
 
     globalPythonLabel.setText(
-        api.persistence().preferences().getString(
-            Constants.GLOBAL_PYTHON_PATH_KEY
-        )
-    );
+        api.persistence().preferences().getString(Constants.GLOBAL_PYTHON_PATH_KEY));
   }
 
   public void saveCurrentSettings() {
@@ -422,15 +376,12 @@ public class MainTab {
     boolean responseCheckboxStatus = responseCheckBox.isSelected();
     boolean forceCheckboxStatus = forceInterceptInScopeCheckbox.isSelected();
 
-    this.api.persistence().extensionData().setBoolean(
-        Constants.FORCE_CHECKBOX_STATUS_KEY,
-        forceCheckboxStatus);
-    this.api.persistence().extensionData().setBoolean(
-        Constants.REQUEST_CHECKBOX_STATUS_KEY,
-        requestCheckboxStatus);
-    this.api.persistence().extensionData().setBoolean(
-        Constants.RESPONSE_CHECKBOX_STATUS_KEY,
-        responseCheckboxStatus);
+    api.persistence().extensionData().setBoolean(
+        Constants.FORCE_CHECKBOX_STATUS_KEY, forceCheckboxStatus);
+    api.persistence().extensionData().setBoolean(
+        Constants.REQUEST_CHECKBOX_STATUS_KEY, requestCheckboxStatus);
+    api.persistence().extensionData().setBoolean(
+        Constants.RESPONSE_CHECKBOX_STATUS_KEY, responseCheckboxStatus);
   }
 
   private void updateScope(String source, String action) {
@@ -478,7 +429,6 @@ public class MainTab {
         selectedScopeList.remove(selectedValue.toString());
       }
     } else {
-
       addUrl = selectedTextField.getText();
       if (!Utils.isValidRegex(addUrl) || addUrl.isBlank()) {
         showAlertMessage("Please check your url, it is not a valid regex");
@@ -499,7 +449,7 @@ public class MainTab {
   }
 
   public void setScopeList(String type, PersistedList<String> scopeListArray) {
-    DefaultListModel<String> listModel = new DefaultListModel<String>();
+    DefaultListModel<String> listModel = new DefaultListModel<>();
     listModel.addAll(scopeListArray);
 
     switch (type) {
@@ -535,7 +485,7 @@ public class MainTab {
   }
 
   private String[] cleanScope(String[] scopeList) {
-    ArrayList<String> clean = new ArrayList<String>();
+    ArrayList<String> clean = new ArrayList<>();
     for (String url : scopeList) {
       if (Utils.isValidRegex(url)) {
         clean.add(url);

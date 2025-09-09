@@ -28,7 +28,7 @@ import static burp.api.montoya.http.HttpService.httpService;
 public class Utils {
 
   public static ArrayList<String> headersToArray(List<HttpHeader> headersList) {
-    ArrayList<String> headers = new ArrayList<String>();
+    ArrayList<String> headers = new ArrayList<>();
     for (HttpHeader header : headersList) {
       if (!Arrays.asList(Constants.dangerousPseudoHeaders).contains(header.name())) {
         headers.add(header.toString());
@@ -38,12 +38,11 @@ public class Utils {
     return headers;
   }
 
-  public static List<HashMap<String, String>> parametersToArray(
-      List<ParsedHttpParameter> parameters) {
+  public static List<HashMap<String, String>> parametersToArray(List<ParsedHttpParameter> parameters) {
     List<HashMap<String, String>> array = new ArrayList<>();
 
     for (ParsedHttpParameter param : parameters) {
-      HashMap<String, String> p = new HashMap<String, String>();
+      HashMap<String, String> p = new HashMap<>();
       p.put("name", param.name());
       p.put("value", param.value());
 
@@ -55,16 +54,14 @@ public class Utils {
 
   public static HashMap<String, String> prepareRequestForExecutor(
       HttpRequest request, int messageId, String source) {
-    HashMap<String, String> result = new HashMap<String, String>();
+    HashMap<String, String> result = new HashMap<>();
 
-    String headers = new Gson().toJson(
-        headersToArray(request.headers()));
+    String headers = new Gson().toJson(Utils.headersToArray(request.headers()));
 
     String urlParameters = new Gson().toJson(
-        parametersToArray(request.parameters(HttpParameterType.URL)));
+        Utils.parametersToArray(request.parameters(HttpParameterType.URL)));
 
-    result.put("body",
-        new String(request.body().getBytes(), StandardCharsets.UTF_8));
+    result.put("body", new String(request.body().getBytes(), StandardCharsets.UTF_8));
     result.put("headers", headers);
     result.put("urlParameters", urlParameters);
     result.put("url", Utils.removeQueryFromUrl(request.url()));
@@ -81,15 +78,13 @@ public class Utils {
 
   public static HashMap<String, String> prepareResponseForExecutor(
       HttpResponse response, String url, int messageId, String source) {
-    HashMap<String, String> result = new HashMap<String, String>();
+    HashMap<String, String> result = new HashMap<>();
 
-    String headers = new Gson().toJson(
-        headersToArray(response.headers()));
+    String headers = new Gson().toJson(Utils.headersToArray(response.headers()));
 
     String urlParameters = new Gson().toJson(null);
 
-    result.put("body",
-        new String(response.body().getBytes(), StandardCharsets.UTF_8));
+    result.put("body", new String(response.body().getBytes(), StandardCharsets.UTF_8));
     result.put("headers", headers);
     result.put("urlParameters", urlParameters);
     result.put("url", url);
@@ -98,12 +93,10 @@ public class Utils {
     result.put("reasonPhrase", response.reasonPhrase());
     result.put("toolSource", source);
 
-
     return result;
   }
 
   public static boolean checkFileExists(String path) {
-
     if (path == null || path.isEmpty()) {
       return false;
     }
@@ -114,39 +107,32 @@ public class Utils {
   }
 
   public static List<HttpHeader> listToHttpHeaders(List<String> headersList) {
-    List<HttpHeader> headers = new ArrayList<HttpHeader>();
+    List<HttpHeader> headers = new ArrayList<>();
 
     if (headersList == null || headersList.isEmpty()) {
       return  headers;
     }
 
-    for (String h : headersList) {
-      headers.add(HttpHeader.httpHeader(h));
-    }
-
+    headersList.forEach(h -> headers.add(HttpHeader.httpHeader(h)));
     return headers;
   }
 
   public static List<HttpParameter> listToUrlParams(
       List<HashMap<String, String>> urlParametersList) {
-    List<HttpParameter> urlParameters = new ArrayList<HttpParameter>();
+    List<HttpParameter> urlParameters = new ArrayList<>();
 
     if (urlParametersList == null || urlParametersList.isEmpty()) {
       return  urlParameters;
     }
 
-    for (HashMap<String, String> param : urlParametersList) {
-      urlParameters.add(
-          HttpParameter.urlParameter(param.get("name"), param.get("value"))
-      );
-    }
+    urlParametersList.forEach(p -> urlParameters.add(
+        HttpParameter.urlParameter(p.get("name"), p.get("value")))
+    );
 
     return urlParameters;
   }
 
-  public static HttpRequest executorToHttpRequest(
-      HttpRequest request, ExecutorOutput output) {
-
+  public static HttpRequest executorToHttpRequest(HttpRequest request, ExecutorOutput output) {
     if (output.error != null && !output.error.isEmpty()) {
       return request
           .withHeader(Constants.STRIPPER_HEADER, Constants.X_STRIPPER_ERROR);
@@ -165,17 +151,15 @@ public class Utils {
       }
     }
 
-    modified = modified.withAddedHeaders(listToHttpHeaders(output.headers));
+    modified = modified.withAddedHeaders(Utils.listToHttpHeaders(output.headers));
 
     return modified
         .withBody(output.body)
-        .withAddedParameters(listToUrlParams(output.urlParameters))
+        .withAddedParameters(Utils.listToUrlParams(output.urlParameters))
         .withHeader(Constants.STRIPPER_HEADER, "true");
   }
 
-  public static HttpResponse executorToHttpResponse(
-      HttpResponse response, ExecutorOutput output) {
-
+  public static HttpResponse executorToHttpResponse(HttpResponse response, ExecutorOutput output) {
     if (output.error != null && !output.error.isEmpty()) {
       return response
           .withAddedHeader(Constants.STRIPPER_HEADER, Constants.X_STRIPPER_ERROR);
@@ -183,14 +167,13 @@ public class Utils {
 
     HttpResponse modified = response
         .withRemovedHeaders(response.headers())
-        .withAddedHeaders(listToHttpHeaders(output.headers))
+        .withAddedHeaders(Utils.listToHttpHeaders(output.headers))
         .withStatusCode(output.statusCode)
         .withReasonPhrase(output.reasonPhrase);
 
     return modified
         .withBody(output.body)
         .withAddedHeader(Constants.STRIPPER_HEADER, "true");
-
   }
 
   public static String removeQueryFromUrl(String url) {
@@ -202,21 +185,17 @@ public class Utils {
       return null;
     }
 
-    String globalPython = persistence.preferences().getString(
-        Constants.GLOBAL_PYTHON_PATH_KEY);
-    String globalNode = persistence.preferences().getString(
-        Constants.GLOBAL_NODE_PATH_KEY);
+    String globalPython = persistence.preferences().getString(Constants.GLOBAL_PYTHON_PATH_KEY);
+    String globalNode = persistence.preferences().getString(Constants.GLOBAL_NODE_PATH_KEY);
 
-    String nodePath = persistence.extensionData().getString(
-        Constants.PROJECT_NODE_PATH_KEY);
-    String pythonPath = persistence.extensionData().getString(
-        Constants.PROJECT_PYTHON_PATH_KEY);
+    String nodePath = persistence.extensionData().getString(Constants.PROJECT_NODE_PATH_KEY);
+    String pythonPath = persistence.extensionData().getString(Constants.PROJECT_PYTHON_PATH_KEY);
 
-    if (!checkFileExists(pythonPath)) {
+    if (!Utils.checkFileExists(pythonPath)) {
       pythonPath = globalPython;
     }
 
-    if (!checkFileExists(nodePath)) {
+    if (!Utils.checkFileExists(nodePath)) {
       nodePath = globalNode;
     }
 
@@ -234,22 +213,15 @@ public class Utils {
     return null;
   }
 
-  public static HashMap<String, PersistedList<String>> loadScope(
-      PersistedObject extensionData
-  ) {
+  public static HashMap<String, PersistedList<String>> loadScope(PersistedObject extensionData) {
     HashMap<String, PersistedList<String>> output = new HashMap<>();
 
-    PersistedList<String> stripperScope =
-        extensionData.getStringList(
-            Constants.STRIPPER_SCOPE_LIST_KEY);
+    PersistedList<String> stripperScope = extensionData.getStringList(Constants.STRIPPER_SCOPE_LIST_KEY);
 
-    PersistedList<String> stripperBlackList =
-        extensionData.getStringList(
-            Constants.STRIPPER_BLACK_LIST_KEY);
+    PersistedList<String> stripperBlackList = extensionData.getStringList(Constants.STRIPPER_BLACK_LIST_KEY);
 
     PersistedList<String> stripperForceIntercept =
-        extensionData.getStringList(
-            Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY);
+        extensionData.getStringList(Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY);
 
     if (stripperScope == null) {
       stripperScope = PersistedList.persistedStringList();
@@ -285,7 +257,7 @@ public class Utils {
           return true;
         }
       } catch (Exception e) {
-        System.out.println(e);
+        return false;
       }
     }
     return false;

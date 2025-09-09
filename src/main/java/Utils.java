@@ -9,6 +9,7 @@ import burp.api.montoya.persistence.PersistedList;
 import burp.api.montoya.persistence.PersistedObject;
 import burp.api.montoya.persistence.Persistence;
 import com.google.gson.Gson;
+import models.ExecutorOutput;
 
 import java.awt.*;
 import java.io.File;

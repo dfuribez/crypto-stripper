@@ -5,6 +5,7 @@ import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.ui.editor.EditorOptions;
 import burp.api.montoya.ui.editor.HttpRequestEditor;
 import burp.api.montoya.ui.editor.HttpResponseEditor;
+import models.ExecutorOutput;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

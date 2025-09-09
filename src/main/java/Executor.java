@@ -2,6 +2,7 @@ import burp.api.montoya.MontoyaApi;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import models.ExecutorOutput;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

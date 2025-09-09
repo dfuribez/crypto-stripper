@@ -9,6 +9,7 @@ import burp.api.montoya.ui.contextmenu.ContextMenuItemsProvider;
 import burp.api.montoya.ui.contextmenu.InvocationType;
 import burp.api.montoya.ui.contextmenu.MessageEditorHttpRequestResponse;
 import com.google.gson.*;
+import models.ExecutorOutput;
 
 import javax.swing.*;
 import java.awt.*;

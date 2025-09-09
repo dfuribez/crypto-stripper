@@ -1,3 +1,5 @@
+package models;
+
 public class JsonSettings {
   public boolean enableRequest;
   public boolean enableResponse;

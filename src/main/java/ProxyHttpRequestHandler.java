@@ -1,6 +1,3 @@
-import static burp.api.montoya.proxy.http.ProxyRequestReceivedAction.continueWith;
-import static burp.api.montoya.proxy.http.ProxyRequestReceivedAction.intercept;
-
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.Annotations;
 import burp.api.montoya.core.HighlightColor;
@@ -15,6 +12,8 @@ import burp.api.montoya.proxy.http.ProxyRequestHandler;
 import burp.api.montoya.proxy.http.ProxyRequestReceivedAction;
 import burp.api.montoya.proxy.http.ProxyRequestToBeSentAction;
 import models.ExecutorOutput;
+
+import static burp.api.montoya.proxy.http.ProxyRequestReceivedAction.*;
 
 
 class ProxyHttpRequestHandler implements ProxyRequestHandler {
@@ -68,16 +67,24 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
       HttpRequest decryptedRequest =
           Utils.executorToHttpRequest(interceptedRequest, executorOutput);
 
-      if (isBlacklisted) {
-        return ProxyRequestReceivedAction.doNotIntercept(decryptedRequest, annotations);
+      if (executorOutput.intercept == null) {
+        if (isBlacklisted) {
+          return ProxyRequestReceivedAction.doNotIntercept(decryptedRequest, annotations);
+        }
+
+        if (this.mainTab.forceInterceptInScopeCheckbox.isSelected()
+            || (isUrlInForce && mainTab.enableForceinterceptCheckbox.isSelected())) {
+          return intercept(decryptedRequest, annotations);
+        }
+
+        return continueWith(decryptedRequest, annotations);
       }
 
-      if (this.mainTab.forceInterceptInScopeCheckbox.isSelected()
-          || (isUrlInForce && mainTab.enableForceinterceptCheckbox.isSelected())) {
+      if (executorOutput.intercept) {
         return intercept(decryptedRequest, annotations);
+      } else {
+        return doNotIntercept(decryptedRequest, annotations);
       }
-
-      return continueWith(decryptedRequest, annotations);
     }
 
     if (isUrlInScope) {

@@ -23,4 +23,5 @@ public class ExecutorOutput {
   public short version;
 
   public String eventLog;
+  public Boolean intercept;
 }

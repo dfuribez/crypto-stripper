@@ -50,6 +50,6 @@ This process is automatic and transparent for the pentester so tools like burp's
 To understand a little better how to play with the extension, a playground is available
 
 - Bypassing asymmetric encryption
-- Bypassing signature verification
+- [Bypassing signature verification](https://github.com/dfuribez/crypto-stripper/wiki/Bypassing-signature-verification)
 - Bypassing symmetric encryption
 - Using automatic tools

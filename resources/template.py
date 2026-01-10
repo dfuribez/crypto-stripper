@@ -20,13 +20,14 @@ def decrypt(body, headers, url_parameters, http_method, host, port, secure, path
     # implement your code here
     print("only print to stderr to debug", file=sys.stderr)
     print("the use of print() will cause the process to fail", file=sys.stderr)
-    event_log = ""
 
-    return body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase, event_log
+    event_log = ""
+    intercept = False  # null: follow proxy configuration, true: force interception, false: does not intercept
+    return body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase, event_log, intercept
 
 
 # DON'T MODIFY THIS
-def print_json(body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase, event_log=None):
+def print_json(body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase, event_log=None, intercept=None):
     print(
         base64.b64encode(
             json.dumps({
@@ -41,7 +42,8 @@ def print_json(body, headers, url_parameters, http_method, host, port, secure, p
                 "port": port,
                 "secure": secure,
                 "version": 3,
-                "eventLog": event_log
+                "eventLog": event_log,
+                "intercept": intercept
                 }
             ).encode("utf8")
         ).decode()

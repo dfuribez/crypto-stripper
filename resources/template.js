@@ -11,7 +11,8 @@ async function decrypt(body, headers, urlParameters, httpMethod, host, port, sec
   console.error("the use of console.log will cause the process to fail")
 
   eventLog = ""
-  return [body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, eventLog]
+  intercept = null // null: follow proxy configuration, true: force interception, false: does not intercept
+  return [body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, eventLog, intercept]
 }
 
 
@@ -21,13 +22,13 @@ async function encrypt(body, headers, urlParameters, httpMethod, host, port, sec
   console.error("only use console.error to debug")
   console.error("the use of console.log will cause the process to fail")
 
-  eventLog = ""  
+  eventLog = ""
   return [body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, eventLog];
 }
 
 
 // DON'T TOUCH THIS
-function printJSON(body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, eventLog=null) {
+function printJSON(body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, eventLog=null, intercept=null) {
   console.log(
     Buffer.from(
       JSON.stringify(
@@ -43,7 +44,8 @@ function printJSON(body, headers, urlParameters, httpMethod, host, port, secure,
           host: host,
           port: port,
           secure: secure,
-          eventLog: eventLog
+          eventLog: eventLog,
+          intercept: intercept
         }
       )
     ).toString("base64")

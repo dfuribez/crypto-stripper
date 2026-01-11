@@ -8,7 +8,7 @@
 It is intended as a general-purpose solution, capable of operating across a broad range of encryption implementations, rather than being constrained to specific schemes or narrowly defined use cases. For example:
 
 
-- [Symmetric encryption with a randomly generated key](https://github.com/dfuribez/crypto-stripper/wiki/Bypassing-symmetric-encryption).
+- [Symmetric encryption with randomly generated keys](https://github.com/dfuribez/crypto-stripper/wiki/Bypassing-symmetric-encryption).
 - Asymmetric encryption, regardless of whether the keys are hardcoded or dynamically generated and exchanged via separate requests.
 - [Bypassing signature verification mechanisms](https://github.com/dfuribez/crypto-stripper/wiki/Bypassing-signature-verification)
 - Enables seamless integration with external tools such as SQLMap, ffuf, and similar automated testing frameworks.
@@ -54,5 +54,5 @@ To understand a little better how to play with the extension, a playground is av
 - Bypassing asymmetric encryption
 - [Bypassing signature verification](https://github.com/dfuribez/crypto-stripper/wiki/Bypassing-signature-verification)
 - [Bypassing symmetric encryption](https://github.com/dfuribez/crypto-stripper/wiki/Bypassing-symmetric-encryption)
-- Using automatic tools
+- [Using automatic and external tools](https://github.com/dfuribez/crypto-stripper/wiki/Using-automatic-and-external-tools)
 - [Bypassing client-side validations](https://github.com/dfuribez/crypto-stripper/wiki/Bypassing-client-side-validations)

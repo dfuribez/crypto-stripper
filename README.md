@@ -9,9 +9,9 @@ It is intended as a general-purpose solution, capable of operating across a broa
 
 
 - [Symmetric encryption with randomly generated keys](https://github.com/dfuribez/crypto-stripper/wiki/Bypassing-symmetric-encryption).
-- Asymmetric encryption, regardless of whether the keys are hardcoded or dynamically generated and exchanged via separate requests.
+- [Asymmetric encryption](https://github.com/dfuribez/crypto-stripper/wiki/Bypassing-asymmetric-encryption), regardless of whether the keys are hardcoded or dynamically generated and exchanged via separate requests.
 - [Bypassing signature verification mechanisms](https://github.com/dfuribez/crypto-stripper/wiki/Bypassing-signature-verification)
-- Enables seamless integration with external tools such as SQLMap, ffuf, and similar automated testing frameworks.
+- Enables [seamless integration with external tools](https://github.com/dfuribez/crypto-stripper/wiki/Using-automatic-and-external-tools) such as SQLMap, ffuf, and similar automated testing frameworks.
 - All of the above, and more.
 
 The extension does not perform any encryption or decryption on its own; instead, it relies on a pentester-provided script that implements the required transformation logic. The script receives the complete request or response and returns the transformed output.
@@ -51,7 +51,7 @@ flowchart TB
 # Examples
 To understand a little better how to play with the extension, a playground is available
 
-- Bypassing asymmetric encryption
+- [Bypassing asymmetric encryption](https://github.com/dfuribez/crypto-stripper/wiki/Bypassing-asymmetric-encryption)
 - [Bypassing signature verification](https://github.com/dfuribez/crypto-stripper/wiki/Bypassing-signature-verification)
 - [Bypassing symmetric encryption](https://github.com/dfuribez/crypto-stripper/wiki/Bypassing-symmetric-encryption)
 - [Using automatic and external tools](https://github.com/dfuribez/crypto-stripper/wiki/Using-automatic-and-external-tools)

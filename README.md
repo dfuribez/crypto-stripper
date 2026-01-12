@@ -56,3 +56,24 @@ To understand a little better how to play with the extension, a playground is av
 - [Bypassing symmetric encryption](https://github.com/dfuribez/crypto-stripper/wiki/Bypassing-symmetric-encryption)
 - [Using automatic and external tools](https://github.com/dfuribez/crypto-stripper/wiki/Using-automatic-and-external-tools)
 - [Bypassing client-side validations](https://github.com/dfuribez/crypto-stripper/wiki/Bypassing-client-side-validations)
+
+
+# Other uses
+
+## Request Highlighting
+Crypto Stripper can also be used along with the Firefox extension ProxyContain [[Firefox]](https://addons.mozilla.org/en-US/firefox/addon/proxycontain/) [[Source code]](https://github.com/dfuribez/proxycontain) to highlight the requests coming from a specific container.
+
+<p align="center">
+<img src="https://github.com/user-attachments/assets/29db1865-731a-48db-8fa4-ee12a47b5795" />
+</p>
+
+Each color represents a request incoming from a specific container, making it easier to pentest multi-session applications.
+
+
+## Insert payload
+
+The Insert Payload feature provides a window that allows users to input either a file or a string of a specified length—randomized or fixed. The resulting output can be encoded or left in plain form. To open the window, right-click where you want to insert the payload and navigate to Extensions → Crypto Stripper → Insert Payload.
+
+<p align="center">
+<img src="https://github.com/user-attachments/assets/086ee62f-bf17-4014-b9e4-cc3eebdac566" />
+</p>

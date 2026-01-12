@@ -41,7 +41,7 @@ def print_json(body, headers, url_parameters, http_method, host, port, secure, p
                 "host": host,
                 "port": port,
                 "secure": secure,
-                "version": 3,
+                "version": 4,
                 "eventLog": event_log,
                 "intercept": intercept
                 }

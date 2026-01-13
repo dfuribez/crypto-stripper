@@ -36,15 +36,15 @@ flowchart TB
 ```
 
 >[!IMPORTANT]
->\* To allow for even more granularity, Crypto Stripper is not triggered on every request or response, even if it falls within the Burp Suite scope. In real-world scenarios, not all application requests are encrypted, nor are they necessarily encrypted or signed using the same method across all endpoints. <br> <br> To address this, Crypto Stripper implements its own scoping mechanism. This scope can be defined on a per-endpoint basis or through the use of regular expressions. [Read more]()
+>\* To allow for even more granularity, Crypto Stripper is not triggered on every request or response, even if it falls within the Burp Suite scope. In real-world scenarios, not all application requests are encrypted, nor are they necessarily encrypted or signed using the same method across all endpoints. <br> <br> To address this, Crypto Stripper implements its own scoping mechanism. This scope can be defined on a per-endpoint basis or through the use of regular expressions. [Read more](https://github.com/dfuribez/crypto-stripper/wiki/Configuration#adding-endpoints-to-the-scope)
 
 
 # How to start?
 1. Download and install the [latest available release](https://github.com/dfuribez/crypto-stripper/releases).
 2. [Set up the core extension settings](https://github.com/dfuribez/crypto-stripper/wiki/Configuration).
-3. Write your response/request scripts.
-4. Include the target endpoint in the Stripper scope.
-5. Test that the scripts work as intended
+3. [Write your response/request scripts.](https://github.com/dfuribez/crypto-stripper/wiki/Stripper-scripts)
+4. [Include the target endpoint in the Stripper scope.](https://github.com/dfuribez/crypto-stripper/wiki/Configuration#adding-endpoints-to-the-scope)
+5. [Test that the scripts work as intended.](https://github.com/dfuribez/crypto-stripper/wiki/Debugging)
 6. Have fun ;-)
 
 

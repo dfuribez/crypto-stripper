@@ -111,7 +111,7 @@ public class MainTab {
       FileNameExtensionFilter filter = new FileNameExtensionFilter(
           "Python, JavaScript files",
           "py", "js");
-      String path = openChooser(filter, true);
+      String path = openChooser("Request script", filter, true);
 
       if (path.isBlank()) {
         return;
@@ -126,7 +126,7 @@ public class MainTab {
       FileNameExtensionFilter filter = new FileNameExtensionFilter(
           "Python, JavaScript files",
           "py", "js");
-      String path = openChooser(filter, true);
+      String path = openChooser("Response script", filter, true);
 
       if (path.isBlank()) {
         return;
@@ -137,7 +137,7 @@ public class MainTab {
     });
 
     chooseNodeBinaryButto.addActionListener(actionEvent -> {
-      String path = openChooser(null, true);
+      String path = openChooser("Node binary path", null, true);
 
       if (!path.isEmpty()) {
         api.persistence().extensionData().setString(Constants.PROJECT_NODE_PATH_KEY, path);
@@ -146,7 +146,7 @@ public class MainTab {
     });
 
     choosePythonBinaryButton.addActionListener(actionEvent -> {
-      String path = openChooser(null, true);
+      String path = openChooser("Python binary path", null, true);
 
       if (!path.isEmpty()) {
         api.persistence().extensionData().setString(Constants.PROJECT_PYTHON_PATH_KEY, path);
@@ -166,7 +166,7 @@ public class MainTab {
     deleteSelectedBlacklistButton.addActionListener(actionEvent -> updateScope("blacklist", "delete"));
     deleteSelectedForceButton.addActionListener(actionEvent -> updateScope("force", "delete"));
     chooseNodeGlobalBinaryButton.addActionListener(actionEvent -> {
-      String path = openChooser(null, true);
+      String path = openChooser("Node binary path", null, true);
 
       if (path.isBlank()) {
         return;
@@ -176,7 +176,7 @@ public class MainTab {
       globalNodeLabel.setText(path);
     });
     choosePythonGlobalBinaryButton.addActionListener(actionEvent -> {
-      String path = openChooser(null, true);
+      String path = openChooser("Python binary path",null, true);
 
       if (path.isBlank()) {
         return;
@@ -194,7 +194,7 @@ public class MainTab {
     JSTemplateButton.addActionListener(actionEvent -> {
       FileNameExtensionFilter filter = new FileNameExtensionFilter(
           "JavaScript files", "js");
-      String path = openChooser(filter, false);
+      String path = openChooser("JS template", filter, false);
       if (path.isBlank()) {
         return;
       }
@@ -203,7 +203,7 @@ public class MainTab {
     pythonTemplateButton.addActionListener(actionEvent -> {
       FileNameExtensionFilter filter = new FileNameExtensionFilter(
           "Python files", "py");
-      String path = openChooser(filter, false);
+      String path = openChooser("Python template", filter, false);
       if (path.isBlank()) {
         return;
       }
@@ -220,8 +220,10 @@ public class MainTab {
 
   private void importSettings() {
     String path = openChooser(
+        "Import JSON settings",
         new FileNameExtensionFilter("JSON, configuration files", "json"),
-        true);
+        true
+    );
 
     if (path.isBlank()) {
       return;
@@ -278,7 +280,7 @@ public class MainTab {
     FileNameExtensionFilter filter =
         new FileNameExtensionFilter("JSON, configuration files", "json");
 
-    String path = openChooser(filter, false);
+    String path = openChooser("Export JSON settings", filter, false);
     try (Writer writer = new FileWriter(path, StandardCharsets.UTF_8)) {
       Gson gson = new GsonBuilder().setPrettyPrinting().create();
       gson.toJson(settings, writer);
@@ -287,7 +289,8 @@ public class MainTab {
     }
   }
 
-  private String openChooser(FileNameExtensionFilter filter, boolean isOpenDialog) {
+  private String openChooser(String title, FileNameExtensionFilter filter, boolean isOpenDialog) {
+    fileChooser.setDialogTitle(title);
     fileChooser.setFileFilter(filter);
 
     int response;

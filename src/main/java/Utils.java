@@ -327,7 +327,6 @@ public class Utils {
 
   public static void setIssue(MontoyaApi montoyaApi, Map<String, String> issue, String url, HttpRequest request, HttpResponse response) {
     try {
-      montoyaApi.logging().logToOutput(issue.get("name"));
       montoyaApi.siteMap().add(AuditIssue.auditIssue(
           issue.get("name"),
           issue.get("detail"),

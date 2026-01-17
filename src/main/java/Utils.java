@@ -1,5 +1,6 @@
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.http.message.HttpHeader;
+import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.HttpParameterType;
 import burp.api.montoya.http.message.params.ParsedHttpParameter;
@@ -8,6 +9,9 @@ import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.persistence.PersistedList;
 import burp.api.montoya.persistence.PersistedObject;
 import burp.api.montoya.persistence.Persistence;
+import burp.api.montoya.scanner.audit.issues.AuditIssue;
+import burp.api.montoya.scanner.audit.issues.AuditIssueConfidence;
+import burp.api.montoya.scanner.audit.issues.AuditIssueSeverity;
 import com.google.gson.Gson;
 import models.ExecutorOutput;
 
@@ -321,4 +325,24 @@ public class Utils {
     }
   }
 
+  public static void setIssue(MontoyaApi montoyaApi, Map<String, String> issue, String url, HttpRequest request, HttpResponse response) {
+    try {
+      montoyaApi.logging().logToOutput(issue.get("name"));
+      montoyaApi.siteMap().add(AuditIssue.auditIssue(
+          issue.get("name"),
+          issue.get("detail"),
+          issue.get("remediation"),
+          url,
+          AuditIssueSeverity.INFORMATION,
+          AuditIssueConfidence.CERTAIN,
+          issue.get("background"),
+          issue.get("remediationBackground"),
+          AuditIssueSeverity.INFORMATION,
+          HttpRequestResponse.httpRequestResponse(request, response)
+      ));
+    } catch (Exception e) {
+      montoyaApi.logging().logToError("Error setting issue", e);
+    }
+
+  }
 }

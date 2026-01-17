@@ -47,6 +47,10 @@ class MyHttpHandler implements HttpHandler {
       ExecutorOutput executorOutput = Executor.execute(
           api, "encrypt", "request", preparedToExecute);
 
+      if (executorOutput.issue != null) {
+        Utils.setIssue(api, executorOutput.issue, url, requestToBeSent, HttpResponse.httpResponse());
+      }
+
       return continueWith(
           Utils.executorToHttpRequest(modifiedRequest, executorOutput)
               .withRemovedHeader(Constants.STRIPPER_HEADER));
@@ -80,6 +84,10 @@ class MyHttpHandler implements HttpHandler {
 
       HttpResponse decryptedResponse =
           Utils.executorToHttpResponse(responseReceived, executorOutput);
+
+      if (executorOutput.issue != null) {
+        Utils.setIssue(api, executorOutput.issue, url, responseReceived.initiatingRequest(), responseReceived);
+      }
 
       if (responseReceived.toolSource().isFromTool(ToolType.PROXY)) {
           return continueWith(decryptedResponse);

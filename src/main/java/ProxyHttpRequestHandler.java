@@ -2,6 +2,7 @@ import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.Annotations;
 import burp.api.montoya.core.HighlightColor;
 import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.logging.Logging;
 
 import java.util.HashMap;
@@ -66,6 +67,10 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
 
       HttpRequest decryptedRequest =
           Utils.executorToHttpRequest(interceptedRequest, executorOutput);
+
+      if (executorOutput.issue != null) {
+        Utils.setIssue(api, executorOutput.issue, url, interceptedRequest, HttpResponse.httpResponse());
+      }
 
       if (executorOutput.intercept == null) {
         if (isBlacklisted) {

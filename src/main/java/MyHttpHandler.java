@@ -57,7 +57,7 @@ class MyHttpHandler implements HttpHandler {
 
       if (executorOutput.annotation != null) {
         annotations = Utils.setAnnotation(
-            annotations,
+            annotations.notes(),
             executorOutput.annotation.get("color"),
             executorOutput.annotation.get("note")
         );
@@ -108,7 +108,7 @@ class MyHttpHandler implements HttpHandler {
 
       if (executorOutput.annotation != null) {
         annotations = Utils.setAnnotation(
-            annotations,
+            annotations.notes(),
             executorOutput.annotation.get("color"),
             executorOutput.annotation.get("note")
         );

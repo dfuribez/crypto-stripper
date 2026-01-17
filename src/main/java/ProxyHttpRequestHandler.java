@@ -42,13 +42,13 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
         .withMethod(interceptedRequest.method());
 
     if (interceptedRequest.hasHeader(Constants.FIREPROXY_HEADER)) {
-      String[] value = interceptedRequest.headerValue(
-          Constants.FIREPROXY_HEADER).split(",", 2);
+      String[] value = interceptedRequest
+          .headerValue(Constants.FIREPROXY_HEADER)
+          .split(",", 2);
 
       if (value.length == 2) {
-        annotations = annotations
-            .withHighlightColor(HighlightColor.valueOf(value[0].toUpperCase()))
-            .withNotes(value[1]);
+        annotations.setNotes(value[1]);
+        annotations.setHighlightColor(HighlightColor.valueOf(value[0].toUpperCase()));
       }
     }
 
@@ -70,6 +70,14 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
 
       if (executorOutput.issue != null) {
         Utils.setIssue(api, executorOutput.issue, url, interceptedRequest, HttpResponse.httpResponse());
+      }
+
+      if (executorOutput.annotation != null) {
+        annotations = Utils.setAnnotation(
+            annotations,
+            executorOutput.annotation.get("color"),
+            executorOutput.annotation.get("note")
+        );
       }
 
       if (executorOutput.intercept == null) {

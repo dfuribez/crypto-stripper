@@ -4,6 +4,7 @@
 let fs = require("fs");
 
 let issue = null
+let annotation = null
 
 // Function that performs the decryption
 // Learn more: https://github.com/dfuribez/crypto-stripper/wiki/Stripper-scripts
@@ -12,6 +13,7 @@ async function decrypt(body, headers, urlParameters, httpMethod, host, port, sec
   console.error("the use of console.log will cause the process to fail")
 
   // addIssue("name", "details", "remediation", "background", "remediation background")
+  //setAnnotation(color.NONE, "Add your annotations here")
   eventLog = ""
   intercept = null // null: follow proxy configuration, true: force interception, false: does not intercept
 
@@ -26,18 +28,12 @@ async function encrypt(body, headers, urlParameters, httpMethod, host, port, sec
   console.error("the use of console.log will cause the process to fail")
 
   // addIssue("name", "details", "remediation", "background", "remediation background")
+  //setAnnotation(color.GREEN, "Add your annotations here")
   eventLog = ""
 
   return [body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, eventLog];
 }
 
-function addIssue(name, detail, remediation, background, remediationBackground){
-  issue.name = name
-  issue.detail = detail
-  issue.remediation = remediation
-  issue.background = background
-  issue.remediationBackground = remediationBackground
-}
 
 
 // DON'T TOUCH THIS
@@ -59,11 +55,40 @@ function printJSON(body, headers, urlParameters, httpMethod, host, port, secure,
           secure: secure,
           eventLog: eventLog,
           intercept: intercept,
-          issue: issue
+          issue: issue,
+          annotation: annotation
         }
       )
     ).toString("base64")
   )
+}
+
+const color = {
+  BLUE: "BLUE",
+  CYAN: "CYAN",
+  GRAY: "GRAY",
+  GREEN: "GREEN",
+  MAGENTA: "MAGENTA",
+  NONE: "NONE",
+  ORANGE: "ORANGE",
+  PINK: "PINK",
+  RED: "RED",
+  YELLOW: "YELLOW"
+}
+
+function addIssue(name, detail, remediation, background, remediationBackground){
+  issue = {}
+  issue.name = name
+  issue.detail = detail
+  issue.remediation = remediation
+  issue.background = background
+  issue.remediationBackground = remediationBackground
+}
+
+function setAnnotation(color, note) {
+  annotation = {}
+  annotation.color = color
+  annotation.note = note
 }
 
 async function main() {

@@ -1,5 +1,6 @@
 
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.Annotations;
 import burp.api.montoya.core.ToolType;
 import burp.api.montoya.http.handler.*;
 import burp.api.montoya.http.message.requests.HttpRequest;
@@ -25,13 +26,16 @@ class MyHttpHandler implements HttpHandler {
 
   @Override
   public RequestToBeSentAction handleHttpRequestToBeSent(
-      HttpRequestToBeSent requestToBeSent) {
+      HttpRequestToBeSent requestToBeSent
+  ) {
 
     HttpRequest modifiedRequest = requestToBeSent
         .withRemovedHeader(Constants.FIREPROXY_HEADER);
 
+    Annotations annotations = requestToBeSent.annotations();
+
     if (requestToBeSent.method().equalsIgnoreCase("options")) {
-      return continueWith(modifiedRequest);
+      return continueWith(modifiedRequest, annotations);
     }
 
     String url = Utils.removeQueryFromUrl(requestToBeSent.url());
@@ -51,17 +55,28 @@ class MyHttpHandler implements HttpHandler {
         Utils.setIssue(api, executorOutput.issue, url, requestToBeSent, HttpResponse.httpResponse());
       }
 
+      if (executorOutput.annotation != null) {
+        annotations = Utils.setAnnotation(
+            annotations,
+            executorOutput.annotation.get("color"),
+            executorOutput.annotation.get("note")
+        );
+      }
+
       return continueWith(
           Utils.executorToHttpRequest(modifiedRequest, executorOutput)
-              .withRemovedHeader(Constants.STRIPPER_HEADER));
+              .withRemovedHeader(Constants.STRIPPER_HEADER),
+          annotations
+      );
     }
 
-    return continueWith(modifiedRequest);
+    return continueWith(modifiedRequest, annotations);
   }
 
   @Override
   public ResponseReceivedAction handleHttpResponseReceived(
-      HttpResponseReceived responseReceived) {
+      HttpResponseReceived responseReceived
+  ) {
     String url = Utils.removeQueryFromUrl(
         responseReceived.initiatingRequest().url());
     HashMap<String, PersistedList<String>> scope =
@@ -69,6 +84,8 @@ class MyHttpHandler implements HttpHandler {
 
     HttpResponse response = responseReceived
         .withStatusCode(responseReceived.statusCode());
+
+    Annotations annotations = responseReceived.annotations();
 
     boolean isUrlInScope = Utils.isUrlInScope(url, scope.get("scope"));
 
@@ -89,11 +106,19 @@ class MyHttpHandler implements HttpHandler {
         Utils.setIssue(api, executorOutput.issue, url, responseReceived.initiatingRequest(), responseReceived);
       }
 
-      if (responseReceived.toolSource().isFromTool(ToolType.PROXY)) {
-          return continueWith(decryptedResponse);
+      if (executorOutput.annotation != null) {
+        annotations = Utils.setAnnotation(
+            annotations,
+            executorOutput.annotation.get("color"),
+            executorOutput.annotation.get("note")
+        );
       }
 
-      return continueWith(decryptedResponse);
+      if (responseReceived.toolSource().isFromTool(ToolType.PROXY)) {
+          return continueWith(decryptedResponse, annotations);
+      }
+
+      return continueWith(decryptedResponse, annotations);
     }
 
     if (isUrlInScope) {
@@ -101,6 +126,6 @@ class MyHttpHandler implements HttpHandler {
           .withAddedHeader(Constants.STRIPPER_HEADER, Constants.X_STRIPPER_RESPONSE_NOT_SELECTED);
     }
 
-    return continueWith(response);
+    return continueWith(response, annotations);
   }
 }

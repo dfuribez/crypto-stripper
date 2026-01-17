@@ -1,4 +1,6 @@
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.Annotations;
+import burp.api.montoya.core.HighlightColor;
 import burp.api.montoya.http.message.HttpHeader;
 import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.http.message.params.HttpParameter;
@@ -325,9 +327,11 @@ public class Utils {
     }
   }
 
-  public static void setIssue(MontoyaApi montoyaApi, Map<String, String> issue, String url, HttpRequest request, HttpResponse response) {
+  public static void setIssue(MontoyaApi montoyaApi, Map<String, String> issue,
+                              String url, HttpRequest request, HttpResponse response
+  ) {
     try {
-      montoyaApi.siteMap().add(AuditIssue.auditIssue(
+        montoyaApi.siteMap().add(AuditIssue.auditIssue(
           issue.get("name"),
           issue.get("detail"),
           issue.get("remediation"),
@@ -342,6 +346,28 @@ public class Utils {
     } catch (Exception e) {
       montoyaApi.logging().logToError("Error setting issue", e);
     }
-
   }
+
+  public static Annotations setAnnotation(
+      Annotations annotation, String color, String note
+  ) {
+    String currentNote = annotation.notes();
+    currentNote = (currentNote == null || currentNote.isBlank())
+        ? ""
+        : currentNote;
+
+    note = (note == null || note.isBlank()) ? "" : ", " + note;
+
+    if (!(color == null
+        || color.isEmpty()
+        || color.equalsIgnoreCase("NONE")
+    )) {
+      annotation = annotation
+          .withHighlightColor(HighlightColor.highlightColor(color.toUpperCase())
+      );
+    }
+
+    return annotation.withNotes(currentNote + note);
+  }
+
 }

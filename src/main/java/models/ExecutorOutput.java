@@ -25,4 +25,5 @@ public class ExecutorOutput {
   public String eventLog;
   public Boolean intercept;
   public HashMap<String, String> issue;
+  public HashMap<String, String> annotation;
 }

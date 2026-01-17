@@ -41,14 +41,26 @@ def print_json(body, headers, url_parameters, http_method, host, port, secure, p
                 "host": host,
                 "port": port,
                 "secure": secure,
-                "version": 4,
+                "version": 5,
                 "eventLog": event_log,
-                "intercept": intercept
+                "intercept": intercept,
+                "issue": issue
                 }
             ).encode("utf8")
         ).decode()
     )
 
+def addIssue(name, detail, remediation, background, remediationBackground):
+    global issue
+    issue = {}
+    issue["name"] = name
+    issue["detail"] = detail
+    issue["remediation"] = remediation
+    issue["background"] = background
+    issue["remediationBackground"] = remediationBackground
+
+
+issue = None
 
 with open(sys.argv[1]) as file:
     json_content = json.load(file)

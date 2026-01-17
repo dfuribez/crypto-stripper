@@ -3,6 +3,7 @@
 
 let fs = require("fs");
 
+let issue = null
 
 // Function that performs the decryption
 // Learn more: https://github.com/dfuribez/crypto-stripper/wiki/Stripper-scripts
@@ -10,8 +11,10 @@ async function decrypt(body, headers, urlParameters, httpMethod, host, port, sec
   console.error("only use console.error to debug")
   console.error("the use of console.log will cause the process to fail")
 
+  // addIssue("name", "details", "remediation", "background", "remediation background")
   eventLog = ""
   intercept = null // null: follow proxy configuration, true: force interception, false: does not intercept
+
   return [body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, eventLog, intercept]
 }
 
@@ -22,8 +25,18 @@ async function encrypt(body, headers, urlParameters, httpMethod, host, port, sec
   console.error("only use console.error to debug")
   console.error("the use of console.log will cause the process to fail")
 
+  // addIssue("name", "details", "remediation", "background", "remediation background")
   eventLog = ""
+
   return [body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, eventLog];
+}
+
+function addIssue(name, detail, remediation, background, remediationBackground){
+  issue.name = name
+  issue.detail = detail
+  issue.remediation = remediation
+  issue.background = background
+  issue.remediationBackground = remediationBackground
 }
 
 
@@ -40,12 +53,13 @@ function printJSON(body, headers, urlParameters, httpMethod, host, port, secure,
           reasonPhrase: reasonPhrase,
           httpMethod: httpMethod,
           path: path,
-          version: 4,
+          version: 5,
           host: host,
           port: port,
           secure: secure,
           eventLog: eventLog,
-          intercept: intercept
+          intercept: intercept,
+          issue: issue
         }
       )
     ).toString("base64")

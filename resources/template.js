@@ -3,8 +3,6 @@
 
 let fs = require("fs");
 
-let issue = null
-let annotation = null
 
 // Function that performs the decryption
 // Learn more: https://github.com/dfuribez/crypto-stripper/wiki/Stripper-scripts
@@ -13,7 +11,7 @@ async function decrypt(body, headers, urlParameters, httpMethod, host, port, sec
   console.error("the use of console.log will cause the process to fail")
 
   // addIssue("name", "details", "remediation", "background", "remediation background")
-  //setAnnotation(color.NONE, "Add your annotations here")
+  // setAnnotation(color.NONE, "Add your annotations here")
   eventLog = ""
   intercept = null // null: follow proxy configuration, true: force interception, false: does not intercept
 
@@ -28,7 +26,7 @@ async function encrypt(body, headers, urlParameters, httpMethod, host, port, sec
   console.error("the use of console.log will cause the process to fail")
 
   // addIssue("name", "details", "remediation", "background", "remediation background")
-  //setAnnotation(color.GREEN, "Add your annotations here")
+  // setAnnotation(color.GREEN, "Add your annotations here")
   eventLog = ""
 
   return [body, headers, urlParameters, httpMethod, host, port, secure, path, statusCode, reasonPhrase, eventLog];
@@ -62,6 +60,9 @@ function printJSON(body, headers, urlParameters, httpMethod, host, port, secure,
     ).toString("base64")
   )
 }
+
+let issue = null
+let annotation = null
 
 const color = {
   BLUE: "BLUE",

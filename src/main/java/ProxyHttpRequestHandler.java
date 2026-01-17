@@ -74,7 +74,7 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
 
       if (executorOutput.annotation != null) {
         annotations = Utils.setAnnotation(
-            annotations,
+            annotations.notes(),
             executorOutput.annotation.get("color"),
             executorOutput.annotation.get("note")
         );

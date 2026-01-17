@@ -349,25 +349,26 @@ public class Utils {
   }
 
   public static Annotations setAnnotation(
-      Annotations annotation, String color, String note
+      String currentNote, String color, String note
   ) {
-    String currentNote = annotation.notes();
-    currentNote = (currentNote == null || currentNote.isBlank())
-        ? ""
-        : currentNote;
 
-    note = (note == null || note.isBlank()) ? "" : ", " + note;
+    Annotations annotation = Annotations.annotations();
+
+    currentNote = currentNote == null || currentNote.isBlank() ? "" : currentNote;
+    note = (note == null || note.isBlank()) ? "" : note;
+    String separator = (currentNote.isBlank() || note.isBlank()) ? "" : ", ";
 
     if (!(color == null
         || color.isEmpty()
         || color.equalsIgnoreCase("NONE")
     )) {
-      annotation = annotation
-          .withHighlightColor(HighlightColor.highlightColor(color.toUpperCase())
+      annotation
+          .setHighlightColor(HighlightColor.highlightColor(color.toUpperCase())
       );
     }
 
-    return annotation.withNotes(currentNote + note);
+    annotation.setNotes(currentNote + separator + note);
+    return annotation;
   }
 
 }

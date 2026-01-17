@@ -26,6 +26,7 @@ public class InsertDialog extends JDialog {
   private JPanel filePanel;
   private JButton insertRandomButton;
   private JPanel encodersPanel;
+  private JTabbedPane tabbedPane1;
 
   static byte[] selectedText;
   MontoyaApi montoyaApi;

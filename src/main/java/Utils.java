@@ -163,7 +163,8 @@ public class Utils {
     return modified
         .withBody(output.body)
         .withAddedParameters(Utils.listToUrlParams(output.urlParameters))
-        .withHeader(Constants.STRIPPER_HEADER, "true");
+        .withHeader(Constants.STRIPPER_HEADER, "true")
+        .withUpdatedHeader("Host", output.host);
   }
 
   public static HttpResponse executorToHttpResponse(HttpResponse response, ExecutorOutput output) {

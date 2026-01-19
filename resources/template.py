@@ -12,6 +12,7 @@ def encrypt(body, headers, url_parameters, http_method, host, port, secure, path
     print("the use of print() will cause the process to fail", file=sys.stderr)
 
     event_log = ""
+    # addIssue("name", "details", "remediation", "background", "remediation background")
     # setAnnotation(Color.NONE, "add your annotation here")
 
     return body, headers, url_parameters, http_method, host, port, secure, path, status_code, reason_phrase, event_log
@@ -23,6 +24,7 @@ def decrypt(body, headers, url_parameters, http_method, host, port, secure, path
     print("only print to stderr to debug", file=sys.stderr)
     print("the use of print() will cause the process to fail", file=sys.stderr)
 
+    # addIssue("name", "details", "remediation", "background", "remediation background")
     # setAnnotation(Color.NONE, "add your annotation here")
     event_log = ""
     intercept = False  # null: follow proxy configuration, true: force interception, false: does not intercept

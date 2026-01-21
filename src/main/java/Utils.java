@@ -1,5 +1,6 @@
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.Annotations;
+import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.core.HighlightColor;
 import burp.api.montoya.http.message.HttpHeader;
 import burp.api.montoya.http.message.HttpRequestResponse;
@@ -161,7 +162,7 @@ public class Utils {
     modified = modified.withAddedHeaders(Utils.listToHttpHeaders(output.headers));
 
     return modified
-        .withBody(output.body)
+        .withBody(ByteArray.byteArray(output.body.getBytes(StandardCharsets.UTF_8)))
         .withAddedParameters(Utils.listToUrlParams(output.urlParameters))
         .withHeader(Constants.STRIPPER_HEADER, "true")
         .withUpdatedHeader("Host", output.host);
@@ -180,7 +181,7 @@ public class Utils {
         .withReasonPhrase(output.reasonPhrase);
 
     return modified
-        .withBody(output.body)
+        .withBody(ByteArray.byteArray(output.body.getBytes(StandardCharsets.UTF_8)))
         .withAddedHeader(Constants.STRIPPER_HEADER, "true");
   }
 

@@ -29,7 +29,7 @@ public class Constants {
 
   public static String VERSION = """
       Crypto Stripper by Diego Uribe
-      Version: v0.13-alpha
+      Version: v0.14-alpha
       Github: https://github.com/dfuribez/crypto-stripper
       Examples: https://github.com/dfuribez/crypto-stripper/wiki
       Playground: https://github.com/dfuribez/crypto-sripper-playground

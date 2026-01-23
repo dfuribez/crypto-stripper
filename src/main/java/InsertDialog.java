@@ -1,4 +1,5 @@
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.http.message.params.ParsedHttpParameter;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -8,6 +9,7 @@ import java.awt.event.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Random;
 
 public class InsertDialog extends JDialog {
@@ -27,6 +29,7 @@ public class InsertDialog extends JDialog {
   private JButton insertRandomButton;
   private JPanel encodersPanel;
   private JTabbedPane tabbedPane1;
+  private JComboBox parametersCombo;
 
   static byte[] selectedText;
   MontoyaApi montoyaApi;
@@ -149,7 +152,23 @@ public class InsertDialog extends JDialog {
     return sb.toString();
   }
 
+  public void setParameters(List<ParsedHttpParameter> parameters) {
+    parametersCombo.removeAllItems();
+    parametersCombo.setPrototypeDisplayValue(
+        "REQUEST - SELECTION POINTREQUEST - SELECTION POINTREQUEST - SELECTION "
+    );
+    parametersCombo.addItem("REQUEST - SELECTION POINT");
+    parameters.forEach(p -> {
+      parametersCombo.addItem(p.type().name() + " - " + p.name());
+    });
+  }
+
+  public String getSelectedParameter() {
+    return (String) parametersCombo.getSelectedItem();
+  }
+
   private void onCancel() {
+    selectedText = null;
     dispose();
   }
 }

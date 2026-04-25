@@ -24,5 +24,8 @@ public class Extension implements BurpExtension {
 
     api.proxy().registerRequestHandler(
         new ProxyHttpRequestHandler(api, tab));
+ 
+    api.proxy().registerResponseHandler(
+        new ProxyHttpResponseHandler(api, tab));
   }
 }

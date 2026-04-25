@@ -77,6 +77,11 @@ class MyHttpHandler implements HttpHandler {
   public ResponseReceivedAction handleHttpResponseReceived(
       HttpResponseReceived responseReceived
   ) {
+
+    if (responseReceived.toolSource().isFromTool(ToolType.PROXY)) {
+      return continueWith(responseReceived, responseReceived.annotations());
+    }
+
     String url = Utils.removeQueryFromUrl(
         responseReceived.initiatingRequest().url());
     HashMap<String, PersistedList<String>> scope =

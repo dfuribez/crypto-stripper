@@ -1,5 +1,4 @@
 import burp.api.montoya.MontoyaApi;
-import burp.api.montoya.core.ToolType;
 import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
@@ -28,7 +27,7 @@ public class PreviewTabGUI {
 
   private JTextPane stdErrTextArea = new JTextPane();
 
-  private JTextArea infoTextArea = new JTextArea(5, 20);
+  private JEditorPane infoEditorPane = new JEditorPane();
 
   private JTextField requestIdTextField = new JTextField(4);
 
@@ -53,12 +52,18 @@ public class PreviewTabGUI {
   Style defaultStyle;
   Style errorStyle;
 
+  String scriptPath;
+
 
   PreviewTabGUI(MontoyaApi montoyaApi, boolean isRequest, String toolSource) {
     this.isRequest = isRequest;
     this.api = montoyaApi;
 
     this.toolSource = toolSource;
+
+
+    initialize();
+
 
     stdErrPanel.setBorder(new TitledBorder("stderr:"));
 
@@ -89,29 +94,28 @@ public class PreviewTabGUI {
 
     testEncryptionButton.addActionListener(actionEvent -> execute("encrypt"));
     testDecryptionButton.addActionListener(actionEvent -> execute("decrypt"));
-    openScriptButton.addActionListener(actionEvent -> {
-      String path;
-      if (isRequest) {
-        path = api.persistence().extensionData().getString(Constants.REQUEST_SCRIPT_PATH_KEY);
-      } else {
-        path = api.persistence().extensionData().getString(Constants.RESPONSE_SCRIPT_PATH_KEY);
-      }
-      Utils.openFolder(path);
-    });
+    openScriptButton.addActionListener(actionEvent -> Utils.openFolder(scriptPath));
 
-    initialize();
     setLayout();
 }
 
   private void initialize() {
-    infoTextArea.setEditable(false);
+    infoEditorPane.setEditable(false);
     stdErrTextArea.setEditable(false);
-    stdErrTextArea.setEnabled(false);
-    infoTextArea.setEnabled(false);
+    infoEditorPane.setEnabled(false);
 
     requestIdTextField.setText("-1");
 
     toolCombo.setSelectedItem(toolSource);
+
+    if (isRequest) {
+      scriptPath = api.persistence().extensionData().getString(Constants.REQUEST_SCRIPT_PATH_KEY);
+    } else {
+      scriptPath = api.persistence().extensionData().getString(Constants.RESPONSE_SCRIPT_PATH_KEY);
+    }
+
+    String command = Utils.getCommandFromPath(api.persistence(), scriptPath);
+    infoEditorPane.setText(String.format(Constants.PREVIEW_INFO_TEMPLATE, command, scriptPath));
   }
 
   private void setLayout() {
@@ -121,6 +125,8 @@ public class PreviewTabGUI {
     JPanel left = new JPanel(new MigLayout("insets 0"));
     JPanel right = new JPanel(new MigLayout("insets 0"));
 
+
+    left.add(new JLabel("Edited"), "alignx center, wrap");
     if (isRequest) {
       top.add(requestEditor.uiComponent(), "grow, push");
       left.add(requestTransformed.uiComponent(), "grow, push");
@@ -137,22 +143,33 @@ public class PreviewTabGUI {
     horizontal.setResizeWeight(0.5);
 
     bottom.add(vertical, "grow, push");
+
+    right.add(new JLabel("Output"), "alignx center, wrap");
     right.add(stdErrTextArea, "grow, push");
 
-    mainPanel.add(infoTextArea, "grow, push, wrap");
+
+    mainPanel.add(infoEditorPane, "grow, push, wrap");
+
+    JPanel options = new JPanel(new MigLayout());
+
+    options.add(new JLabel("Tool:"));
+    options.add(toolCombo);
+    options.add(new JLabel("MessageId:"));
+    options.add(requestIdTextField);
+    mainPanel.add(options, "alignx center, wrap");
+
     mainPanel.add(horizontal, "grow, push, wrap");
 
     JPanel buttonsPanel = new JPanel(new MigLayout());
 
-    buttonsPanel.add(new JLabel("Tool:"));
-    buttonsPanel.add(toolCombo);
-    buttonsPanel.add(new JLabel("RequestId:"));
-    buttonsPanel.add(requestIdTextField);
+
+    buttonsPanel.add(testDecryptionButton);
 
     buttonsPanel.add(new JPanel(), "growx, pushx");
 
-    buttonsPanel.add(testDecryptionButton);
     buttonsPanel.add(openScriptButton);
+    buttonsPanel.add(new JPanel(), "growx, pushx");
+
     buttonsPanel.add(testEncryptionButton);
 
     mainPanel.add(buttonsPanel, "growx, pushx");
@@ -167,15 +184,19 @@ private void execute(String action) {
   String source;
 
   updateUi();
+
+  int messageId = Utils.stringToInt(requestIdTextField.getText());
+  String selectedToolSource = (String) toolCombo.getSelectedItem();
+
   if (isRequest) {
     prepared = Utils.prepareRequestForExecutor(
-        requestEditor.getRequest(), -1, toolSource);
+        requestEditor.getRequest(), messageId, selectedToolSource);
     source = "request";
   } else {
     String url =
         Utils.removeQueryFromUrl(requestResponse.request().url());
     prepared = Utils.prepareResponseForExecutor(
-        responseEditor.getResponse(), url, -1, toolSource);
+        responseEditor.getResponse(), url, messageId, selectedToolSource);
     source = "response";
   }
 

@@ -49,4 +49,6 @@ public class Constants {
       """;
 
   public static String[] TOOLS = { "proxy", "repeater", "intruder" };
+
+  public static String PREVIEW_INFO_TEMPLATE = "%s %s";
 }

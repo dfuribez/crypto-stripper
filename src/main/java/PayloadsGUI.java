@@ -20,7 +20,6 @@ public class PayloadsGUI extends JDialog {
   private JButton buttonCancel = new JButton("Cancel");
   private JButton insertRandomButton = new JButton("Random");
   private JButton selectFileButton = new JButton("Select");
-  private JButton insertFileButton = new JButton("Insert file");
 
   private JLabel lenghtLabel = new JLabel("0");
 
@@ -30,7 +29,6 @@ public class PayloadsGUI extends JDialog {
 
   private JTextArea previewTextArea = new JTextArea(5, 20);
 
-  private JRadioButton randomContentRadioButton = new JRadioButton("Random content");
   public JRadioButton base64RadioButton = new JRadioButton("Base 64");
   public JRadioButton URLEncodeRadioButton = new JRadioButton("URL encondign");
   private JRadioButton plainTextRadioButton = new JRadioButton("Plain text");
@@ -38,7 +36,7 @@ public class PayloadsGUI extends JDialog {
   private JRadioButton repeatTimesRadio = new JRadioButton("Times");
   private JRadioButton repeatBytesRadio = new JRadioButton("Bytes");
 
-  private JComboBox parametersCombo = new JComboBox();
+  private JComboBox<String> parametersCombo = new JComboBox<>();
 
   static byte[] selectedText;
   MontoyaApi montoyaApi;
@@ -86,8 +84,6 @@ public class PayloadsGUI extends JDialog {
       }
     });
 
-    insertFileButton.addActionListener(e -> dispose());
-
     selectFileButton.addActionListener(actionEvent -> {
       int response = fileChooser.showOpenDialog(burpMainFrame);
 
@@ -97,6 +93,7 @@ public class PayloadsGUI extends JDialog {
         try {
           PayloadsGUI.selectedText = Files.readAllBytes(Paths.get(path));
           fileTextField.setText(path);
+          textRepeat.setText("");
         } catch (Exception e) {
           montoyaApi.logging().logToError("Could not open file: " + path);
           montoyaApi.logging().logToError(e.toString());
@@ -123,7 +120,6 @@ public class PayloadsGUI extends JDialog {
   }
 
   private void initialize() {
-    insertFileButton.setBackground(Constants.MAIN_BUTTON_BACKGROUND);
     buttonOK.setBackground(Constants.MAIN_BUTTON_BACKGROUND);
 
     textLenght.setText("100");
@@ -138,9 +134,13 @@ public class PayloadsGUI extends JDialog {
     encondings.add(URLEncodeRadioButton);
     encondings.add(plainTextRadioButton);
 
+    plainTextRadioButton.setSelected(true);
+
     ButtonGroup repeat = new ButtonGroup();
     repeat.add(repeatBytesRadio);
     repeat.add(repeatTimesRadio);
+
+    repeatBytesRadio.setSelected(true);
 
   }
 
@@ -157,21 +157,19 @@ public class PayloadsGUI extends JDialog {
     // Characters
     JPanel characters = new JPanel(new MigLayout());
 
-    characters.add(new JLabel("String:"));
-    characters.add(textRepeat, "growx, pushx, span 3");
+    characters.add(new JLabel("Strings:"));
+    characters.add(textRepeat, "growx, pushx, span 2");
     characters.add(lenghtLabel, "wrap, alignx center");
 
     characters.add(new JLabel("Repeat:"));
     characters.add(textLenght, "growx, pushx");
     characters.add(repeatBytesRadio);
-    characters.add(repeatTimesRadio);
-    characters.add(buttonOK, "wrap");
+    characters.add(repeatTimesRadio, "wrap");
 
     characters.add(new JLabel("Preview:"));
     characters.add(previewTextArea, "span, grow, push");
 
     mainPanel.add(characters, "span, growx, pushx, wrap");
-
 
     // --------------
     JPanel separator2 = new JPanel(new MigLayout());
@@ -187,8 +185,6 @@ public class PayloadsGUI extends JDialog {
     files.add(new JLabel("File:"));
     files.add(fileTextField, "growx, pushx");
     files.add(selectFileButton, "sg btn");
-
-    files.add(insertFileButton, "sg btn");
 
 
     mainPanel.add(files, "span, growx, pushx, wrap");
@@ -213,23 +209,28 @@ public class PayloadsGUI extends JDialog {
 
     mainPanel.add(options, "span, pushx, growx, wrap");
 
-
-
     mainPanel.add(new JPanel(), "growx");
     mainPanel.add(buttonCancel);
+    mainPanel.add(buttonOK);
 
+  }
+
+  public void clear() {
+    textRepeat.setText("");
+    fileTextField.setText("");
   }
 
   private void onOK() {
     int length;
     String toRepeat = textRepeat.getText();
 
-    montoyaApi.logging().logToOutput(toRepeat);
-
+    if (fileTextField.getText().length() > 0) {
+      dispose();
+      return;
+    }
 
     try {
       length = Integer.parseInt(textLenght.getText());
-      montoyaApi.logging().logToOutput(textLenght.getText());
     } catch (NumberFormatException e) {
       length = 0;
     }
@@ -247,7 +248,6 @@ public class PayloadsGUI extends JDialog {
       }
 
       selectedText = builder.toString().getBytes(StandardCharsets.UTF_8);
-      montoyaApi.logging().logToOutput(builder.toString());
     }
     dispose();
   }
@@ -263,6 +263,7 @@ public class PayloadsGUI extends JDialog {
   }
 
   public void setParameters(List<ParsedHttpParameter> parameters) {
+    clear();
     parametersCombo.removeAllItems();
     parametersCombo.addItem("REQUEST - SELECTION POINT");
     parameters.forEach(p -> {

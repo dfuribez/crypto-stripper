@@ -47,4 +47,6 @@ public class Constants {
           "protocol": "any"
       }
       """;
+
+  public static String[] TOOLS = { "proxy", "repeater", "intruder" };
 }

@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class MyCustomResponseEditor implements ExtensionProvidedHttpResponseEditor {
   MontoyaApi api;
   EditorCreationContext creationContext;
-  EditorTab editorTab;
+  PreviewTabGUI previewTab;
 
   HttpRequestResponse currentResponse;
 
@@ -20,7 +20,7 @@ public class MyCustomResponseEditor implements ExtensionProvidedHttpResponseEdit
     this.api = api;
     this.creationContext = editorCreationContext;
     String tool = editorCreationContext.toolSource().toolType().toolName().toLowerCase();
-    this.editorTab = new EditorTab(api, false, tool);
+    this.previewTab = new PreviewTabGUI(api, false, tool);
   }
 
   @Override
@@ -30,9 +30,9 @@ public class MyCustomResponseEditor implements ExtensionProvidedHttpResponseEdit
 
   @Override
   public void setRequestResponse(HttpRequestResponse requestResponse) {
-    this.currentResponse = requestResponse;
-    this.editorTab.setRequestResponse(requestResponse);
-    this.editorTab.setContent(requestResponse.response());
+    currentResponse = requestResponse;
+    previewTab.setRequestResponse(requestResponse);
+    previewTab.setContent(requestResponse.response());
   }
 
   @Override
@@ -47,8 +47,8 @@ public class MyCustomResponseEditor implements ExtensionProvidedHttpResponseEdit
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());
     
-    this.currentResponse = requestResponse;
-    this.editorTab.setRequestResponse(requestResponse);
+    currentResponse = requestResponse;
+    previewTab.setRequestResponse(requestResponse);
     return Utils.isUrlInScope(url, scope.get("scope"));
   }
 
@@ -59,7 +59,7 @@ public class MyCustomResponseEditor implements ExtensionProvidedHttpResponseEdit
 
   @Override
   public Component uiComponent() {
-    return this.editorTab.panel1;
+    return previewTab.mainPanel;
   }
 
   @Override

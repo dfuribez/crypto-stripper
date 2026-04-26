@@ -8,11 +8,11 @@ public class Extension implements BurpExtension {
 
     api.extension().setName("Crypto Stripper");
 
-    MainTab tab = new MainTab(api);
+    MainTab2 tab = new MainTab2(api);
 
     api.logging().logToOutput(Constants.VERSION);
 
-    api.userInterface().registerSuiteTab("Stripper", tab.panel1);
+    api.userInterface().registerSuiteTab("Stripper", tab.getMainPanel());
     api.userInterface().registerContextMenuItemsProvider(
         new MyContextMenus(api, tab));
     api.userInterface().registerHttpRequestEditorProvider(

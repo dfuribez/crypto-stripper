@@ -47,6 +47,12 @@ flowchart TB
 5. [Test that the scripts work as intended.](https://github.com/dfuribez/crypto-stripper/wiki/Debugging)
 6. Have fun ;-)
 
+# Build
+```sh
+./gradlew clean shadowJar
+```
+
+The resulting JAR will be located in: `build/libs/` or download the latest realease from [releases](https://github.com/dfuribez/crypto-stripper/releases)
 
 # Examples
 To understand a little better how to play with the extension, a playground is available

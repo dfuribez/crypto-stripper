@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("com.gradleup.shadow") version "9.3.1"
 }
 
 repositories {
@@ -19,7 +20,10 @@ tasks.withType<JavaCompile> {
 }
 
 tasks.jar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from(configurations.runtimeClasspath.get().filter { it.isDirectory })
-    from(configurations.runtimeClasspath.get().filterNot { it.isDirectory }.map { zipTree(it) })
+    enabled = false
+}
+
+tasks.shadowJar {
+    archiveClassifier.set("")
+    mergeServiceFiles()
 }

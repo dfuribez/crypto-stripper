@@ -3,6 +3,8 @@ import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.nio.charset.StandardCharsets;
@@ -20,7 +22,7 @@ public class PayloadsGUI extends JDialog {
   private JButton selectFileButton = new JButton("Select");
   private JButton insertFileButton = new JButton("Insert file");
 
-  private JLabel lenghtLabel = new JLabel("123");
+  private JLabel lenghtLabel = new JLabel("0");
 
   private JTextField textRepeat = new JTextField();
   private JTextField textLenght = new JTextField();
@@ -72,6 +74,17 @@ public class PayloadsGUI extends JDialog {
         KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
         JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
     );
+
+    textRepeat.getDocument().addDocumentListener(new DocumentListener() {
+      public void insertUpdate(DocumentEvent e) { handle(); }
+      public void removeUpdate(DocumentEvent e) { handle(); }
+      public void changedUpdate(DocumentEvent e) {}
+
+      private void handle() {
+        String text = textRepeat.getText();
+        lenghtLabel.setText(String.valueOf(text.length()));
+      }
+    });
 
     insertFileButton.addActionListener(e -> dispose());
 

@@ -1,3 +1,5 @@
+import java.awt.*;
+
 public class Constants {
   public static String STRIPPER_SCOPE_LIST_KEY = "stripperScope";
   public static String STRIPPER_BLACK_LIST_KEY = "stripperBlackList";
@@ -51,4 +53,7 @@ public class Constants {
   public static String[] TOOLS = { "proxy", "repeater", "intruder" };
 
   public static String PREVIEW_INFO_TEMPLATE = "%s %s";
+
+  public static Color MAIN_BUTTON_BACKGROUND = new Color(219, 97, 47);
+  public static Color MAIN_BUTTON_FOREGROUND = new Color(255, 255, 255);
 }

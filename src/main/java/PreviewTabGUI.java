@@ -9,7 +9,6 @@ import models.ExecutorOutput;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -23,15 +22,15 @@ public class PreviewTabGUI {
   private JButton openScriptButton = new JButton("Open");
 
   public JPanel mainPanel = new JPanel(new MigLayout("insets 0"));
-  private JPanel stdErrPanel = new JPanel();
 
   private JTextPane stdErrTextArea = new JTextPane();
+  private JTextField requestIdTextField = new JTextField(4);
 
   private JEditorPane infoEditorPane = new JEditorPane();
 
-  private JTextField requestIdTextField = new JTextField(4);
-
   private JComboBox<String> toolCombo = new JComboBox<>(Constants.TOOLS);
+
+  private JScrollPane stdErrScroll = new JScrollPane(stdErrTextArea);
 
   MontoyaApi api;
 
@@ -40,19 +39,19 @@ public class PreviewTabGUI {
   HttpRequestResponse requestResponse;
 
   HttpResponseEditor responseEditor;
-  HttpRequestEditor requestEditor;
-
-  HttpRequestEditor requestTransformed;
   HttpResponseEditor responseTransformed;
 
+  HttpRequestEditor requestEditor;
+  HttpRequestEditor requestTransformed;
+
   String toolSource;
+  String scriptPath;
+
   StyledDocument doc;
 
   Style warningStyle;
   Style defaultStyle;
   Style errorStyle;
-
-  String scriptPath;
 
 
   PreviewTabGUI(MontoyaApi montoyaApi, boolean isRequest, String toolSource) {
@@ -61,11 +60,7 @@ public class PreviewTabGUI {
 
     this.toolSource = toolSource;
 
-
     initialize();
-
-
-    stdErrPanel.setBorder(new TitledBorder("stderr:"));
 
     requestEditor = api.userInterface().createHttpRequestEditor();
     responseEditor = api.userInterface().createHttpResponseEditor();
@@ -100,6 +95,8 @@ public class PreviewTabGUI {
 }
 
   private void initialize() {
+    testDecryptionButton.setBackground(Constants.MAIN_BUTTON_BACKGROUND);
+    testEncryptionButton.setBackground(Constants.MAIN_BUTTON_BACKGROUND);
     infoEditorPane.setEditable(false);
     stdErrTextArea.setEditable(false);
     infoEditorPane.setEnabled(false);
@@ -125,7 +122,6 @@ public class PreviewTabGUI {
     JPanel left = new JPanel(new MigLayout("insets 0"));
     JPanel right = new JPanel(new MigLayout("insets 0"));
 
-
     left.add(new JLabel("Edited"), "alignx center, wrap");
     if (isRequest) {
       top.add(requestEditor.uiComponent(), "grow, push");
@@ -144,32 +140,20 @@ public class PreviewTabGUI {
 
     bottom.add(vertical, "grow, push");
 
-    right.add(new JLabel("Output"), "alignx center, wrap");
-    right.add(stdErrTextArea, "grow, push");
+    right.add(Utils.separator("Output", "center", false), "alignx center, wrap");
+    right.add(stdErrScroll, "grow, push");
 
+    mainPanel.add(horizontal, "grow, wrap");
 
-    mainPanel.add(infoEditorPane, "grow, push, wrap");
-
-    JPanel options = new JPanel(new MigLayout());
-
-    options.add(new JLabel("Tool:"));
-    options.add(toolCombo);
-    options.add(new JLabel("MessageId:"));
-    options.add(requestIdTextField);
-    mainPanel.add(options, "alignx center, wrap");
-
-    mainPanel.add(horizontal, "grow, push, wrap");
-
-    JPanel buttonsPanel = new JPanel(new MigLayout());
-
+    JPanel buttonsPanel = new JPanel(new MigLayout("insets 0"));
 
     buttonsPanel.add(testDecryptionButton);
-
     buttonsPanel.add(new JPanel(), "growx, pushx");
-
-    buttonsPanel.add(openScriptButton);
+    buttonsPanel.add(new JLabel("Tool:"));
+    buttonsPanel.add(toolCombo);
+    buttonsPanel.add(new JLabel("MessageId:"));
+    buttonsPanel.add(requestIdTextField);
     buttonsPanel.add(new JPanel(), "growx, pushx");
-
     buttonsPanel.add(testEncryptionButton);
 
     mainPanel.add(buttonsPanel, "growx, pushx");

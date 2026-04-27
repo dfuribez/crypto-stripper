@@ -23,13 +23,13 @@ import java.util.regex.Pattern;
 
 public class MyContextMenus  implements ContextMenuItemsProvider {
   private final MontoyaApi montoyaApi;
-  private MainTab mainTab;
-  InsertDialog insertDialog;
+  private MainTab2 mainTab;
+  PayloadsGUI insertDialog;
 
-  public MyContextMenus(MontoyaApi api, MainTab tab) {
+  public MyContextMenus(MontoyaApi api, MainTab2 tab) {
     this.montoyaApi = api;
     this.mainTab = tab;
-    insertDialog = new InsertDialog(montoyaApi);
+    insertDialog = new PayloadsGUI(montoyaApi);
   }
 
   public void updateStripperScope(String source, String action, String url) {
@@ -150,7 +150,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
         String[] split = selectedComboParameter.split(" - ", 2);
 
         String selectedParameter = split[1];
-        byte[] toInsert = InsertDialog.selectedText;
+        byte[] toInsert = insertDialog.selectedText;
 
         if (toInsert == null) { return; }
 

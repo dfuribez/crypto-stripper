@@ -17,9 +17,9 @@ import java.util.HashMap;
 class MyHttpHandler implements HttpHandler {
 
   MontoyaApi api;
-  MainTab mainTab;
+  MainTab2 mainTab;
 
-  public MyHttpHandler(MontoyaApi api, MainTab gui) {
+  public MyHttpHandler(MontoyaApi api, MainTab2 gui) {
     this.api = api;
     this.mainTab = gui;
   }

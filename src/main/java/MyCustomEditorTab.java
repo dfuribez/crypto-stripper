@@ -13,7 +13,7 @@ import java.util.Objects;
 public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
   MontoyaApi montoyaApi;
   EditorCreationContext creationContext;
-  EditorTab editorTab;
+  PreviewTabGUI previewTabGUI;
 
 
   private HttpRequestResponse currentRequest;
@@ -24,7 +24,7 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
 
     String source = editorCreationContext.toolSource().toolType().toolName().toLowerCase();
 
-    this.editorTab = new EditorTab(montoyaApi, true, source);
+    this.previewTabGUI = new PreviewTabGUI(montoyaApi, true, source);
   }
 
   @Override
@@ -34,9 +34,9 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
 
   @Override
   public void setRequestResponse(HttpRequestResponse requestResponse) {
-    this.currentRequest = requestResponse;
-    this.editorTab.setRequestResponse(requestResponse);
-    this.editorTab.setContent(requestResponse.request());
+    currentRequest = requestResponse;
+    previewTabGUI.setRequestResponse(requestResponse);
+    previewTabGUI.setContent(requestResponse.request());
   }
 
   @Override
@@ -47,8 +47,8 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
 
       HashMap<String, PersistedList<String>> scope =
           Utils.loadScope(montoyaApi.persistence().extensionData());
-      this.currentRequest = requestResponse;
-      this.editorTab.setRequestResponse(requestResponse);
+      currentRequest = requestResponse;
+      previewTabGUI.setRequestResponse(requestResponse);
 
       return Utils.isUrlInScope(url, scope.get("scope"))
           && !Objects.equals(creationContext.toolSource().toolType().toolName(), "Extensions");
@@ -65,7 +65,7 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
 
   @Override
   public Component uiComponent() {
-    return this.editorTab.panel1;
+    return previewTabGUI.mainPanel;
   }
 
   @Override

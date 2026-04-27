@@ -38,6 +38,8 @@ public class PayloadsGUI extends JDialog {
 
   private JComboBox<String> parametersCombo = new JComboBox<>();
 
+  private JScrollPane scrollPreview = new JScrollPane(previewTextArea);
+
   static byte[] selectedText;
   MontoyaApi montoyaApi;
 
@@ -81,6 +83,17 @@ public class PayloadsGUI extends JDialog {
       private void handle() {
         String text = textRepeat.getText();
         lenghtLabel.setText(String.valueOf(text.length()));
+        generateString();
+      }
+    });
+
+    textLenght.getDocument().addDocumentListener(new DocumentListener() {
+      public void insertUpdate(DocumentEvent e) { handle(); }
+      public void removeUpdate(DocumentEvent e) { handle(); }
+      public void changedUpdate(DocumentEvent e) {}
+
+      private void handle() {
+        generateString();
       }
     });
 
@@ -110,9 +123,10 @@ public class PayloadsGUI extends JDialog {
       }
 
       if (length > 0) {
-        selectedText = generate(length).getBytes(StandardCharsets.UTF_8);
+        String random = generate(length);
+        previewTextArea.setText(random);
+        selectedText = random.getBytes(StandardCharsets.UTF_8);
       }
-      dispose();
     });
 
     initialize();
@@ -127,7 +141,8 @@ public class PayloadsGUI extends JDialog {
 
     lenghtLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-    previewTextArea.setEnabled(false);
+    previewTextArea.setEditable(false);
+    previewTextArea.setLineWrap(true);
 
     ButtonGroup encondings = new ButtonGroup();
     encondings.add(base64RadioButton);
@@ -158,16 +173,17 @@ public class PayloadsGUI extends JDialog {
     JPanel characters = new JPanel(new MigLayout());
 
     characters.add(new JLabel("Strings:"));
-    characters.add(textRepeat, "growx, pushx, span 2");
+    characters.add(textRepeat, "growx, pushx, span 3");
     characters.add(lenghtLabel, "wrap, alignx center");
 
     characters.add(new JLabel("Repeat:"));
     characters.add(textLenght, "growx, pushx");
     characters.add(repeatBytesRadio);
-    characters.add(repeatTimesRadio, "wrap");
+    characters.add(repeatTimesRadio);
+    characters.add(insertRandomButton, "wrap");
 
     characters.add(new JLabel("Preview:"));
-    characters.add(previewTextArea, "span, grow, push");
+    characters.add(scrollPreview, "span, grow, push");
 
     mainPanel.add(characters, "span, growx, pushx, wrap");
 
@@ -218,38 +234,51 @@ public class PayloadsGUI extends JDialog {
   public void clear() {
     textRepeat.setText("");
     fileTextField.setText("");
+    previewTextArea.setText("");
   }
 
+
   private void onOK() {
+    dispose();
+  }
+
+  private void generateString() {
     int length;
     String toRepeat = textRepeat.getText();
 
-    if (fileTextField.getText().length() > 0) {
-      dispose();
+    String tl = textLenght.getText();
+
+
+    if (tl.length() <= 0 || toRepeat.length() <= 0) {
+      previewTextArea.setText("");
       return;
     }
 
     try {
-      length = Integer.parseInt(textLenght.getText());
+      length = Integer.parseInt(tl);
     } catch (NumberFormatException e) {
       length = 0;
     }
 
-    if (length > 0) {
-      StringBuilder builder = new StringBuilder(length);
-
-      while (builder.length() + toRepeat.length() <= length) {
-        builder.append(toRepeat);
-      }
-
-      int remaining = length - builder.length();
-      if (remaining > 0) {
-        builder.append(toRepeat, 0, remaining);
-      }
-
-      selectedText = builder.toString().getBytes(StandardCharsets.UTF_8);
+    if (length <= 0) {
+      previewTextArea.setText("");
+      return;
     }
-    dispose();
+
+    StringBuilder builder = new StringBuilder(length);
+
+    while (builder.length() + toRepeat.length() <= length) {
+      builder.append(toRepeat);
+    }
+
+    int remaining = length - builder.length();
+    if (remaining > 0) {
+      builder.append(toRepeat, 0, remaining);
+    }
+
+    previewTextArea.setText(builder.toString());
+    selectedText = builder.toString().getBytes(StandardCharsets.UTF_8);
+  
   }
 
 

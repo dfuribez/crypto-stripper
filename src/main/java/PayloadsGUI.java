@@ -162,11 +162,7 @@ public class PayloadsGUI extends JDialog {
   private void setLayout() {
 
     // Separator
-    JPanel separator = new JPanel(new MigLayout());
-    separator.add(new JSeparator(SwingConstants.HORIZONTAL), "growx, pushx");
-    separator.add(new JLabel("Characters:"));
-    separator.add(new JSeparator(SwingConstants.HORIZONTAL), "growx, pushx, wrap");
-
+    JPanel separator = Utils.separator("Characters", "center", true);
     mainPanel.add(separator, "span, growx, pushx, wrap");
 
     // Characters
@@ -188,10 +184,7 @@ public class PayloadsGUI extends JDialog {
     mainPanel.add(characters, "span, growx, pushx, wrap");
 
     // --------------
-    JPanel separator2 = new JPanel(new MigLayout());
-    separator2.add(new JSeparator(SwingConstants.HORIZONTAL), "growx, pushx");
-    separator2.add(new JLabel("Files:"));
-    separator2.add(new JSeparator(SwingConstants.HORIZONTAL), "growx, pushx, wrap");
+    JPanel separator2 = Utils.separator("Files", "center", true);
     mainPanel.add(separator2, "span, growx, pushx, wrap");
 
 
@@ -206,10 +199,7 @@ public class PayloadsGUI extends JDialog {
     mainPanel.add(files, "span, growx, pushx, wrap");
 
     // --------------
-    JPanel separator3 = new JPanel(new MigLayout());
-    separator3.add(new JSeparator(SwingConstants.HORIZONTAL), "growx, pushx");
-    separator3.add(new JLabel("Output:"));
-    separator3.add(new JSeparator(SwingConstants.HORIZONTAL), "growx, pushx, wrap");
+    JPanel separator3 = Utils.separator("Output", "center", true);
     mainPanel.add(separator3, "span, growx, pushx, wrap");
 
     // Options

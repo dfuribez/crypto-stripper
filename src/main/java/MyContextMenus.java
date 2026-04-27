@@ -150,7 +150,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
         String[] split = selectedComboParameter.split(" - ", 2);
 
         String selectedParameter = split[1];
-        byte[] toInsert = insertDialog.selectedText;
+        byte[] toInsert = PayloadsGUI.selectedText;
 
         if (toInsert == null) { return; }
 

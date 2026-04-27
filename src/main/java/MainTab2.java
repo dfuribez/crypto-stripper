@@ -21,8 +21,8 @@ import java.util.Objects;
 public class MainTab2 {
   public JPanel panel1 = new JPanel(new MigLayout("fillx"));
   private JPanel encryptorsPanel = new JPanel(new MigLayout());
-  public JCheckBox requestCheckBox = new JCheckBox("Request");
-  public JCheckBox responseCheckBox = new JCheckBox("Response");
+  public JCheckBox requestCheckBox = new JCheckBox("Request:");
+  public JCheckBox responseCheckBox = new JCheckBox("Response:");
   public JCheckBox forceInterceptInScopeCheckbox = new JCheckBox("Force Intercept In Scope");
 
   private JList<String> scopeList = new JList<>();
@@ -58,8 +58,8 @@ public class MainTab2 {
   private JTextField globalPythonLabel = new JTextField("Global Python");
 
   private JPanel scopeListPanel = new JPanel(new MigLayout());
-  private JPanel blackListPanel = new JPanel(new MigLayout("", "[grow][pref]", ""));
-  private JPanel forceInterceptListPanel = new JPanel(new MigLayout());
+  private JPanel blackListPanel = new JPanel(new MigLayout());
+  private JPanel forceListPanel = new JPanel(new MigLayout());
 
   private JButton JSTemplateButton = new JButton("JS Template");
   private JButton pythonTemplateButton = new JButton("Python Template");
@@ -113,20 +113,6 @@ public class MainTab2 {
 
     globalBinariesPanel.setBorder(BorderFactory.createCompoundBorder(
         new TitledBorder(BorderFactory.createEtchedBorder(), "Global paths:"),
-        emptyBorder
-    ));
-
-    scopeListPanel.setBorder(BorderFactory.createCompoundBorder(
-        new TitledBorder(BorderFactory.createEtchedBorder(), "Scope: (?)"),
-        emptyBorder
-    ));
-    blackListPanel.setBorder(BorderFactory.createCompoundBorder(
-        new TitledBorder(BorderFactory.createEtchedBorder(), "Black List: (?)"),
-        emptyBorder
-    ));
-
-    forceInterceptListPanel.setBorder(BorderFactory.createCompoundBorder(
-        new TitledBorder(BorderFactory.createEtchedBorder(), "Force intercept: (?)"),
         emptyBorder
     ));
 
@@ -301,11 +287,7 @@ public class MainTab2 {
     panel1.add(gpathsPanel, "growx, wrap");
 
     // ---------------
-    JPanel separator = new JPanel(new MigLayout());
-
-    separator.add(new JSeparator(SwingConstants.HORIZONTAL), "growx, pushx");
-    separator.add(new JLabel("Crypto Stripper scope"));
-    separator.add(new JSeparator(SwingConstants.HORIZONTAL), "growx, pushx");
+    JPanel separator = Utils.separator("Crypto Stripper scope", "center", true);
 
     panel1.add(separator, "growx, wrap");
 
@@ -313,6 +295,7 @@ public class MainTab2 {
     JPanel scopesPanel = new JPanel(new MigLayout("fill"));
 
     // Scope panel
+    scopeListPanel.add(Utils.separator("Scope (?)", "center", false), "span, growx");
     scopeListPanel.add(scrollScope, "wrap, span 2, grow, push");
     scopeListPanel.add(deleteSelectedScopeButton, "alignx right, span 2, wrap");
     scopeListPanel.add(scopeUrlTextField, "growx, pushx");
@@ -321,22 +304,36 @@ public class MainTab2 {
     scopesPanel.add(scopeListPanel, "sg pn, grow");
 
     // BlackList panel
+    blackListPanel.add(Utils.separator("Black List: (?)", "center", false), "span, growx");
     blackListPanel.add(scrollBlackList, "span 2, grow, push, wrap");
     blackListPanel.add(enableBlackListcheckbox, "alignx left");
     blackListPanel.add(deleteSelectedBlacklistButton, "alignx right, wrap");
-    blackListPanel.add(blackListUrlTextField, "growx");
-    blackListPanel.add(addBlackListUrlButton, "wrap");
+
+
+    JPanel addBlackListPanel = new JPanel(new MigLayout("insets 0"));
+
+    addBlackListPanel.add(blackListUrlTextField, "growx, pushx");
+    addBlackListPanel.add(addBlackListUrlButton);
+
+    blackListPanel.add(addBlackListPanel, "span, growx");
 
     scopesPanel.add(blackListPanel, "sg pn, grow");
 
     // Force interept panel
-    forceInterceptListPanel.add(scrollForceInterceptList, "wrap, span 2, grow, push");
-    forceInterceptListPanel.add(enableForceinterceptCheckbox, "alignx left");
-    forceInterceptListPanel.add(deleteSelectedForceButton, "alignx right, wrap");
-    forceInterceptListPanel.add(forceUrlTextField, "growx, pushx");
-    forceInterceptListPanel.add(addForceUrlButton);
+    forceListPanel.add(Utils.separator("Force intercept: (?)", "center", false), "span, growx");
 
-    scopesPanel.add(forceInterceptListPanel, "sg pn, grow");
+    forceListPanel.add(scrollForceInterceptList, "wrap, span 2, grow, push");
+    forceListPanel.add(enableForceinterceptCheckbox, "alignx left");
+    forceListPanel.add(deleteSelectedForceButton, "alignx right, wrap");
+
+    JPanel addForcePanel = new JPanel(new MigLayout("insets 0"));
+
+    addForcePanel.add(forceUrlTextField, "growx, pushx");
+    addForcePanel.add(addForceUrlButton);
+
+    forceListPanel.add(addForcePanel, "span, growx");
+
+    scopesPanel.add(forceListPanel, "sg pn, grow");
 
     panel1.add(scopesPanel, "grow, wrap");
 
@@ -624,7 +621,7 @@ public class MainTab2 {
     pathsPanel.setToolTipText("Project-specific paths will override the Global path for this project only.");
     scopeListPanel.setToolTipText("Any endpoint in this list will trigger Stripper's main functionality.");
     blackListPanel.setToolTipText("Endpoints in this list will be excluded from interception by Burp.");
-    forceInterceptListPanel.setToolTipText("Endpoints in this list will be intercepted even if the proxy is set to not intercept.");
+    forceListPanel.setToolTipText("Endpoints in this list will be intercepted even if the proxy is set to not intercept.");
     addScopeUrlButton.setToolTipText("Add a new endpoint. Regular expressions are supported.");
     addBlackListUrlButton.setToolTipText("Add a new endpoint. Regular expressions are supported.");
     addForceUrlButton.setToolTipText("Add a new endpoint. Regular expressions are supported.");

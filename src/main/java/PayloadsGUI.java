@@ -211,7 +211,7 @@ public class PayloadsGUI extends JDialog {
     options.add(plainTextRadioButton, "wrap");
 
     options.add(new JLabel("Insertion point:"));
-    options.add(parametersCombo, "growx, pushx, span, wrap");
+    options.add(parametersCombo, "growx, pushx, span, wrap, wmax 400");
 
     mainPanel.add(options, "span, pushx, growx, wrap");
 

@@ -17,6 +17,7 @@ import burp.api.montoya.scanner.audit.issues.AuditIssueConfidence;
 import burp.api.montoya.scanner.audit.issues.AuditIssueSeverity;
 import com.google.gson.Gson;
 import models.ExecutorOutput;
+import net.miginfocom.swing.MigLayout;
 
 import java.awt.*;
 import java.io.File;
@@ -30,6 +31,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.List;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 
 import static burp.api.montoya.http.HttpService.httpService;
 
@@ -373,12 +379,39 @@ public class Utils {
     return annotation;
   }
 
-  public  static  int stringToInt(String value) {
+  public static int stringToInt(String value) {
     try {
       return Integer.parseInt(value);
     } catch (Exception e) {
       return  -1;
     }
+  }
+
+  public static JPanel separator(String title, String type, boolean visible) {
+    JPanel separator = new JPanel(new MigLayout("insets 0"));
+
+
+    if (type.equalsIgnoreCase("center")) {
+      separator.add(spacer(visible), "growx, pushx");
+      separator.add(new JLabel(title));
+      separator.add(spacer(visible), "growx, pushx");
+    } else if (type.equalsIgnoreCase("left")) {
+      separator.add(new JLabel(title));
+      separator.add(spacer(visible), "growx, pushx");
+    } else {
+      separator.add(spacer(visible), "growx, pushx");
+      separator.add(new JLabel(title));
+    }
+
+    return separator;
+  }
+
+  private static Component spacer(boolean visible) {
+    if (visible) {
+      return new JSeparator(SwingConstants.HORIZONTAL);
+    }
+
+    return new JPanel();
   }
 
 }

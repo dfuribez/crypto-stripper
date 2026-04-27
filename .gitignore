@@ -2,8 +2,6 @@
 .idea
 bin/
 build/
-gradle/
-gradlew
 gradlew.bat
 doc
 lib

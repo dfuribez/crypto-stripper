@@ -47,7 +47,7 @@ public class MainTab2 {
   private JTextField nodePathTextField = new JTextField();
   private JTextField pythonPathTextField = new JTextField();
 
-  private JButton exportScopeButton = new JButton("Export Scope");
+  private JButton exportSettingsButton = new JButton("Export Settings");
   private JButton importSettingsButton = new JButton("Import Settings");
 
   private JButton chooseNodeGlobalBinaryButton = new JButton("Global Node");
@@ -101,11 +101,6 @@ public class MainTab2 {
 
     Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
 
-    encryptorsPanel.setBorder(BorderFactory.createCompoundBorder(
-        new TitledBorder(BorderFactory.createEtchedBorder(), "Scripts:"),
-        emptyBorder
-    ));
-
     pathsPanel.setBorder(BorderFactory.createCompoundBorder(
         new TitledBorder(BorderFactory.createEtchedBorder(), "Project paths:"),
         emptyBorder
@@ -118,7 +113,7 @@ public class MainTab2 {
 
     versionTextArea.setText(Constants.VERSION);
 
-    selectRequestScriptButton.addActionListener(actionEvent -> {
+    selectRequestScriptButton.addActionListener(e -> {
       FileNameExtensionFilter filter = new FileNameExtensionFilter(
           "Python, JavaScript files",
           "py", "js");
@@ -133,7 +128,7 @@ public class MainTab2 {
       requetsPathLabel.setText(path);
     });
 
-    selectResponseScriptButton.addActionListener(actionEvent -> {
+    selectResponseScriptButton.addActionListener(e -> {
       FileNameExtensionFilter filter = new FileNameExtensionFilter(
           "Python, JavaScript files",
           "py", "js");
@@ -147,7 +142,7 @@ public class MainTab2 {
       responsePathLabel.setText(path);
     });
 
-    chooseNodeBinaryButton.addActionListener(actionEvent -> {
+    chooseNodeBinaryButton.addActionListener(e -> {
       String path = openChooser("Node binary path", null, true);
 
       if (!path.isEmpty()) {
@@ -156,7 +151,7 @@ public class MainTab2 {
       }
     });
 
-    choosePythonBinaryButton.addActionListener(actionEvent -> {
+    choosePythonBinaryButton.addActionListener(e -> {
       String path = openChooser("Python binary path", null, true);
 
       if (!path.isEmpty()) {
@@ -164,19 +159,19 @@ public class MainTab2 {
         pythonPathTextField.setText(path);
       }
     });
-    setNodeDefaultButton.addActionListener(actionEvent -> {
+    setNodeDefaultButton.addActionListener(e -> {
       api.persistence().extensionData().setString(Constants.PROJECT_NODE_PATH_KEY, "");
       nodePathTextField.setText("");
     });
-    setPythonDefaultButton.addActionListener(actionEvent -> {
+    setPythonDefaultButton.addActionListener(e -> {
       api.persistence().extensionData().setString(Constants.PROJECT_PYTHON_PATH_KEY, "");
       pythonPathTextField.setText("");
     });
 
-    deleteSelectedScopeButton.addActionListener(actionEvent -> updateScope("scope", "delete"));
-    deleteSelectedBlacklistButton.addActionListener(actionEvent -> updateScope("blacklist", "delete"));
-    deleteSelectedForceButton.addActionListener(actionEvent -> updateScope("force", "delete"));
-    chooseNodeGlobalBinaryButton.addActionListener(actionEvent -> {
+    deleteSelectedScopeButton.addActionListener(e -> updateScope("scope", "delete"));
+    deleteSelectedBlacklistButton.addActionListener(e -> updateScope("blacklist", "delete"));
+    deleteSelectedForceButton.addActionListener(e -> updateScope("force", "delete"));
+    chooseNodeGlobalBinaryButton.addActionListener(e -> {
       String path = openChooser("Node binary path", null, true);
 
       if (path.isBlank()) {
@@ -186,7 +181,7 @@ public class MainTab2 {
       api.persistence().preferences().setString(Constants.GLOBAL_NODE_PATH_KEY, path);
       globalNodeLabel.setText(path);
     });
-    choosePythonGlobalBinaryButton.addActionListener(actionEvent -> {
+    choosePythonGlobalBinaryButton.addActionListener(e -> {
       String path = openChooser("Python binary path",null, true);
 
       if (path.isBlank()) {
@@ -196,13 +191,13 @@ public class MainTab2 {
       api.persistence().preferences().setString(Constants.GLOBAL_PYTHON_PATH_KEY, path);
       globalPythonLabel.setText(path);
     });
-    requestCheckBox.addActionListener(actionEvent -> saveCurrentSettings());
-    responseCheckBox.addActionListener(actionEvent -> saveCurrentSettings());
-    forceInterceptInScopeCheckbox.addActionListener(actionEvent -> saveCurrentSettings());
-    restoreSettingsButton.addActionListener(actionEvent -> clearSettings());
-    exportScopeButton.addActionListener(actionEvent -> exportSettings());
-    importSettingsButton.addActionListener(actionEvent -> importSettings());
-    JSTemplateButton.addActionListener(actionEvent -> {
+    requestCheckBox.addActionListener(e -> saveCurrentSettings());
+    responseCheckBox.addActionListener(e -> saveCurrentSettings());
+    forceInterceptInScopeCheckbox.addActionListener(e -> saveCurrentSettings());
+    restoreSettingsButton.addActionListener(e -> clearSettings());
+    exportSettingsButton.addActionListener(e -> exportSettings());
+    importSettingsButton.addActionListener(e -> importSettings());
+    JSTemplateButton.addActionListener(e -> {
       FileNameExtensionFilter filter = new FileNameExtensionFilter(
           "JavaScript files", "js");
       String path = openChooser("JS template", filter, false);
@@ -211,7 +206,7 @@ public class MainTab2 {
       }
       Utils.resourceToFile(api, "template.js", path);
     });
-    pythonTemplateButton.addActionListener(actionEvent -> {
+    pythonTemplateButton.addActionListener(e -> {
       FileNameExtensionFilter filter = new FileNameExtensionFilter(
           "Python files", "py");
       String path = openChooser("Python template", filter, false);
@@ -222,11 +217,11 @@ public class MainTab2 {
       Utils.resourceToFile(api, "template.py", path);
 
     });
-    addScopeUrlButton.addActionListener(actionEvent -> updateScope("scope", "add"));
-    addBlackListUrlButton.addActionListener(actionEvent -> updateScope("blacklist", "add"));
-    addForceUrlButton.addActionListener(actionEvent -> updateScope("force", "add"));
-    openRequestButton.addActionListener(actionEvent -> Utils.openFolder(requetsPathLabel.getText()));
-    openResponseButton.addActionListener(actionEvent -> Utils.openFolder(responsePathLabel.getText()));
+    addScopeUrlButton.addActionListener(e -> updateScope("scope", "add"));
+    addBlackListUrlButton.addActionListener(e -> updateScope("blacklist", "add"));
+    addForceUrlButton.addActionListener(e -> updateScope("force", "add"));
+    openRequestButton.addActionListener(e -> Utils.openFolder(requetsPathLabel.getText()));
+    openResponseButton.addActionListener(e -> Utils.openFolder(responsePathLabel.getText()));
 
     initializeUI();
     setLayout();
@@ -240,6 +235,9 @@ public class MainTab2 {
     responsePathLabel.setEditable(false);
 
     versionTextArea.setEditable(false);
+
+    globalNodeLabel.setEditable(false);
+    globalPythonLabel.setEditable(false);
   }
 
   private void setLayout() {
@@ -247,12 +245,10 @@ public class MainTab2 {
     encryptorsPanel.add(requetsPathLabel, "growx, pushx");
     encryptorsPanel.add(selectRequestScriptButton, "sg btn");
     encryptorsPanel.add(openRequestButton, "sg btn1, wrap");
-
     encryptorsPanel.add(responseCheckBox);
     encryptorsPanel.add(responsePathLabel, "growx, pushx");
     encryptorsPanel.add(selectResponseScriptButton, "sg btn");
     encryptorsPanel.add(openResponseButton, "sg btn1, wrap");
-
     encryptorsPanel.add(forceInterceptInScopeCheckbox);
 
     panel1.add(encryptorsPanel, "growx, wrap");
@@ -264,7 +260,6 @@ public class MainTab2 {
     globalBinariesPanel.add(new JLabel("Node:"));
     globalBinariesPanel.add(globalNodeLabel, "sg lbl, growx, pushx");
     globalBinariesPanel.add(chooseNodeGlobalBinaryButton, "sg btn, align right, wrap");
-
     globalBinariesPanel.add(new JLabel("Python:"));
     globalBinariesPanel.add(globalPythonLabel, "growx, pushx");
     globalBinariesPanel.add(choosePythonGlobalBinaryButton, "sg btn, align right, wrap");
@@ -276,7 +271,6 @@ public class MainTab2 {
     pathsPanel.add(nodePathTextField, "sg lbl, growx, pushx");
     pathsPanel.add(chooseNodeBinaryButton, "sg btn");
     pathsPanel.add(setNodeDefaultButton, "sg btn1, wrap");
-
     pathsPanel.add(new JLabel("Python:"));
     pathsPanel.add(pythonPathTextField, "sg lbl, growx, pushx");
     pathsPanel.add(choosePythonBinaryButton, "sg btn");
@@ -308,7 +302,6 @@ public class MainTab2 {
     blackListPanel.add(scrollBlackList, "span 2, grow, push, wrap");
     blackListPanel.add(enableBlackListcheckbox, "alignx left");
     blackListPanel.add(deleteSelectedBlacklistButton, "alignx right, wrap");
-
 
     JPanel addBlackListPanel = new JPanel(new MigLayout("insets 0"));
 
@@ -342,14 +335,10 @@ public class MainTab2 {
 
     buttonsPanel.add(JSTemplateButton);
     buttonsPanel.add(pythonTemplateButton);
-
     buttonsPanel.add(new JPanel(), "pushx, growx");
-
     buttonsPanel.add(restoreSettingsButton);
-
     buttonsPanel.add(new JSeparator(SwingConstants.VERTICAL), "width 2!, growy");
-
-    buttonsPanel.add(exportScopeButton);
+    buttonsPanel.add(exportSettingsButton);
     buttonsPanel.add(importSettingsButton);
 
     panel1.add(new JPanel(), "pushy, wrap");
@@ -379,25 +368,19 @@ public class MainTab2 {
           Constants.RESPONSE_CHECKBOX_STATUS_KEY, jsonSettings.enableResponse);
       api.persistence().extensionData().setBoolean(
           Constants.FORCE_CHECKBOX_STATUS_KEY, jsonSettings.enableForceIntercept);
-
       api.persistence().extensionData().setStringList(
           Constants.STRIPPER_SCOPE_LIST_KEY,
-          Utils.arrayToPersisted(cleanScope(jsonSettings.scope))
-      );
+          Utils.arrayToPersisted(cleanScope(jsonSettings.scope)));
       api.persistence().extensionData().setStringList(
           Constants.STRIPPER_BLACK_LIST_KEY,
-          Utils.arrayToPersisted(cleanScope(jsonSettings.blackList))
-      );
+          Utils.arrayToPersisted(cleanScope(jsonSettings.blackList)));
       api.persistence().extensionData().setStringList(
           Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY,
-          Utils.arrayToPersisted(cleanScope(jsonSettings.forceIntercept))
-      );
+          Utils.arrayToPersisted(cleanScope(jsonSettings.forceIntercept)));
       loadCurrentSettings();
-
     } catch (Exception e) {
       api.logging().logToError(e.toString());
     }
-
   }
 
   private void exportSettings() {
@@ -450,24 +433,23 @@ public class MainTab2 {
 
   public void clearSettings() {
     api.persistence().extensionData().setBoolean(Constants.REQUEST_CHECKBOX_STATUS_KEY, true);
-
     api.persistence().extensionData().setBoolean(Constants.RESPONSE_CHECKBOX_STATUS_KEY, true);
-
     api.persistence().extensionData().setBoolean(Constants.FORCE_CHECKBOX_STATUS_KEY, false);
-
     api.persistence().extensionData().setString(Constants.RESPONSE_SCRIPT_PATH_KEY, "");
-
     api.persistence().extensionData().setString(Constants.REQUEST_SCRIPT_PATH_KEY, "");
+
+    api.persistence().extensionData().setString(Constants.PROJECT_NODE_PATH_KEY, "");
+    api.persistence().extensionData().setString(Constants.PROJECT_PYTHON_PATH_KEY, "");
 
     api.persistence().extensionData().setStringList(
         Constants.STRIPPER_SCOPE_LIST_KEY, PersistedList.persistedStringList());
-
     api.persistence().extensionData().setStringList(
         Constants.STRIPPER_BLACK_LIST_KEY, PersistedList.persistedStringList());
-
     api.persistence().extensionData().setStringList(
         Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY, PersistedList.persistedStringList());
 
+    api.persistence().preferences().setString(Constants.GLOBAL_PYTHON_PATH_KEY, "");
+    api.persistence().preferences().setString(Constants.GLOBAL_NODE_PATH_KEY, "");
     loadCurrentSettings();
   }
 

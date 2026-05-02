@@ -238,12 +238,12 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
       if (montoyaApi.scope().isInScope(url)) {
         burpScopeMenu = new JMenuItem("Exclude URL from Burp's scope");
         burpScopeMenu.addActionListener(
-            l -> montoyaApi.scope().excludeFromScope(Utils.removePathFromURL(url))
+            l -> montoyaApi.scope().excludeFromScope(KUtils.removePath(url))
         );
       } else {
         burpScopeMenu = new JMenuItem("Include URL to Burp's scope");
         burpScopeMenu.addActionListener(
-            l -> montoyaApi.scope().includeInScope(Utils.removePathFromURL(url))
+            l -> montoyaApi.scope().includeInScope(KUtils.removePath(url))
         );
       }
 

@@ -281,7 +281,7 @@ public class MainTabGUI {
     panel1.add(gpathsPanel, "growx, wrap");
 
     // ---------------
-    JPanel separator = Utils.separator("Crypto Stripper scope", "center", true);
+    JPanel separator = KUtils.separator("Crypto Stripper scope", "center", true);
 
     panel1.add(separator, "growx, wrap");
 
@@ -289,7 +289,7 @@ public class MainTabGUI {
     JPanel scopesPanel = new JPanel(new MigLayout("fill"));
 
     // Scope panel
-    scopeListPanel.add(Utils.separator("Scope (?)", "center", false), "span, growx");
+    scopeListPanel.add(KUtils.separator("Scope (?)", "center", false), "span, growx");
     scopeListPanel.add(scrollScope, "wrap, span 2, grow, push");
     scopeListPanel.add(deleteSelectedScopeButton, "alignx right, span 2, wrap");
     scopeListPanel.add(scopeUrlTextField, "growx, pushx");
@@ -298,7 +298,7 @@ public class MainTabGUI {
     scopesPanel.add(scopeListPanel, "sg pn, grow");
 
     // BlackList panel
-    blackListPanel.add(Utils.separator("Black List: (?)", "center", false), "span, growx");
+    blackListPanel.add(KUtils.separator("Black List: (?)", "center", false), "span, growx");
     blackListPanel.add(scrollBlackList, "span 2, grow, push, wrap");
     blackListPanel.add(enableBlackListcheckbox, "alignx left");
     blackListPanel.add(deleteSelectedBlacklistButton, "alignx right, wrap");
@@ -313,7 +313,7 @@ public class MainTabGUI {
     scopesPanel.add(blackListPanel, "sg pn, grow");
 
     // Force interept panel
-    forceListPanel.add(Utils.separator("Force intercept: (?)", "center", false), "span, growx");
+    forceListPanel.add(KUtils.separator("Force intercept: (?)", "center", false), "span, growx");
 
     forceListPanel.add(scrollForceInterceptList, "wrap, span 2, grow, push");
     forceListPanel.add(enableForceinterceptCheckbox, "alignx left");

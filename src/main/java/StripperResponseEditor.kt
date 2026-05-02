@@ -12,7 +12,7 @@ class StripperResponseEditor(
 ) : ExtensionProvidedHttpResponseEditor {
 
   var currentRequestResponse: HttpRequestResponse? = null
-  var previewTabGUI: PreviewTabGUI
+  lateinit var previewTabGUI: PreviewTabGUI
 
   init {
     val tool = editorCreationContext.toolSource().toolType().toolName().lowercase()
@@ -30,7 +30,8 @@ class StripperResponseEditor(
   }
 
   override fun isEnabledFor(requestResponse: HttpRequestResponse?): Boolean {
-    if (requestResponse == null) return false
+    if (requestResponse == null
+      || requestResponse.request() == null) return false
 
     this.currentRequestResponse = requestResponse
     val url = Utils.removeQueryFromUrl(requestResponse.request().url())

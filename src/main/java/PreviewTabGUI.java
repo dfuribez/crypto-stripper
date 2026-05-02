@@ -143,7 +143,7 @@ public class PreviewTabGUI {
     right.add(Utils.separator("Output", "center", false), "alignx center, wrap");
     right.add(stdErrScroll, "grow, push");
 
-    mainPanel.add(horizontal, "grow, wrap");
+    mainPanel.add(horizontal, "grow, wrap, push");
 
     JPanel buttonsPanel = new JPanel(new MigLayout("insets 0"));
 

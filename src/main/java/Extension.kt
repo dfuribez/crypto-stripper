@@ -28,7 +28,7 @@ class Extension : BurpExtension,
     montoyaApi.userInterface().registerHttpResponseEditorProvider(this)
 
     montoyaApi.http().registerHttpHandler(StripperHttpHandler(montoyaApi, mainTab))
-    montoyaApi.proxy().registerRequestHandler(ProxyHttpRequestHandler(montoyaApi, mainTab))
+    montoyaApi.proxy().registerRequestHandler(StripperProxyRequestHandler(montoyaApi, mainTab))
     montoyaApi.proxy().registerResponseHandler(ProxyHttpResponseHandler(montoyaApi, mainTab))
   }
 

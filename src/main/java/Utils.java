@@ -67,7 +67,7 @@ public class Utils {
     result.put("body", new String(request.body().getBytes(), StandardCharsets.UTF_8));
     result.put("headers", headers);
     result.put("urlParameters", urlParameters);
-    result.put("url", KUtils.cleanUrl(request.url()));
+    result.put("url", KUtils.Url.clean(request.url()));
     result.put("messageId", String.valueOf(messageId));
     result.put("httpMethod", request.method());
     result.put("path", request.path());

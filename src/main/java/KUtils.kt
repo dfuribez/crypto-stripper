@@ -10,15 +10,18 @@ import javax.swing.JSeparator
 import javax.swing.SwingConstants
 
 object KUtils {
+
+  object Url {
+    @JvmStatic
+    fun clean(url: String): String {
+      return url.split("?")[0]
+    }
+  }
+
   @JvmStatic
   fun checkFileExists(path: String?): Boolean {
     if (path.isNullOrEmpty()) return false
     return File(path).isFile
-  }
-
-  @JvmStatic
-  fun cleanUrl(url: String): String {
-    return url.split("?")[0]
   }
 
   @JvmStatic

@@ -32,7 +32,7 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
   public ProxyRequestReceivedAction handleRequestReceived(
       InterceptedRequest interceptedRequest) {
 
-    String url = KUtils.cleanUrl(interceptedRequest.url());
+    String url = KUtils.Url.clean(interceptedRequest.url());
     Annotations annotations = interceptedRequest.annotations();
 
     HashMap<String, PersistedList<String>> scope =

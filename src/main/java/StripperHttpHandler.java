@@ -38,7 +38,7 @@ class StripperHttpHandler implements HttpHandler {
       return continueWith(modifiedRequest, annotations);
     }
 
-    String url = KUtils.cleanUrl(requestToBeSent.url());
+    String url = KUtils.Url.clean(requestToBeSent.url());
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());
 
@@ -82,7 +82,7 @@ class StripperHttpHandler implements HttpHandler {
       return continueWith(responseReceived, responseReceived.annotations());
     }
 
-    String url = KUtils.cleanUrl(
+    String url = KUtils.Url.clean(
         responseReceived.initiatingRequest().url());
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());

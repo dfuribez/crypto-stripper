@@ -178,7 +178,7 @@ private void execute(String action) {
     source = "request";
   } else {
     String url =
-        KUtils.cleanUrl(requestResponse.request().url());
+        KUtils.Url.clean(requestResponse.request().url());
     prepared = Utils.prepareResponseForExecutor(
         responseEditor.getResponse(), url, messageId, selectedToolSource);
     source = "response";

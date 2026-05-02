@@ -26,10 +26,10 @@ public final class Executor {
 
     if ("request".equals(source)) {
       scriptToExecute = api.persistence().extensionData().getString(
-          Constants.REQUEST_SCRIPT_PATH_KEY);
+          K.KEYS.REQUEST_SCRIPT_PATH);
     } else {
       scriptToExecute = api.persistence().extensionData().getString(
-          Constants.RESPONSE_SCRIPT_PATH_KEY);
+          K.KEYS.RESPONSE_SCRIPT_PATH);
     }
 
     command = Utils.getCommandFromPath(api.persistence(), scriptToExecute);
@@ -111,7 +111,7 @@ public final class Executor {
     } catch (IOException  | IllegalStateException | JsonSyntaxException |
         IllegalArgumentException e) {
       response.error = String.format(
-          Constants.STRIPPER_ERROR_TEMPLATE,
+          K.Error.TEMPLATE,
           command, scriptToExecute, "", e, decodedOutput);
 
       error.append("--------- Extension errors ---------").append("\n");

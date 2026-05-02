@@ -30,7 +30,7 @@ class StripperHttpHandler implements HttpHandler {
   ) {
 
     HttpRequest modifiedRequest = requestToBeSent
-        .withRemovedHeader(Constants.FIREPROXY_HEADER);
+        .withRemovedHeader(K.HEADER.FIREPROXY);
 
     Annotations annotations = requestToBeSent.annotations();
 
@@ -65,7 +65,7 @@ class StripperHttpHandler implements HttpHandler {
 
       return continueWith(
           Utils.executorToHttpRequest(modifiedRequest, executorOutput)
-              .withRemovedHeader(Constants.STRIPPER_HEADER),
+              .withRemovedHeader(K.HEADER.STRIPPER),
           annotations
       );
     }
@@ -128,7 +128,7 @@ class StripperHttpHandler implements HttpHandler {
 
     if (isUrlInScope) {
       response = response
-          .withAddedHeader(Constants.STRIPPER_HEADER, Constants.X_STRIPPER_RESPONSE_NOT_SELECTED);
+          .withAddedHeader(K.HEADER.STRIPPER, K.Error.RESPONSE_NOT_SELECTED);
     }
 
     return continueWith(response, annotations);

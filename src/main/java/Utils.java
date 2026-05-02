@@ -44,7 +44,7 @@ public class Utils {
   public static ArrayList<String> headersToArray(List<HttpHeader> headersList) {
     ArrayList<String> headers = new ArrayList<>();
     for (HttpHeader header : headersList) {
-      if (!Arrays.asList(Constants.dangerousPseudoHeaders).contains(header.name())) {
+      if (!Arrays.asList(K.Gen.dangerousPseudoHeaders).contains(header.name())) {
         headers.add(header.toString());
       }
     }
@@ -149,7 +149,7 @@ public class Utils {
   public static HttpRequest executorToHttpRequest(HttpRequest request, ExecutorOutput output) {
     if (output.error != null && !output.error.isEmpty()) {
       return request
-          .withHeader(Constants.STRIPPER_HEADER, Constants.X_STRIPPER_ERROR);
+          .withHeader(K.HEADER.STRIPPER, K.Error.ERROR);
     }
 
     HttpRequest modified = request
@@ -160,7 +160,7 @@ public class Utils {
 
     // avoids kettling
     for (HttpHeader header : request.headers()) {
-      if (!Arrays.asList(Constants.dangerousPseudoHeaders).contains(header.name())) {
+      if (!Arrays.asList(K.Gen.dangerousPseudoHeaders).contains(header.name())) {
         modified = modified.withRemovedHeader(header.name());
       }
     }
@@ -170,14 +170,14 @@ public class Utils {
     return modified
         .withBody(ByteArray.byteArray(output.body.getBytes(StandardCharsets.UTF_8)))
         .withAddedParameters(Utils.listToUrlParams(output.urlParameters))
-        .withHeader(Constants.STRIPPER_HEADER, "true")
+        .withHeader(K.HEADER.STRIPPER, "true")
         .withUpdatedHeader("Host", output.host);
   }
 
   public static HttpResponse executorToHttpResponse(HttpResponse response, ExecutorOutput output) {
     if (output.error != null && !output.error.isEmpty()) {
       return response
-          .withAddedHeader(Constants.STRIPPER_HEADER, Constants.X_STRIPPER_ERROR);
+          .withAddedHeader(K.HEADER.STRIPPER, K.Error.ERROR);
     }
 
     HttpResponse modified = response
@@ -188,7 +188,7 @@ public class Utils {
 
     return modified
         .withBody(ByteArray.byteArray(output.body.getBytes(StandardCharsets.UTF_8)))
-        .withAddedHeader(Constants.STRIPPER_HEADER, "true");
+        .withAddedHeader(K.HEADER.STRIPPER, "true");
   }
 
   public static String removeQueryFromUrl(String url) {
@@ -200,11 +200,11 @@ public class Utils {
       return null;
     }
 
-    String globalPython = persistence.preferences().getString(Constants.GLOBAL_PYTHON_PATH_KEY);
-    String globalNode = persistence.preferences().getString(Constants.GLOBAL_NODE_PATH_KEY);
+    String globalPython = persistence.preferences().getString(K.KEYS.GLOBAL_PYTHON_PATH);
+    String globalNode = persistence.preferences().getString(K.KEYS.GLOBAL_NODE_PATH);
 
-    String nodePath = persistence.extensionData().getString(Constants.PROJECT_NODE_PATH_KEY);
-    String pythonPath = persistence.extensionData().getString(Constants.PROJECT_PYTHON_PATH_KEY);
+    String nodePath = persistence.extensionData().getString(K.KEYS.PROJECT_NODE_PATH);
+    String pythonPath = persistence.extensionData().getString(K.KEYS.PROJECT_PYTHON_PATH);
 
     if (!Utils.checkFileExists(pythonPath)) {
       pythonPath = globalPython;
@@ -231,12 +231,12 @@ public class Utils {
   public static HashMap<String, PersistedList<String>> loadScope(PersistedObject extensionData) {
     HashMap<String, PersistedList<String>> output = new HashMap<>();
 
-    PersistedList<String> stripperScope = extensionData.getStringList(Constants.STRIPPER_SCOPE_LIST_KEY);
+    PersistedList<String> stripperScope = extensionData.getStringList(K.KEYS.SCOPE_LIST);
 
-    PersistedList<String> stripperBlackList = extensionData.getStringList(Constants.STRIPPER_BLACK_LIST_KEY);
+    PersistedList<String> stripperBlackList = extensionData.getStringList(K.KEYS.BLACK_LIST);
 
     PersistedList<String> stripperForceIntercept =
-        extensionData.getStringList(Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY);
+        extensionData.getStringList(K.KEYS.FORCE_INTERCEPT_LIST);
 
     if (stripperScope == null) {
       stripperScope = PersistedList.persistedStringList();

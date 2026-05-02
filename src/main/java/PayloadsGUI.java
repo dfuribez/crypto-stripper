@@ -134,7 +134,7 @@ public class PayloadsGUI extends JDialog {
   }
 
   private void initialize() {
-    buttonOK.setBackground(Constants.MAIN_BUTTON_BACKGROUND);
+    buttonOK.setBackground(K.Color.MAIN_BUTTON_BACKGROUND);
 
     textLenght.setText("100");
     fileTextField.setEditable(false);
@@ -268,7 +268,7 @@ public class PayloadsGUI extends JDialog {
 
     previewTextArea.setText(builder.toString());
     selectedText = builder.toString().getBytes(StandardCharsets.UTF_8);
-  
+
   }
 
 

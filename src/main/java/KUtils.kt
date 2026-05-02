@@ -10,15 +10,18 @@ import javax.swing.JSeparator
 import javax.swing.SwingConstants
 
 object KUtils {
+
+  object Url {
+    @JvmStatic
+    fun clean(url: String): String {
+      return url.split("?")[0]
+    }
+  }
+
   @JvmStatic
   fun checkFileExists(path: String?): Boolean {
     if (path.isNullOrEmpty()) return false
     return File(path).isFile
-  }
-
-  @JvmStatic
-  fun cleanUrl(url: String): String {
-    return url.split("?")[0]
   }
 
   @JvmStatic
@@ -67,7 +70,7 @@ object KUtils {
     val headers = ArrayList<String?>()
 
     for (header in burpHeaders) {
-      if (K.Gen.dangerousPseudoHeaders.contains(header.name())) {
+      if (!K.Gen.dangerousPseudoHeaders.contains(header.name())) {
         headers.add(header.toString())
       }
     }
@@ -101,6 +104,16 @@ object KUtils {
     }
 
     return JPanel()
+  }
+
+  fun escapeHtml(input: String): String {
+    return input
+      .replace("&", "&amp;")
+      .replace("<", "&lt;")
+      .replace(">", "&gt;")
+      .replace("\"", "&quot;")
+      .replace("'", "&#x27;")
+      .replace("\n", "<br>")
   }
 
 }

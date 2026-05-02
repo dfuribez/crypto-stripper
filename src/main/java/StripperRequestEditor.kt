@@ -13,11 +13,11 @@ class StripperRequestEditor(
 
   var currentRequestResponse: HttpRequestResponse? = null
 
-  val previewTabGUI: PreviewTabGUI
+  val previewTabGUI: PreviewTabGui
 
   init {
     val source = creationContext.toolSource().toolType().toolName().lowercase()
-    previewTabGUI = PreviewTabGUI(montoyaApi, true, source)
+    previewTabGUI = PreviewTabGui(montoyaApi, true, source)
   }
 
   override fun getRequest(): HttpRequest? {
@@ -27,13 +27,13 @@ class StripperRequestEditor(
   override fun setRequestResponse(requestResponse: HttpRequestResponse?) {
     this.currentRequestResponse = requestResponse
     previewTabGUI.setRequestResponse(requestResponse)
-    previewTabGUI.setContent(requestResponse?.request())
+    previewTabGUI.setRequest(requestResponse?.request())
   }
 
   override fun isEnabledFor(requestResponse: HttpRequestResponse?): Boolean {
     if (requestResponse == null) return false
     try {
-      val url = KUtils.cleanUrl(requestResponse.request().url())
+      val url = KUtils.Url.clean(requestResponse.request().url())
       val scope = Utils.loadScope(montoyaApi.persistence().extensionData())
       this.currentRequestResponse = requestResponse
       previewTabGUI.setRequestResponse(requestResponse)

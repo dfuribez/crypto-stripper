@@ -1,9 +1,17 @@
+import burp.api.montoya.MontoyaApi
+import burp.api.montoya.core.Annotations
 import burp.api.montoya.http.message.HttpHeader
+import burp.api.montoya.http.message.requests.HttpRequest
+import burp.api.montoya.http.message.responses.HttpResponse
 import burp.api.montoya.persistence.Persistence
+import jdk.jshell.execution.Util
+import models.EditedRequest
 import net.miginfocom.swing.MigLayout
 import java.awt.Component
 import java.io.File
 import java.net.URI
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JSeparator
@@ -17,6 +25,44 @@ object KUtils {
       return url.split("?")[0]
     }
   }
+
+  object Request {
+    @JvmStatic
+    fun edit(montoyaApi: MontoyaApi,
+             request: HttpRequest,
+             annotations: Annotations,
+             messageId: Int,
+             action: String,
+             toolName: String
+    ) : EditedRequest {
+      val url = KUtils.Url.clean(request.url())
+      var newAnnotations: Annotations? = null
+
+      val ready = Utils.prepareRequestForExecutor(request, messageId, toolName)
+      val executed = Executor.execute(montoyaApi, action, "request", ready)
+      val edited = Utils.executorToHttpRequest(request, executed)
+
+      if (!executed.issue.isNullOrEmpty()) {
+        Utils.setIssue(
+          montoyaApi,
+          executed.issue,
+          url,
+          request,
+          HttpResponse.httpResponse()
+        )
+      }
+
+      if (!executed.annotation.isNullOrEmpty()) {
+        newAnnotations = Utils.setAnnotation(
+          annotations.notes(),
+          executed.annotation["color"],
+          executed.annotation["note"]
+        )
+      }
+      return EditedRequest(edited, newAnnotations ?: annotations, executed.intercept)
+    }
+  }
+
 
   @JvmStatic
   fun checkFileExists(path: String?): Boolean {
@@ -116,4 +162,10 @@ object KUtils {
       .replace("\n", "<br>")
   }
 
+  fun printError(montoyaApi: MontoyaApi, source: String, error: String) {
+    val now = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+    montoyaApi.logging().logToError(
+      "[+] $now at $source\n\t$error\n"
+    )
+  }
 }

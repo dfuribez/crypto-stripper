@@ -78,7 +78,7 @@ public class Utils {
     result.put("body", new String(request.body().getBytes(), StandardCharsets.UTF_8));
     result.put("headers", headers);
     result.put("urlParameters", urlParameters);
-    result.put("url", Utils.removeQueryFromUrl(request.url()));
+    result.put("url", KUtils.cleanUrl(request.url()));
     result.put("messageId", String.valueOf(messageId));
     result.put("httpMethod", request.method());
     result.put("path", request.path());
@@ -108,16 +108,6 @@ public class Utils {
     result.put("toolSource", source);
 
     return result;
-  }
-
-  public static boolean checkFileExists(String path) {
-    if (path == null || path.isEmpty()) {
-      return false;
-    }
-
-    File file = new File(path);
-
-    return file.isFile();
   }
 
   public static List<HttpHeader> listToHttpHeaders(List<String> headersList) {
@@ -189,43 +179,6 @@ public class Utils {
     return modified
         .withBody(ByteArray.byteArray(output.body.getBytes(StandardCharsets.UTF_8)))
         .withAddedHeader(K.HEADER.STRIPPER, "true");
-  }
-
-  public static String removeQueryFromUrl(String url) {
-    return url.split("\\?")[0];
-  }
-
-  public static String getCommandFromPath(Persistence persistence, String path) {
-    if (path == null) {
-      return null;
-    }
-
-    String globalPython = persistence.preferences().getString(K.KEYS.GLOBAL_PYTHON_PATH);
-    String globalNode = persistence.preferences().getString(K.KEYS.GLOBAL_NODE_PATH);
-
-    String nodePath = persistence.extensionData().getString(K.KEYS.PROJECT_NODE_PATH);
-    String pythonPath = persistence.extensionData().getString(K.KEYS.PROJECT_PYTHON_PATH);
-
-    if (!Utils.checkFileExists(pythonPath)) {
-      pythonPath = globalPython;
-    }
-
-    if (!Utils.checkFileExists(nodePath)) {
-      nodePath = globalNode;
-    }
-
-    int dotIndex = path.lastIndexOf(".");
-
-    if (dotIndex > 0) {
-      String extension = path.substring(dotIndex + 1);
-      return switch (extension) {
-        case "py" -> pythonPath;
-        case "js" -> nodePath;
-        default -> null;
-      };
-    }
-
-    return null;
   }
 
   public static HashMap<String, PersistedList<String>> loadScope(PersistedObject extensionData) {

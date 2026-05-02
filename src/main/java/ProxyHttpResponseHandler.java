@@ -23,7 +23,7 @@ class ProxyHttpResponseHandler implements ProxyResponseHandler {
   public ProxyResponseReceivedAction handleResponseReceived(
       InterceptedResponse interceptedResponse
   ) {
-    String url = Utils.removeQueryFromUrl(interceptedResponse.initiatingRequest().url());
+    String url = KUtils.cleanUrl(interceptedResponse.initiatingRequest().url());
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());
 

@@ -111,7 +111,7 @@ public class PreviewTabGUI {
       scriptPath = api.persistence().extensionData().getString(K.KEYS.RESPONSE_SCRIPT_PATH);
     }
 
-    String command = Utils.getCommandFromPath(api.persistence(), scriptPath);
+    String command = KUtils.getCommandFromPath(api.persistence(), scriptPath);
     infoEditorPane.setText(String.format(K.Gen.PREVIEW_INFO_TEMPLATE, command, scriptPath));
   }
 
@@ -178,7 +178,7 @@ private void execute(String action) {
     source = "request";
   } else {
     String url =
-        Utils.removeQueryFromUrl(requestResponse.request().url());
+        KUtils.cleanUrl(requestResponse.request().url());
     prepared = Utils.prepareResponseForExecutor(
         responseEditor.getResponse(), url, messageId, selectedToolSource);
     source = "response";

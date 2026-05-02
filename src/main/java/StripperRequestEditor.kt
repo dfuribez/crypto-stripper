@@ -33,7 +33,7 @@ class StripperRequestEditor(
   override fun isEnabledFor(requestResponse: HttpRequestResponse?): Boolean {
     if (requestResponse == null) return false
     try {
-      val url = Utils.removeQueryFromUrl(requestResponse.request().url())
+      val url = KUtils.cleanUrl(requestResponse.request().url())
       val scope = Utils.loadScope(montoyaApi.persistence().extensionData())
       this.currentRequestResponse = requestResponse
       previewTabGUI.setRequestResponse(requestResponse)

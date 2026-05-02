@@ -46,15 +46,15 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
     switch (source) {
       case "blacklist":
         target = scope.get("blacklist");
-        key = Constants.STRIPPER_BLACK_LIST_KEY;
+        key = K.KEYS.BLACK_LIST;
         break;
       case "force":
         target = scope.get("force");
-        key = Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY;
+        key = K.KEYS.FORCE_INTERCEPT_LIST;
         break;
       case "scope":
         target = scope.get("scope");
-        key = Constants.STRIPPER_SCOPE_LIST_KEY;
+        key = K.KEYS.SCOPE_LIST;
         break;
       default:
         return;
@@ -254,7 +254,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
             .replace(".", "\\\\.");
 
         int port = finalRequestResponse.request().httpService().port();
-        String pass = String.format(Constants.PASS_THROUGH, host, port);
+        String pass = String.format(K.Gen.PASS_THROUGH, host, port);
         String current = montoyaApi.burpSuite().exportProjectOptionsAsJson();
         JsonObject root = JsonParser.parseString(current).getAsJsonObject();
 

@@ -111,7 +111,7 @@ public class MainTabGUI {
         emptyBorder
     ));
 
-    versionTextArea.setText(Constants.VERSION);
+    versionTextArea.setText(K.Gen.VERSION);
 
     selectRequestScriptButton.addActionListener(e -> {
       FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -124,7 +124,7 @@ public class MainTabGUI {
       }
 
       api.persistence().extensionData().setString(
-          Constants.REQUEST_SCRIPT_PATH_KEY, path);
+          K.KEYS.REQUEST_SCRIPT_PATH, path);
       requetsPathLabel.setText(path);
     });
 
@@ -138,7 +138,7 @@ public class MainTabGUI {
         return;
       }
 
-      api.persistence().extensionData().setString(Constants.RESPONSE_SCRIPT_PATH_KEY, path);
+      api.persistence().extensionData().setString(K.KEYS.RESPONSE_SCRIPT_PATH, path);
       responsePathLabel.setText(path);
     });
 
@@ -146,7 +146,7 @@ public class MainTabGUI {
       String path = openChooser("Node binary path", null, true);
 
       if (!path.isEmpty()) {
-        api.persistence().extensionData().setString(Constants.PROJECT_NODE_PATH_KEY, path);
+        api.persistence().extensionData().setString(K.KEYS.PROJECT_NODE_PATH, path);
         nodePathTextField.setText(path);
       }
     });
@@ -155,16 +155,16 @@ public class MainTabGUI {
       String path = openChooser("Python binary path", null, true);
 
       if (!path.isEmpty()) {
-        api.persistence().extensionData().setString(Constants.PROJECT_PYTHON_PATH_KEY, path);
+        api.persistence().extensionData().setString(K.KEYS.PROJECT_PYTHON_PATH, path);
         pythonPathTextField.setText(path);
       }
     });
     setNodeDefaultButton.addActionListener(e -> {
-      api.persistence().extensionData().setString(Constants.PROJECT_NODE_PATH_KEY, "");
+      api.persistence().extensionData().setString(K.KEYS.PROJECT_NODE_PATH, "");
       nodePathTextField.setText("");
     });
     setPythonDefaultButton.addActionListener(e -> {
-      api.persistence().extensionData().setString(Constants.PROJECT_PYTHON_PATH_KEY, "");
+      api.persistence().extensionData().setString(K.KEYS.PROJECT_PYTHON_PATH, "");
       pythonPathTextField.setText("");
     });
 
@@ -178,7 +178,7 @@ public class MainTabGUI {
         return;
       }
 
-      api.persistence().preferences().setString(Constants.GLOBAL_NODE_PATH_KEY, path);
+      api.persistence().preferences().setString(K.KEYS.GLOBAL_NODE_PATH, path);
       globalNodeLabel.setText(path);
     });
     choosePythonGlobalBinaryButton.addActionListener(e -> {
@@ -188,7 +188,7 @@ public class MainTabGUI {
         return;
       }
 
-      api.persistence().preferences().setString(Constants.GLOBAL_PYTHON_PATH_KEY, path);
+      api.persistence().preferences().setString(K.KEYS.GLOBAL_PYTHON_PATH, path);
       globalPythonLabel.setText(path);
     });
     requestCheckBox.addActionListener(e -> saveCurrentSettings());
@@ -363,19 +363,19 @@ public class MainTabGUI {
       JsonSettings jsonSettings = gson.fromJson(reader, JsonSettings.class);
 
       api.persistence().extensionData().setBoolean(
-          Constants.REQUEST_CHECKBOX_STATUS_KEY, jsonSettings.enableRequest);
+          K.KEYS.REQUEST_CHECKBOX_STATUS, jsonSettings.enableRequest);
       api.persistence().extensionData().setBoolean(
-          Constants.RESPONSE_CHECKBOX_STATUS_KEY, jsonSettings.enableResponse);
+          K.KEYS.RESPONSE_CHECKBOX_STATUS, jsonSettings.enableResponse);
       api.persistence().extensionData().setBoolean(
-          Constants.FORCE_CHECKBOX_STATUS_KEY, jsonSettings.enableForceIntercept);
+          K.KEYS.FORCE_CHECKBOX_STATUS, jsonSettings.enableForceIntercept);
       api.persistence().extensionData().setStringList(
-          Constants.STRIPPER_SCOPE_LIST_KEY,
+          K.KEYS.SCOPE_LIST,
           Utils.arrayToPersisted(cleanScope(jsonSettings.scope)));
       api.persistence().extensionData().setStringList(
-          Constants.STRIPPER_BLACK_LIST_KEY,
+          K.KEYS.BLACK_LIST,
           Utils.arrayToPersisted(cleanScope(jsonSettings.blackList)));
       api.persistence().extensionData().setStringList(
-          Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY,
+          K.KEYS.FORCE_INTERCEPT_LIST,
           Utils.arrayToPersisted(cleanScope(jsonSettings.forceIntercept)));
       loadCurrentSettings();
     } catch (Exception e) {
@@ -387,11 +387,11 @@ public class MainTabGUI {
     JsonSettings settings = new JsonSettings();
 
     settings.enableRequest =
-        api.persistence().extensionData().getBoolean(Constants.REQUEST_CHECKBOX_STATUS_KEY);
+        api.persistence().extensionData().getBoolean(K.KEYS.REQUEST_CHECKBOX_STATUS);
     settings.enableResponse =
-        api.persistence().extensionData().getBoolean(Constants.RESPONSE_CHECKBOX_STATUS_KEY);
+        api.persistence().extensionData().getBoolean(K.KEYS.RESPONSE_CHECKBOX_STATUS);
     settings.enableForceIntercept =
-        api.persistence().extensionData().getBoolean(Constants.FORCE_CHECKBOX_STATUS_KEY);
+        api.persistence().extensionData().getBoolean(K.KEYS.FORCE_CHECKBOX_STATUS);
 
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());
@@ -432,36 +432,36 @@ public class MainTabGUI {
   }
 
   public void clearSettings() {
-    api.persistence().extensionData().setBoolean(Constants.REQUEST_CHECKBOX_STATUS_KEY, true);
-    api.persistence().extensionData().setBoolean(Constants.RESPONSE_CHECKBOX_STATUS_KEY, true);
-    api.persistence().extensionData().setBoolean(Constants.FORCE_CHECKBOX_STATUS_KEY, false);
-    api.persistence().extensionData().setString(Constants.RESPONSE_SCRIPT_PATH_KEY, "");
-    api.persistence().extensionData().setString(Constants.REQUEST_SCRIPT_PATH_KEY, "");
+    api.persistence().extensionData().setBoolean(K.KEYS.REQUEST_CHECKBOX_STATUS, true);
+    api.persistence().extensionData().setBoolean(K.KEYS.RESPONSE_CHECKBOX_STATUS, true);
+    api.persistence().extensionData().setBoolean(K.KEYS.FORCE_CHECKBOX_STATUS, false);
+    api.persistence().extensionData().setString(K.KEYS.RESPONSE_SCRIPT_PATH, "");
+    api.persistence().extensionData().setString(K.KEYS.REQUEST_SCRIPT_PATH, "");
 
-    api.persistence().extensionData().setString(Constants.PROJECT_NODE_PATH_KEY, "");
-    api.persistence().extensionData().setString(Constants.PROJECT_PYTHON_PATH_KEY, "");
+    api.persistence().extensionData().setString(K.KEYS.PROJECT_NODE_PATH, "");
+    api.persistence().extensionData().setString(K.KEYS.PROJECT_PYTHON_PATH, "");
 
     api.persistence().extensionData().setStringList(
-        Constants.STRIPPER_SCOPE_LIST_KEY, PersistedList.persistedStringList());
+        K.KEYS.SCOPE_LIST, PersistedList.persistedStringList());
     api.persistence().extensionData().setStringList(
-        Constants.STRIPPER_BLACK_LIST_KEY, PersistedList.persistedStringList());
+        K.KEYS.BLACK_LIST, PersistedList.persistedStringList());
     api.persistence().extensionData().setStringList(
-        Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY, PersistedList.persistedStringList());
+        K.KEYS.FORCE_INTERCEPT_LIST, PersistedList.persistedStringList());
 
-    api.persistence().preferences().setString(Constants.GLOBAL_PYTHON_PATH_KEY, "");
-    api.persistence().preferences().setString(Constants.GLOBAL_NODE_PATH_KEY, "");
+    api.persistence().preferences().setString(K.KEYS.GLOBAL_PYTHON_PATH, "");
+    api.persistence().preferences().setString(K.KEYS.GLOBAL_NODE_PATH, "");
     loadCurrentSettings();
   }
 
   public void loadCurrentSettings() {
     Boolean requestStatus = api.persistence().extensionData().getBoolean(
-        Constants.REQUEST_CHECKBOX_STATUS_KEY);
+        K.KEYS.REQUEST_CHECKBOX_STATUS);
 
     Boolean responseStatus = api.persistence().extensionData().getBoolean(
-        Constants.RESPONSE_CHECKBOX_STATUS_KEY);
+        K.KEYS.RESPONSE_CHECKBOX_STATUS);
 
     Boolean forceStatus = api.persistence().extensionData().getBoolean(
-        Constants.FORCE_CHECKBOX_STATUS_KEY);
+        K.KEYS.FORCE_CHECKBOX_STATUS);
 
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(api.persistence().extensionData());
@@ -478,22 +478,22 @@ public class MainTabGUI {
     setScopeList("force", scope.get("force"));
 
     requetsPathLabel.setText(
-        api.persistence().extensionData().getString(Constants.REQUEST_SCRIPT_PATH_KEY));
+        api.persistence().extensionData().getString(K.KEYS.REQUEST_SCRIPT_PATH));
 
     responsePathLabel.setText(
-        api.persistence().extensionData().getString(Constants.RESPONSE_SCRIPT_PATH_KEY));
+        api.persistence().extensionData().getString(K.KEYS.RESPONSE_SCRIPT_PATH));
 
     nodePathTextField.setText(
-        api.persistence().extensionData().getString(Constants.PROJECT_NODE_PATH_KEY));
+        api.persistence().extensionData().getString(K.KEYS.PROJECT_NODE_PATH));
 
     pythonPathTextField.setText(
-        api.persistence().extensionData().getString(Constants.PROJECT_PYTHON_PATH_KEY));
+        api.persistence().extensionData().getString(K.KEYS.PROJECT_PYTHON_PATH));
 
     globalNodeLabel.setText(
-        api.persistence().preferences().getString(Constants.GLOBAL_NODE_PATH_KEY));
+        api.persistence().preferences().getString(K.KEYS.GLOBAL_NODE_PATH));
 
     globalPythonLabel.setText(
-        api.persistence().preferences().getString(Constants.GLOBAL_PYTHON_PATH_KEY));
+        api.persistence().preferences().getString(K.KEYS.GLOBAL_PYTHON_PATH));
   }
 
   public void saveCurrentSettings() {
@@ -502,11 +502,11 @@ public class MainTabGUI {
     boolean forceCheckboxStatus = forceInterceptInScopeCheckbox.isSelected();
 
     api.persistence().extensionData().setBoolean(
-        Constants.FORCE_CHECKBOX_STATUS_KEY, forceCheckboxStatus);
+        K.KEYS.FORCE_CHECKBOX_STATUS, forceCheckboxStatus);
     api.persistence().extensionData().setBoolean(
-        Constants.REQUEST_CHECKBOX_STATUS_KEY, requestCheckboxStatus);
+        K.KEYS.REQUEST_CHECKBOX_STATUS, requestCheckboxStatus);
     api.persistence().extensionData().setBoolean(
-        Constants.RESPONSE_CHECKBOX_STATUS_KEY, responseCheckboxStatus);
+        K.KEYS.RESPONSE_CHECKBOX_STATUS, responseCheckboxStatus);
   }
 
   private void updateScope(String source, String action) {
@@ -523,19 +523,19 @@ public class MainTabGUI {
       case "scope":
         target = this.scopeList;
         selectedScopeList = scope.get("scope");
-        key = Constants.STRIPPER_SCOPE_LIST_KEY;
+        key = K.KEYS.SCOPE_LIST;
         selectedTextField = scopeUrlTextField;
         break;
       case "blacklist":
         target = this.blackList;
         selectedScopeList = scope.get("blacklist");
-        key = Constants.STRIPPER_BLACK_LIST_KEY;
+        key = K.KEYS.BLACK_LIST;
         selectedTextField = blackListUrlTextField;
         break;
       case "force":
         target = this.forceInterceptList;
         selectedScopeList = scope.get("force");
-        key = Constants.STRIPPER_FORCE_INTERCEPT_LIST_KEY;
+        key = K.KEYS.FORCE_INTERCEPT_LIST;
         selectedTextField = forceUrlTextField;
         break;
       default:

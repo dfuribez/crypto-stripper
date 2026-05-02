@@ -28,7 +28,7 @@ public class PreviewTabGUI {
 
   private JEditorPane infoEditorPane = new JEditorPane();
 
-  private JComboBox<String> toolCombo = new JComboBox<>(Constants.TOOLS);
+  private JComboBox<String> toolCombo = new JComboBox<>(K.Gen.TOOLS);
 
   private JScrollPane stdErrScroll = new JScrollPane(stdErrTextArea);
 
@@ -95,8 +95,8 @@ public class PreviewTabGUI {
 }
 
   private void initialize() {
-    testDecryptionButton.setBackground(Constants.MAIN_BUTTON_BACKGROUND);
-    testEncryptionButton.setBackground(Constants.MAIN_BUTTON_BACKGROUND);
+    testDecryptionButton.setBackground(K.Color.MAIN_BUTTON_BACKGROUND);
+    testEncryptionButton.setBackground(K.Color.MAIN_BUTTON_BACKGROUND);
     infoEditorPane.setEditable(false);
     stdErrTextArea.setEditable(false);
     infoEditorPane.setEnabled(false);
@@ -106,13 +106,13 @@ public class PreviewTabGUI {
     toolCombo.setSelectedItem(toolSource);
 
     if (isRequest) {
-      scriptPath = api.persistence().extensionData().getString(Constants.REQUEST_SCRIPT_PATH_KEY);
+      scriptPath = api.persistence().extensionData().getString(K.KEYS.REQUEST_SCRIPT_PATH);
     } else {
-      scriptPath = api.persistence().extensionData().getString(Constants.RESPONSE_SCRIPT_PATH_KEY);
+      scriptPath = api.persistence().extensionData().getString(K.KEYS.RESPONSE_SCRIPT_PATH);
     }
 
     String command = Utils.getCommandFromPath(api.persistence(), scriptPath);
-    infoEditorPane.setText(String.format(Constants.PREVIEW_INFO_TEMPLATE, command, scriptPath));
+    infoEditorPane.setText(String.format(K.Gen.PREVIEW_INFO_TEMPLATE, command, scriptPath));
   }
 
   private void setLayout() {
@@ -196,7 +196,7 @@ private void execute(String action) {
 
   try {
     if (!Utils.checkScriptVersion(executed.version) && executed.error.isBlank()){
-      doc.insertString(doc.getLength(), Constants.SCRIPT_NOT_SUPORTED, warningStyle);
+      doc.insertString(doc.getLength(), K.Error.SCRIPT_NOT_SUPORTED.stripIndent(), warningStyle);
       doc.insertString(doc.getLength(), "\n\n", defaultStyle);
     }
     doc.insertString(doc.getLength(), executed.stdErr, defaultStyle);

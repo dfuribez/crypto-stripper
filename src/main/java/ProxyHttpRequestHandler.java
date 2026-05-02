@@ -41,9 +41,9 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
     HttpRequest request = interceptedRequest
         .withMethod(interceptedRequest.method());
 
-    if (interceptedRequest.hasHeader(Constants.FIREPROXY_HEADER)) {
+    if (interceptedRequest.hasHeader(K.HEADER.FIREPROXY)) {
       String[] value = interceptedRequest
-          .headerValue(Constants.FIREPROXY_HEADER)
+          .headerValue(K.HEADER.FIREPROXY)
           .split(",", 2);
 
       if (value.length == 2) {
@@ -102,7 +102,7 @@ class ProxyHttpRequestHandler implements ProxyRequestHandler {
 
     if (isUrlInScope) {
       request = request
-          .withHeader(Constants.STRIPPER_HEADER, Constants.X_STRIPPER_REQUEST_NOT_SELECTED);
+          .withHeader(K.HEADER.STRIPPER, K.Error.REQUEST_NOT_SELECTED);
     }
 
     if (isBlacklisted) {

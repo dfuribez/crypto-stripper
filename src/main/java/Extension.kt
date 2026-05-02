@@ -18,7 +18,7 @@ class Extension : BurpExtension,
     val mainTab = MainTabGUI(montoyaApi)
 
     montoyaApi.extension().setName("Crypto Striper")
-    montoyaApi.logging().logToOutput(Constants.VERSION)
+    montoyaApi.logging().logToOutput(K.Gen.VERSION)
 
     montoyaApi.userInterface().registerSuiteTab("Stripper", mainTab.mainPanel)
     montoyaApi.userInterface().registerContextMenuItemsProvider(

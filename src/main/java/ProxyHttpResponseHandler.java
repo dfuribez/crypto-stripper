@@ -71,7 +71,7 @@ class ProxyHttpResponseHandler implements ProxyResponseHandler {
 
     if (isUrlInScope) {
       response = response
-          .withAddedHeader(Constants.STRIPPER_HEADER, Constants.X_STRIPPER_RESPONSE_NOT_SELECTED);
+          .withAddedHeader(K.HEADER.STRIPPER, K.Error.RESPONSE_NOT_SELECTED);
     }
 
     return ProxyResponseReceivedAction.continueWith(response, annotations);

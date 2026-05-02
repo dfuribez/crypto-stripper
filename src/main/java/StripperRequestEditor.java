@@ -10,7 +10,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
+public class StripperRequestEditor implements ExtensionProvidedHttpRequestEditor {
   MontoyaApi montoyaApi;
   EditorCreationContext creationContext;
   PreviewTabGUI previewTabGUI;
@@ -18,7 +18,7 @@ public class MyCustomEditorTab implements ExtensionProvidedHttpRequestEditor {
 
   private HttpRequestResponse currentRequest;
 
-  public MyCustomEditorTab(MontoyaApi montoyaApi, EditorCreationContext editorCreationContext) {
+  public StripperRequestEditor(MontoyaApi montoyaApi, EditorCreationContext editorCreationContext) {
     this.montoyaApi = montoyaApi;
     this.creationContext = editorCreationContext;
 

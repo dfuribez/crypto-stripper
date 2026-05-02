@@ -14,12 +14,12 @@ import static burp.api.montoya.http.handler.ResponseReceivedAction.continueWith;
 import java.util.HashMap;
 
 
-class MyHttpHandler implements HttpHandler {
+class StripperHttpHandler implements HttpHandler {
 
   MontoyaApi api;
-  MainTab2 mainTab;
+  MainTabGUI mainTab;
 
-  public MyHttpHandler(MontoyaApi api, MainTab2 gui) {
+  public StripperHttpHandler(MontoyaApi api, MainTabGUI gui) {
     this.api = api;
     this.mainTab = gui;
   }

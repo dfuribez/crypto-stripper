@@ -9,14 +9,14 @@ import burp.api.montoya.ui.editor.extension.ExtensionProvidedHttpResponseEditor;
 import java.awt.*;
 import java.util.HashMap;
 
-public class MyCustomResponseEditor implements ExtensionProvidedHttpResponseEditor {
+public class StripperResponseEditor implements ExtensionProvidedHttpResponseEditor {
   MontoyaApi api;
   EditorCreationContext creationContext;
   PreviewTabGUI previewTab;
 
   HttpRequestResponse currentResponse;
 
-  public MyCustomResponseEditor(MontoyaApi api, EditorCreationContext editorCreationContext) {
+  public StripperResponseEditor(MontoyaApi api, EditorCreationContext editorCreationContext) {
     this.api = api;
     this.creationContext = editorCreationContext;
     String tool = editorCreationContext.toolSource().toolType().toolName().toLowerCase();

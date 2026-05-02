@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class MainTab2 {
+public class MainTabGUI {
   public JPanel panel1 = new JPanel(new MigLayout("fillx"));
   private JPanel encryptorsPanel = new JPanel(new MigLayout());
   public JCheckBox requestCheckBox = new JCheckBox("Request:");
@@ -93,7 +93,7 @@ public class MainTab2 {
   MontoyaApi api;
   JFileChooser fileChooser = new JFileChooser();
 
-  public MainTab2(MontoyaApi api) {
+  public MainTabGUI(MontoyaApi api) {
     this.api = api;
 
     loadCurrentSettings();

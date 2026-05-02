@@ -20,9 +20,9 @@ import static burp.api.montoya.proxy.http.ProxyRequestReceivedAction.*;
 class ProxyHttpRequestHandler implements ProxyRequestHandler {
   Logging logger;
   MontoyaApi api;
-  public MainTab2 mainTab;
+  public MainTabGUI mainTab;
 
-  public ProxyHttpRequestHandler(MontoyaApi api, MainTab2 tab) {
+  public ProxyHttpRequestHandler(MontoyaApi api, MainTabGUI tab) {
     this.api = api;
     this.logger = api.logging();
     this.mainTab = tab;

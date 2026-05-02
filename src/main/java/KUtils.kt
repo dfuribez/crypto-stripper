@@ -6,6 +6,7 @@ import burp.api.montoya.http.message.responses.HttpResponse
 import burp.api.montoya.persistence.Persistence
 import jdk.jshell.execution.Util
 import models.EditedRequest
+import models.EditedResponse
 import net.miginfocom.swing.MigLayout
 import java.awt.Component
 import java.io.File
@@ -26,6 +27,45 @@ object KUtils {
     }
   }
 
+  object Response {
+
+    fun edit(
+      montoyaApi: MontoyaApi,
+      response: HttpResponse,
+      url: String,
+      annotations: Annotations,
+      messageId: Int,
+      action: String,
+      toolName: String
+    ) : EditedResponse {
+      var newAnnotations: Annotations? = null
+      val ready =
+        Utils.prepareResponseForExecutor(response, url, messageId, toolName)
+
+      val executed = Executor.execute(montoyaApi, action, "response", ready);
+      val response = Utils.executorToHttpResponse(response, executed)
+
+      if (executed.issue != null) {
+        Utils.setIssue(
+          montoyaApi,
+          executed.issue,
+          url,
+          HttpRequest.httpRequest(),
+          response
+        )
+      }
+
+      if (executed.annotation != null) {
+        newAnnotations = Utils.setAnnotation(
+          annotations.notes(),
+          executed.annotation["color"],
+          executed.annotation["note"]
+        )
+      }
+
+      return EditedResponse(response, newAnnotations ?: annotations)
+    }
+  }
   object Request {
     @JvmStatic
     fun edit(montoyaApi: MontoyaApi,

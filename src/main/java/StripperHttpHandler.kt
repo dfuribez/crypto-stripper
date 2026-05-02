@@ -63,14 +63,17 @@ class StripperHttpHandler(
     }
 
     val source = responseReceived.toolSource().toolType().toolName().lowercase()
-    val ready =
-      Utils.prepareResponseForExecutor(responseReceived, url, responseReceived.messageId(), source)
 
-    val executed = Executor.execute(montoyaApi, "decrypt", "response", ready);
+    val editedResponse = KUtils.Response.edit(
+      montoyaApi,
+      responseReceived.withStatusCode(responseReceived.statusCode()),
+      url,
+      annotations,
+      responseReceived.messageId(),
+      "decrypt",
+      source
+    )
 
-    val response = Utils.executorToHttpResponse(responseReceived, executed)
-
-
-    return continueWith(response, annotations)
+    return continueWith(editedResponse.response, editedResponse.annotations)
   }
 }

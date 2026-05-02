@@ -107,7 +107,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
       requestResponse = event.selectedRequestResponses().getFirst();
     }
 
-    String url = Utils.removeQueryFromUrl(requestResponse.request().url());
+    String url = KUtils.cleanUrl(requestResponse.request().url());
 
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(this.montoyaApi.persistence().extensionData());

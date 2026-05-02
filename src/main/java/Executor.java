@@ -32,9 +32,9 @@ public final class Executor {
           K.KEYS.RESPONSE_SCRIPT_PATH);
     }
 
-    command = Utils.getCommandFromPath(api.persistence(), scriptToExecute);
+    command = KUtils.getCommandFromPath(api.persistence(), scriptToExecute);
 
-    if (!Utils.checkFileExists(scriptToExecute)) {
+    if (!KUtils.checkFileExists(scriptToExecute)) {
       response.error = scriptToExecute + " is not a file";
       return response;
     }
@@ -42,7 +42,8 @@ public final class Executor {
     if (command == null) {
       response.error = "The selected script: "
           + scriptToExecute
-          + " does not have a valid extension";
+          + " does not have a valid extension"
+          + " or no binary selected";
       return response;
     }
 

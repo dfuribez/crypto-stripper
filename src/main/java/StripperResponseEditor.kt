@@ -34,7 +34,7 @@ class StripperResponseEditor(
       || requestResponse.request() == null) return false
 
     this.currentRequestResponse = requestResponse
-    val url = Utils.removeQueryFromUrl(requestResponse.request().url())
+    val url = KUtils.cleanUrl(requestResponse.request().url())
     val scope = Utils.loadScope(montoyaApi.persistence().extensionData())
 
     previewTabGUI.setRequestResponse(requestResponse)

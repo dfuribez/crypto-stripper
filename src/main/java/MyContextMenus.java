@@ -23,10 +23,10 @@ import java.util.regex.Pattern;
 
 public class MyContextMenus  implements ContextMenuItemsProvider {
   private final MontoyaApi montoyaApi;
-  private MainTab2 mainTab;
+  private MainTabGUI mainTab;
   PayloadsGUI insertDialog;
 
-  public MyContextMenus(MontoyaApi api, MainTab2 tab) {
+  public MyContextMenus(MontoyaApi api, MainTabGUI tab) {
     this.montoyaApi = api;
     this.mainTab = tab;
     insertDialog = new PayloadsGUI(montoyaApi);

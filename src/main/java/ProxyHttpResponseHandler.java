@@ -12,9 +12,9 @@ import java.util.HashMap;
 
 class ProxyHttpResponseHandler implements ProxyResponseHandler {
   MontoyaApi api;
-  MainTab2 mainTab;
+  MainTabGUI mainTab;
 
-  public ProxyHttpResponseHandler(MontoyaApi api, MainTab2 tab) {
+  public ProxyHttpResponseHandler(MontoyaApi api, MainTabGUI tab) {
     this.api = api;
     this.mainTab = tab;
   }

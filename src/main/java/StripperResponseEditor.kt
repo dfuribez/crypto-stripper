@@ -12,11 +12,11 @@ class StripperResponseEditor(
 ) : ExtensionProvidedHttpResponseEditor {
 
   var currentRequestResponse: HttpRequestResponse? = null
-  lateinit var previewTabGUI: PreviewTabGUI
+  var previewTabGui: PreviewTabGui
 
   init {
     val tool = editorCreationContext.toolSource().toolType().toolName().lowercase()
-    previewTabGUI = PreviewTabGUI(montoyaApi, false, tool)
+    previewTabGui = PreviewTabGui(montoyaApi, false, tool)
   }
 
   override fun getResponse(): HttpResponse? {
@@ -25,8 +25,8 @@ class StripperResponseEditor(
 
   override fun setRequestResponse(requestResponse: HttpRequestResponse?) {
     this.currentRequestResponse = requestResponse
-    previewTabGUI.setRequestResponse(requestResponse)
-    previewTabGUI.setContent(requestResponse?.response())
+    previewTabGui.setRequestResponse(requestResponse)
+    previewTabGui.setResponse(requestResponse?.response())
   }
 
   override fun isEnabledFor(requestResponse: HttpRequestResponse?): Boolean {
@@ -37,7 +37,7 @@ class StripperResponseEditor(
     val url = KUtils.Url.clean(requestResponse.request().url())
     val scope = Utils.loadScope(montoyaApi.persistence().extensionData())
 
-    previewTabGUI.setRequestResponse(requestResponse)
+    previewTabGui.setRequestResponse(requestResponse)
     return Utils.isUrlInScope(url, scope["scope"])
   }
 
@@ -45,8 +45,8 @@ class StripperResponseEditor(
     return "Stripper"
   }
 
-  override fun uiComponent(): Component? {
-    return previewTabGUI.mainPanel
+  override fun uiComponent(): Component {
+    return previewTabGui.mainPanel
   }
 
   override fun selectedData(): Selection? {

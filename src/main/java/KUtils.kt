@@ -70,7 +70,7 @@ object KUtils {
     val headers = ArrayList<String?>()
 
     for (header in burpHeaders) {
-      if (K.Gen.dangerousPseudoHeaders.contains(header.name())) {
+      if (!K.Gen.dangerousPseudoHeaders.contains(header.name())) {
         headers.add(header.toString())
       }
     }
@@ -104,6 +104,16 @@ object KUtils {
     }
 
     return JPanel()
+  }
+
+  fun escapeHtml(input: String): String {
+    return input
+      .replace("&", "&amp;")
+      .replace("<", "&lt;")
+      .replace(">", "&gt;")
+      .replace("\"", "&quot;")
+      .replace("'", "&#x27;")
+      .replace("\n", "<br>")
   }
 
 }

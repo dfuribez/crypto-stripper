@@ -303,13 +303,4 @@ public class Utils {
     annotation.setNotes(currentNote + separator + note);
     return annotation;
   }
-
-  public static int stringToInt(String value) {
-    try {
-      return Integer.parseInt(value);
-    } catch (Exception e) {
-      return  -1;
-    }
-  }
-
 }

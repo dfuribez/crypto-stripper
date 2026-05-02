@@ -33,10 +33,12 @@ class Extension : BurpExtension,
   }
 
   override fun provideHttpResponseEditor(p0: EditorCreationContext?): ExtensionProvidedHttpResponseEditor? {
+    if (p0 == null) return null
     return StripperResponseEditor(montoyaApi, p0)
   }
 
   override fun provideHttpRequestEditor(p0: EditorCreationContext?): ExtensionProvidedHttpRequestEditor? {
+    if (p0 == null) return null
     return StripperRequestEditor(montoyaApi, p0)
   }
 }

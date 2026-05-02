@@ -41,17 +41,6 @@ import static burp.api.montoya.http.HttpService.httpService;
 
 public class Utils {
 
-  public static ArrayList<String> headersToArray(List<HttpHeader> headersList) {
-    ArrayList<String> headers = new ArrayList<>();
-    for (HttpHeader header : headersList) {
-      if (!Arrays.asList(K.Gen.dangerousPseudoHeaders).contains(header.name())) {
-        headers.add(header.toString());
-      }
-    }
-
-    return headers;
-  }
-
   public static List<HashMap<String, String>> parametersToArray(List<ParsedHttpParameter> parameters) {
     List<HashMap<String, String>> array = new ArrayList<>();
 
@@ -70,7 +59,7 @@ public class Utils {
       HttpRequest request, int messageId, String source) {
     HashMap<String, String> result = new HashMap<>();
 
-    String headers = new Gson().toJson(Utils.headersToArray(request.headers()));
+    String headers = new Gson().toJson(KUtils.headersToArray(request.headers()));
 
     String urlParameters = new Gson().toJson(
         Utils.parametersToArray(request.parameters(HttpParameterType.URL)));
@@ -94,7 +83,7 @@ public class Utils {
       HttpResponse response, String url, int messageId, String source) {
     HashMap<String, String> result = new HashMap<>();
 
-    String headers = new Gson().toJson(Utils.headersToArray(response.headers()));
+    String headers = new Gson().toJson(KUtils.headersToArray(response.headers()));
 
     String urlParameters = new Gson().toJson(null);
 
@@ -271,23 +260,6 @@ public class Utils {
     }
   }
 
-  public static String removePathFromURL(String url) {
-    try {
-      URI uri = new URI(url);
-      return new URI(
-          uri.getScheme(),
-          uri.getUserInfo(),
-          uri.getHost(),
-          uri.getPort(),
-          null,
-          null,
-          null
-      ).toString();
-    } catch (URISyntaxException e) {
-      return null;
-    }
-  }
-
   public static void setIssue(MontoyaApi montoyaApi, Map<String, String> issue,
                               String url, HttpRequest request, HttpResponse response
   ) {
@@ -338,33 +310,6 @@ public class Utils {
     } catch (Exception e) {
       return  -1;
     }
-  }
-
-  public static JPanel separator(String title, String type, boolean visible) {
-    JPanel separator = new JPanel(new MigLayout("insets 0"));
-
-
-    if (type.equalsIgnoreCase("center")) {
-      separator.add(spacer(visible), "growx, pushx");
-      separator.add(new JLabel(title));
-      separator.add(spacer(visible), "growx, pushx");
-    } else if (type.equalsIgnoreCase("left")) {
-      separator.add(new JLabel(title));
-      separator.add(spacer(visible), "growx, pushx");
-    } else {
-      separator.add(spacer(visible), "growx, pushx");
-      separator.add(new JLabel(title));
-    }
-
-    return separator;
-  }
-
-  private static Component spacer(boolean visible) {
-    if (visible) {
-      return new JSeparator(SwingConstants.HORIZONTAL);
-    }
-
-    return new JPanel();
   }
 
 }

@@ -140,7 +140,7 @@ public class PreviewTabGUI {
 
     bottom.add(vertical, "grow, push");
 
-    right.add(Utils.separator("Output", "center", false), "alignx center, wrap");
+    right.add(KUtils.separator("Output", "center", false), "alignx center, wrap");
     right.add(stdErrScroll, "grow, push");
 
     mainPanel.add(horizontal, "grow, wrap, push");

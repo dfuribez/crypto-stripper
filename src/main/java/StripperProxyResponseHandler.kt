@@ -8,7 +8,7 @@ import models.EditedResponse
 
 class StripperProxyResponseHandler(
   var montoyaApi: MontoyaApi,
-  var stripperGui: MainTabGUI
+  var stripperGui: StripperTab
 ) : ProxyResponseHandler {
   override fun handleResponseReceived(interceptedResponse: InterceptedResponse?): ProxyResponseReceivedAction? {
     if (interceptedResponse == null) return null

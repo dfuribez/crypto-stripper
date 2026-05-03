@@ -28,7 +28,6 @@ object KUtils {
   }
 
   object Response {
-
     fun edit(
       montoyaApi: MontoyaApi,
       response: HttpResponse,

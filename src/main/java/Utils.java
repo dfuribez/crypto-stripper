@@ -220,15 +220,6 @@ public class Utils {
     return false;
   }
 
-  public static boolean isValidRegex(String regex) {
-    try {
-      "".matches(regex);
-    } catch (Exception error) {
-      return false;
-    }
-      return true;
-  }
-
   public static boolean resourceToFile(MontoyaApi api, String resource, String path) {
     try (InputStream in = Utils.class.getClassLoader().getResourceAsStream(resource)) {
       if (in == null) {

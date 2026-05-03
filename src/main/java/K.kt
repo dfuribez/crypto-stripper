@@ -15,9 +15,12 @@ class K {
     const val GLOBAL_NODE_PATH: String = "globalNodePath"
     const val GLOBAL_PYTHON_PATH: String = "globalPythonPath"
 
-    const val REQUEST_CHECKBOX_STATUS = "requestCheckboxStatus";
-    const val RESPONSE_CHECKBOX_STATUS = "responseCheckboxStatus";
-    const val FORCE_CHECKBOX_STATUS = "forceCheckboxStatus";
+    const val REQUEST_CHECKBOX_STATUS = "requestCheckboxStatus"
+    const val RESPONSE_CHECKBOX_STATUS = "responseCheckboxStatus"
+    const val FORCE_CHECKBOX_STATUS = "forceCheckboxStatus"
+
+    const val ENABLE_FORCE = "enableforce"
+    const val ENABLE_BLACK = "enableblack"
   }
 
   object HEADER {

@@ -12,7 +12,7 @@ import burp.api.montoya.ui.contextmenu.InvocationType;
 import burp.api.montoya.ui.contextmenu.MessageEditorHttpRequestResponse;
 import com.google.gson.*;
 import models.ExecutorOutput;
-
+import Utils2.GenericKt;
 import javax.swing.*;
 import java.awt.*;
 import java.net.URLEncoder;
@@ -23,10 +23,10 @@ import java.util.regex.Pattern;
 
 public class MyContextMenus  implements ContextMenuItemsProvider {
   private final MontoyaApi montoyaApi;
-  private MainTabGUI mainTab;
+  private StripperTab mainTab;
   PayloadsGUI insertDialog;
 
-  public MyContextMenus(MontoyaApi api, MainTabGUI tab) {
+  public MyContextMenus(MontoyaApi api, StripperTab tab) {
     this.montoyaApi = api;
     this.mainTab = tab;
     insertDialog = new PayloadsGUI(montoyaApi);
@@ -39,7 +39,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
     HashMap<String, PersistedList<String>> scope =
         Utils.loadScope(montoyaApi.persistence().extensionData());
 
-    if (!Utils.isValidRegex(url)) {
+    if (!GenericKt.isValidRegex(url)) {
       url = Pattern.quote(url);
     }
 
@@ -67,7 +67,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
     }
 
     montoyaApi.persistence().extensionData().setStringList(key, target);
-    mainTab.loadCurrentSettings();
+    mainTab.loadSettings();
   }
 
   public void decryptRequest(MessageEditorHttpRequestResponse requestResponse, String source){

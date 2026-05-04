@@ -14,14 +14,14 @@ class StripperProxyResponseHandler(
     if (interceptedResponse == null) return null
 
     val url = KUtils.Url.clean(interceptedResponse.initiatingRequest().url())
-    val scope = Utils.loadScope(montoyaApi.persistence().extensionData())
+    val scope = Utils2.Settings.scope(montoyaApi)
 
     val response = interceptedResponse
       .withStatusCode(interceptedResponse.statusCode())
 
     val annotations = interceptedResponse.annotations()
 
-    val isUrlInScope = Utils.isUrlInScope(url, scope["scope"])
+    val isUrlInScope = Utils2.isUrlInScope(url, scope.scope)
 
 
     if (stripperGui.responseCheckBox.isSelected && isUrlInScope) {

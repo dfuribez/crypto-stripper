@@ -34,11 +34,11 @@ class StripperRequestEditor(
     if (requestResponse == null) return false
     try {
       val url = KUtils.Url.clean(requestResponse.request().url())
-      val scope = Utils.loadScope(montoyaApi.persistence().extensionData())
+      val scope = Utils2.Settings.scope(montoyaApi)
       this.currentRequestResponse = requestResponse
       previewTabGUI.setRequestResponse(requestResponse)
 
-      return Utils.isUrlInScope(url, scope["scope"])
+      return Utils2.isUrlInScope(url, scope.scope)
           && !creationContext.toolSource().toolType().toolName().equals("Extensions", ignoreCase = true)
 
     } catch (e: Exception){

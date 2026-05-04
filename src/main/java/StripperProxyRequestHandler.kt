@@ -18,8 +18,7 @@ class StripperProxyRequestHandler(
     val url = KUtils.Url.clean(interceptedRequest.url())
     val annotations = interceptedRequest.annotations()
 
-    val scope =
-      Utils.loadScope(montoyaApi.persistence().extensionData())
+    val scope = Utils2.Settings.scope(montoyaApi)
 
     var request = interceptedRequest
       .withMethod(interceptedRequest.method())
@@ -38,10 +37,10 @@ class StripperProxyRequestHandler(
     }
 
     val isBlacklisted = stripperTab.enableBlackListcheckbox.isSelected
-        && Utils.isUrlInScope(url, scope["blacklist"])
-    val forceIntercept = Utils.isUrlInScope(url, scope["force"])
+        && Utils2.isUrlInScope(url, scope.black)
+    val forceIntercept = Utils2.isUrlInScope(url, scope.force)
         && stripperTab.enableForceinterceptCheckbox.isSelected
-    val isUrlInScope = Utils.isUrlInScope(url, scope["scope"])
+    val isUrlInScope = Utils2.isUrlInScope(url, scope.scope)
 
     if (stripperTab.requestCheckBox.isSelected && isUrlInScope) {
       val editedRequest = edit(

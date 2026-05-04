@@ -117,20 +117,19 @@ object Settings {
     File(path).writeText(jsonString)
   }
 
+  @JvmStatic
+  fun scope(montoyaApi: MontoyaApi): StripperScope {
+    val extensionData = montoyaApi.persistence().extensionData()
+    val stripperScope = extensionData.getStringList(K.KEYS.SCOPE_LIST)
+      ?: PersistedList.persistedStringList()
+    val stripperBlack = extensionData.getStringList(K.KEYS.BLACK_LIST)
+      ?: PersistedList.persistedStringList()
+    val stripperForce = extensionData.getStringList(K.KEYS.FORCE_INTERCEPT_LIST)
+      ?: PersistedList.persistedStringList()
+    return StripperScope(
+      scope = stripperScope,
+      black = stripperBlack,
+      force = stripperForce
+    )
+  }
 }
-
-fun scope(montoyaApi: MontoyaApi) : StripperScope {
-  val extensionData = montoyaApi.persistence().extensionData()
-  val stripperScope = extensionData.getStringList(K.KEYS.SCOPE_LIST)
-    ?: PersistedList.persistedStringList()
-  val stripperBlack = extensionData.getStringList(K.KEYS.BLACK_LIST)
-    ?: PersistedList.persistedStringList()
-  val stripperForce = extensionData.getStringList(K.KEYS.FORCE_INTERCEPT_LIST)
-    ?: PersistedList.persistedStringList()
-  return StripperScope(
-    scope = stripperScope,
-    black = stripperBlack,
-    force = stripperForce
-  )
-}
-

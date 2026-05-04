@@ -1,8 +1,12 @@
 package Utils2
 
-import burp.api.montoya.MontoyaApi
+import burp.api.montoya.persistence.PersistedList
 import java.awt.Component
+import java.awt.Desktop
+import java.io.File
+import java.io.IOException
 import javax.swing.JFileChooser
+import javax.swing.JOptionPane
 import javax.swing.filechooser.FileNameExtensionFilter
 
 fun openChooser(
@@ -35,4 +39,36 @@ fun isValidRegex(pattern: String) : Boolean{
   } catch (e: Exception) {
     return false
   }
+}
+
+fun openFolder(path: String?): Boolean {
+  if (path.isNullOrBlank()) return false
+  if (Desktop.isDesktopSupported()) {
+    val file = File(path)
+    val desktop = Desktop.getDesktop()
+    try {
+      desktop.open(File(file.parent))
+      return true
+    } catch (e: IOException) {
+      return false
+    }
+  }
+  return false
+}
+
+fun showAlertMessage(parent: Component, message: String) {
+  JOptionPane.showMessageDialog(parent, message)
+}
+
+fun isUrlInScope(url: String, scope: PersistedList<String>): Boolean {
+  for (regex in scope) {
+    try {
+      if (url.matches(regex.toRegex())) {
+        return true
+      }
+    } catch (e: java.lang.Exception) {
+      return false
+    }
+  }
+  return false
 }

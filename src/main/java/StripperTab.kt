@@ -203,8 +203,14 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     exportSettingsButton.addActionListener { exportSettings() }
     importSettingsButton.addActionListener { importSettings() }
 
-    openRequestButton.addActionListener { Utils.openFolder(requestScriptTextField.text) }
-    openResponseButton.addActionListener { Utils.openFolder(responseScriptTextField.text) }
+    openRequestButton.addActionListener { openFolder(requestScriptTextField.text) }
+    openResponseButton.addActionListener { openFolder(responseScriptTextField.text) }
+  }
+
+  private fun openFolder(path: String) {
+    val result = Utils2.openFolder(path)
+    val parent = montoyaApi.userInterface().swingUtils().suiteFrame()
+    if (!result) Utils2.showAlertMessage(parent, "Error opening containing folder")
   }
 
   private fun layout() {
@@ -332,24 +338,24 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     val key: String?
     val addUrl: String?
 
-    val scope = Utils.loadScope(montoyaApi.persistence().extensionData())
+    val scope = Utils2.Settings.scope(montoyaApi)
 
     when (source) {
       "scope" -> {
         target = scopeList
-        selectedScopeList = scope["scope"]
+        selectedScopeList = scope.scope
         key = K.KEYS.SCOPE_LIST
         selectedTextField = scopeUrlTextField
       }
       "black" -> {
         target = blackList
-        selectedScopeList = scope["blacklist"]
+        selectedScopeList = scope.black
         key = K.KEYS.BLACK_LIST
         selectedTextField = blackListUrlTextField
       }
       "force" -> {
         target = forceInterceptList
-        selectedScopeList = scope["force"]
+        selectedScopeList = scope.force
         key = K.KEYS.FORCE_INTERCEPT_LIST
         selectedTextField = forceUrlTextField
       }
@@ -370,13 +376,14 @@ class StripperTab(var montoyaApi: MontoyaApi) {
       }
     } else {
       addUrl = selectedTextField.text;
+      val parent = montoyaApi.userInterface().swingUtils().suiteFrame()
       if (!Utils2.isValidRegex(addUrl) || addUrl.isBlank()) {
-        showAlertMessage("Please check your url, it is not a valid regex");
+        Utils2.showAlertMessage(parent, "Please check your url, it is not a valid regex");
         return;
       }
 
-      if (Utils.isUrlInScope(addUrl, selectedScopeList)) {
-        showAlertMessage("Url already in the scope");
+      if (Utils2.isUrlInScope(addUrl, selectedScopeList)) {
+        Utils2.showAlertMessage(parent, "Url already in the scope");
         return;
       }
 
@@ -385,11 +392,6 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     }
     montoyaApi.persistence().extensionData().setStringList(key, selectedScopeList);
     loadSettings()
-  }
-  private fun showAlertMessage(message: String) {
-    JOptionPane.showMessageDialog(
-      montoyaApi.userInterface().swingUtils().suiteFrame(), message
-    )
   }
 
   private fun clearSettings() {
@@ -422,7 +424,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
 
   fun loadSettings() {
     val settings = Utils2.Settings.load(montoyaApi)
-    val scope = Utils.loadScope(montoyaApi.persistence().extensionData())
+    val scope = Utils2.Settings.scope(montoyaApi)
 
     requestCheckBox.isSelected = settings.requestEnabled
     responseCheckBox.isSelected = settings.responseEnabled
@@ -439,15 +441,15 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     enableBlackListcheckbox.isSelected = settings.enableBlack
 
     val scopeModel = DefaultListModel<String>()
-    scopeModel.addAll(scope["scope"]?.map { it.toString() })
+    scopeModel.addAll(scope.scope.map { it.toString() })
     scopeList.model = scopeModel
 
     val blackModel = DefaultListModel<String>()
-    blackModel.addAll(scope["blacklist"]?.map { it.toString() })
+    blackModel.addAll(scope.black.map { it.toString() })
     blackList.model = blackModel
 
     val forceModel = DefaultListModel<String>()
-    forceModel.addAll(scope["force"]?.map { it.toString() })
+    forceModel.addAll(scope.force.map { it.toString() })
     forceInterceptList.model = forceModel
   }
 

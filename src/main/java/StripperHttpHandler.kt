@@ -16,11 +16,11 @@ class StripperHttpHandler(var montoyaApi: MontoyaApi) : HttpHandler {
     }
 
     val url = KUtils.Url.clean(requestToBeSent.url())
-    val scope = Utils.loadScope(montoyaApi.persistence().extensionData())
+    val scope = Utils2.Settings.scope(montoyaApi)
 
     val requestEnabled = montoyaApi.persistence().extensionData().getBoolean(K.KEYS.REQUEST_CHECKBOX_STATUS)
 
-    if (!(requestEnabled && Utils.isUrlInScope(url, scope["scope"])))
+    if (!(requestEnabled && Utils2.isUrlInScope(url, scope.scope)))
       return continueWith(modifiedRequest, annotations)
 
     val toolName = requestToBeSent.toolSource().toolType().toolName().lowercase()
@@ -45,11 +45,11 @@ class StripperHttpHandler(var montoyaApi: MontoyaApi) : HttpHandler {
     }
 
     val url = KUtils.Url.clean(responseReceived.initiatingRequest().url())
-    val scope = Utils.loadScope(montoyaApi.persistence().extensionData())
+    val scope = Utils2.Settings.scope(montoyaApi)
 
-    var annotations = responseReceived.annotations()
+    val annotations = responseReceived.annotations()
 
-    if (!Utils.isUrlInScope(url, scope["scope"])) {
+    if (!Utils2.isUrlInScope(url, scope.scope)) {
       return continueWith(responseReceived, annotations)
     }
 

@@ -170,65 +170,6 @@ public class Utils {
         .withAddedHeader(K.HEADER.STRIPPER, "true");
   }
 
-  public static HashMap<String, PersistedList<String>> loadScope(PersistedObject extensionData) {
-    HashMap<String, PersistedList<String>> output = new HashMap<>();
-
-    PersistedList<String> stripperScope = extensionData.getStringList(K.KEYS.SCOPE_LIST);
-
-    PersistedList<String> stripperBlackList = extensionData.getStringList(K.KEYS.BLACK_LIST);
-
-    PersistedList<String> stripperForceIntercept =
-        extensionData.getStringList(K.KEYS.FORCE_INTERCEPT_LIST);
-
-    if (stripperScope == null) {
-      stripperScope = PersistedList.persistedStringList();
-    }
-
-    if (stripperBlackList == null) {
-      stripperBlackList = PersistedList.persistedStringList();
-    }
-
-    if (stripperForceIntercept == null) {
-      stripperForceIntercept = PersistedList.persistedStringList();
-    }
-
-    output.put("scope", stripperScope);
-    output.put("blacklist", stripperBlackList);
-    output.put("force", stripperForceIntercept);
-
-    return output;
-  }
-
-  public static PersistedList<String> arrayToPersisted(String[] list){
-    PersistedList<String> out = PersistedList.persistedStringList();
-
-    Collections.addAll(out, list);
-
-    return out;
-  }
-
-  public static boolean isUrlInScope(String url, PersistedList<String> scope) {
-    for (String regex : scope) {
-      try {
-        if (url.matches(regex)) {
-          return true;
-        }
-      } catch (Exception e) {
-        return false;
-      }
-    }
-    return false;
-  }
-
-  public static boolean isValidRegex(String regex) {
-    try {
-      "".matches(regex);
-    } catch (Exception error) {
-      return false;
-    }
-      return true;
-  }
-
   public static boolean resourceToFile(MontoyaApi api, String resource, String path) {
     try (InputStream in = Utils.class.getClassLoader().getResourceAsStream(resource)) {
       if (in == null) {
@@ -246,18 +187,6 @@ public class Utils {
 
   public static boolean checkScriptVersion(short version) {
     return version >= 2;
-  }
-
-  public static void openFolder(String path) {
-    if (Desktop.isDesktopSupported()) {
-      File file = new File(path);
-      Desktop desktop = Desktop.getDesktop();
-      try {
-        desktop.open(new File(file.getParent()));
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-    }
   }
 
   public static void setIssue(MontoyaApi montoyaApi, Map<String, String> issue,

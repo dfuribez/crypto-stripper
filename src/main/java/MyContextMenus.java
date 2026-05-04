@@ -12,6 +12,8 @@ import burp.api.montoya.ui.contextmenu.InvocationType;
 import burp.api.montoya.ui.contextmenu.MessageEditorHttpRequestResponse;
 import com.google.gson.*;
 import models.ExecutorOutput;
+import Utils2.GenericKt;
+import models.StripperScope;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,10 +25,10 @@ import java.util.regex.Pattern;
 
 public class MyContextMenus  implements ContextMenuItemsProvider {
   private final MontoyaApi montoyaApi;
-  private MainTabGUI mainTab;
+  private StripperTab mainTab;
   PayloadsGUI insertDialog;
 
-  public MyContextMenus(MontoyaApi api, MainTabGUI tab) {
+  public MyContextMenus(MontoyaApi api, StripperTab tab) {
     this.montoyaApi = api;
     this.mainTab = tab;
     insertDialog = new PayloadsGUI(montoyaApi);
@@ -36,24 +38,23 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
     PersistedList<String> target;
     String key;
 
-    HashMap<String, PersistedList<String>> scope =
-        Utils.loadScope(montoyaApi.persistence().extensionData());
+    StripperScope scope = Utils2.Settings.scope(montoyaApi);
 
-    if (!Utils.isValidRegex(url)) {
+    if (!GenericKt.isValidRegex(url)) {
       url = Pattern.quote(url);
     }
 
     switch (source) {
       case "blacklist":
-        target = scope.get("blacklist");
+        target = scope.getBlack();
         key = K.KEYS.BLACK_LIST;
         break;
       case "force":
-        target = scope.get("force");
+        target = scope.getForce();
         key = K.KEYS.FORCE_INTERCEPT_LIST;
         break;
       case "scope":
-        target = scope.get("scope");
+        target = scope.getScope();
         key = K.KEYS.SCOPE_LIST;
         break;
       default:
@@ -67,7 +68,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
     }
 
     montoyaApi.persistence().extensionData().setStringList(key, target);
-    mainTab.loadCurrentSettings();
+    mainTab.loadSettings();
   }
 
   public void decryptRequest(MessageEditorHttpRequestResponse requestResponse, String source){
@@ -109,8 +110,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
 
     String url = KUtils.Url.clean(requestResponse.request().url());
 
-    HashMap<String, PersistedList<String>> scope =
-        Utils.loadScope(this.montoyaApi.persistence().extensionData());
+    StripperScope scope = Utils2.Settings.scope(montoyaApi);
 
     String source = event.toolType().toolName().toLowerCase();
 
@@ -124,7 +124,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
 
 
     if (event.isFromTool(ToolType.PROXY, ToolType.REPEATER) && editorHttpRequestResponse != null) {
-      if (Utils.isUrlInScope(url, scope.get("scope"))
+      if (Utils2.GenericKt.isUrlInScope(url, scope.getScope())
           && !event.isFrom(InvocationType.MESSAGE_VIEWER_REQUEST)
           && !event.isFrom(InvocationType.MESSAGE_VIEWER_RESPONSE)
       ) {
@@ -197,7 +197,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
     }
 
     if (event.isFromTool(ToolType.PROXY, ToolType.REPEATER, ToolType.TARGET, ToolType.LOGGER)) {
-      if (Utils.isUrlInScope(url, scope.get("scope"))) {
+      if (Utils2.GenericKt.isUrlInScope(url, scope.getScope())) {
         stripperScopeMenu = new JMenuItem("Remove from scope");
         stripperScopeMenu.addActionListener(
             l -> this.updateStripperScope("scope", "remove", url));
@@ -211,7 +211,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
         );
       }
 
-      if (Utils.isUrlInScope(url, scope.get("blacklist"))) {
+      if (Utils2.GenericKt.isUrlInScope(url, scope.getBlack())) {
         stripperBlackListMenu = new JMenuItem("Remove endpoint from blacklist");
         stripperBlackListMenu.addActionListener(
             l -> this.updateStripperScope("blacklist", "remove", url)
@@ -223,7 +223,7 @@ public class MyContextMenus  implements ContextMenuItemsProvider {
         );
       }
 
-      if (Utils.isUrlInScope(url, scope.get("force"))) {
+      if (Utils2.GenericKt.isUrlInScope(url, scope.getForce())) {
         stripperForceMenu = new JMenuItem("Do not force interception");
         stripperForceMenu.addActionListener(
             l -> this.updateStripperScope("force", "remove", url)

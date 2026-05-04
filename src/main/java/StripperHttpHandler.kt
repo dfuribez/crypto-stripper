@@ -4,10 +4,7 @@ import burp.api.montoya.http.handler.*
 import burp.api.montoya.http.handler.RequestToBeSentAction.continueWith
 import burp.api.montoya.http.handler.ResponseReceivedAction.continueWith
 
-class StripperHttpHandler(
-  var montoyaApi: MontoyaApi,
-  var stripperTab: MainTabGUI
-) : HttpHandler {
+class StripperHttpHandler(var montoyaApi: MontoyaApi) : HttpHandler {
   override fun handleHttpRequestToBeSent(requestToBeSent: HttpRequestToBeSent?): RequestToBeSentAction? {
     if (requestToBeSent == null) return null
 
@@ -19,10 +16,11 @@ class StripperHttpHandler(
     }
 
     val url = KUtils.Url.clean(requestToBeSent.url())
-    val scope = Utils.loadScope(montoyaApi.persistence().extensionData())
+    val scope = Utils2.Settings.scope(montoyaApi)
 
-    if (!(stripperTab.requestCheckBox.isSelected
-      && Utils.isUrlInScope(url, scope["scope"])))
+    val requestEnabled = montoyaApi.persistence().extensionData().getBoolean(K.KEYS.REQUEST_CHECKBOX_STATUS)
+
+    if (!(requestEnabled && Utils2.isUrlInScope(url, scope.scope)))
       return continueWith(modifiedRequest, annotations)
 
     val toolName = requestToBeSent.toolSource().toolType().toolName().lowercase()
@@ -47,15 +45,17 @@ class StripperHttpHandler(
     }
 
     val url = KUtils.Url.clean(responseReceived.initiatingRequest().url())
-    val scope = Utils.loadScope(montoyaApi.persistence().extensionData())
+    val scope = Utils2.Settings.scope(montoyaApi)
 
-    var annotations = responseReceived.annotations()
+    val annotations = responseReceived.annotations()
 
-    if (!Utils.isUrlInScope(url, scope["scope"])) {
+    if (!Utils2.isUrlInScope(url, scope.scope)) {
       return continueWith(responseReceived, annotations)
     }
 
-    if (!stripperTab.responseCheckBox.isSelected) {
+    val responseEnabled = montoyaApi.persistence().extensionData().getBoolean(K.KEYS.RESPONSE_CHECKBOX_STATUS)
+
+    if (!responseEnabled) {
       return continueWith(
         responseReceived.withAddedHeader(K.HEADER.STRIPPER, K.Error.RESPONSE_NOT_SELECTED),
         annotations

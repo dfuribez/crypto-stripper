@@ -49,7 +49,7 @@ class PreviewTabGui(
     testEncryptionButton.addActionListener { execute("encrypt") }
     testDecryptionButton.addActionListener { execute("decrypt") }
 
-    openScriptButton.addActionListener { Utils.openFolder(scriptPath) }
+    openScriptButton.addActionListener { Utils2.openFolder(scriptPath) }
 
     layout()
   }

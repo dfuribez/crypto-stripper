@@ -7,8 +7,7 @@ import burp.api.montoya.proxy.http.ProxyResponseToBeSentAction
 import models.EditedResponse
 
 class StripperProxyResponseHandler(
-  var montoyaApi: MontoyaApi,
-  var stripperGui: StripperTab
+  var montoyaApi: MontoyaApi
 ) : ProxyResponseHandler {
   override fun handleResponseReceived(interceptedResponse: InterceptedResponse?): ProxyResponseReceivedAction? {
     if (interceptedResponse == null) return null
@@ -23,8 +22,9 @@ class StripperProxyResponseHandler(
 
     val isUrlInScope = Utils2.isUrlInScope(url, scope.scope)
 
+    val settings = Utils2.Settings.load(montoyaApi)
 
-    if (stripperGui.responseCheckBox.isSelected && isUrlInScope) {
+    if (settings.responseEnabled && isUrlInScope) {
       val editedResponse = KUtils.Response.edit(
         montoyaApi,
         response,

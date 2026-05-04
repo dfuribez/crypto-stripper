@@ -9,10 +9,7 @@ import burp.api.montoya.proxy.http.ProxyRequestReceivedAction.doNotIntercept
 import burp.api.montoya.proxy.http.ProxyRequestReceivedAction.intercept
 import burp.api.montoya.proxy.http.ProxyRequestToBeSentAction
 
-class StripperProxyRequestHandler(
-  var montoyaApi: MontoyaApi,
-  var stripperTab: StripperTab
-) : ProxyRequestHandler {
+class StripperProxyRequestHandler(var montoyaApi: MontoyaApi) : ProxyRequestHandler {
   override fun handleRequestReceived(interceptedRequest: InterceptedRequest?): ProxyRequestReceivedAction? {
     if (interceptedRequest == null) return null
     val url = KUtils.Url.clean(interceptedRequest.url())
@@ -36,13 +33,13 @@ class StripperProxyRequestHandler(
       }
     }
 
-    val isBlacklisted = stripperTab.enableBlackListcheckbox.isSelected
-        && Utils2.isUrlInScope(url, scope.black)
-    val forceIntercept = Utils2.isUrlInScope(url, scope.force)
-        && stripperTab.enableForceinterceptCheckbox.isSelected
+    val settings = Utils2.Settings.load(montoyaApi)
+
+    val isBlacklisted = settings.enableBlack && Utils2.isUrlInScope(url, scope.black)
+    val forceIntercept = Utils2.isUrlInScope(url, scope.force) && settings.enableForce
     val isUrlInScope = Utils2.isUrlInScope(url, scope.scope)
 
-    if (stripperTab.requestCheckBox.isSelected && isUrlInScope) {
+    if (settings.requestEnabled && isUrlInScope) {
       val editedRequest = edit(
         montoyaApi,
         request,
@@ -54,7 +51,7 @@ class StripperProxyRequestHandler(
 
       if (editedRequest.intercept == null) {
         if (isBlacklisted) return doNotIntercept(editedRequest.request, annotations)
-        if (stripperTab.forceInterceptInScopeCheckbox.isSelected || forceIntercept) {
+        if (settings.forceInScope || forceIntercept) {
           return intercept(editedRequest.request, annotations)
         }
         return continueWith(editedRequest.request, annotations)
@@ -71,14 +68,14 @@ class StripperProxyRequestHandler(
     }
 
     if (isBlacklisted) return doNotIntercept(request, annotations)
-    if (stripperTab.enableForceinterceptCheckbox.isSelected
-      && forceIntercept) return intercept(request, annotations)
+    if (settings.forceInScope && forceIntercept) return intercept(request, annotations)
 
     return continueWith(request, annotations)
   }
 
   override fun handleRequestToBeSent(interceptedRequest: InterceptedRequest?): ProxyRequestToBeSentAction? {
     if (interceptedRequest == null) return null
-    return ProxyRequestToBeSentAction.continueWith(interceptedRequest.withRemovedHeader(K.HEADER.STRIPPER))
+    return ProxyRequestToBeSentAction.continueWith(
+      interceptedRequest.withRemovedHeader(K.HEADER.STRIPPER))
   }
 }

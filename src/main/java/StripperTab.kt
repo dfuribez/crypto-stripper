@@ -334,7 +334,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
   private fun updateScope(source: String, action: String) {
     val target: JList<String>
     val selectedTextField: JTextField?
-    val selectedScopeList: PersistedList<String>?
+    val selectedScopeList: PersistedList<String>
     val key: String?
     val addUrl: String?
 
@@ -361,8 +361,6 @@ class StripperTab(var montoyaApi: MontoyaApi) {
       }
       else -> return
     }
-
-    if (selectedScopeList == null) return
 
     if (action == "delete") {
       val model = target.model as DefaultListModel<String>

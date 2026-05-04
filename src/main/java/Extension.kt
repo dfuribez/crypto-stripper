@@ -18,7 +18,7 @@ class Extension : BurpExtension,
     val stripperTab = StripperTab(montoyaApi)
 
     montoyaApi.extension().setName("Crypto Striper")
-    montoyaApi.logging().logToOutput(K.Gen.VERSION)
+    montoyaApi.logging().logToOutput(K.Gen.VERSION.trimIndent())
 
     montoyaApi.userInterface().registerSuiteTab("Stripper", stripperTab.getMainPanel())
     montoyaApi.userInterface().registerContextMenuItemsProvider(
@@ -28,8 +28,8 @@ class Extension : BurpExtension,
     montoyaApi.userInterface().registerHttpResponseEditorProvider(this)
 
     montoyaApi.http().registerHttpHandler(StripperHttpHandler(montoyaApi))
-    montoyaApi.proxy().registerRequestHandler(StripperProxyRequestHandler(montoyaApi, stripperTab))
-    montoyaApi.proxy().registerResponseHandler(StripperProxyResponseHandler(montoyaApi, stripperTab))
+    montoyaApi.proxy().registerRequestHandler(StripperProxyRequestHandler(montoyaApi))
+    montoyaApi.proxy().registerResponseHandler(StripperProxyResponseHandler(montoyaApi))
   }
 
   override fun provideHttpResponseEditor(p0: EditorCreationContext?): ExtensionProvidedHttpResponseEditor? {

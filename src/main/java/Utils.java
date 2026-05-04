@@ -170,14 +170,6 @@ public class Utils {
         .withAddedHeader(K.HEADER.STRIPPER, "true");
   }
 
-  public static PersistedList<String> arrayToPersisted(String[] list){
-    PersistedList<String> out = PersistedList.persistedStringList();
-
-    Collections.addAll(out, list);
-
-    return out;
-  }
-
   public static boolean resourceToFile(MontoyaApi api, String resource, String path) {
     try (InputStream in = Utils.class.getClassLoader().getResourceAsStream(resource)) {
       if (in == null) {

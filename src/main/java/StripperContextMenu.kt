@@ -7,22 +7,33 @@ import burp.api.montoya.MontoyaApi
 import burp.api.montoya.core.Annotations
 import burp.api.montoya.core.ToolType
 import burp.api.montoya.http.message.HttpRequestResponse
+import burp.api.montoya.http.message.params.HttpParameter
+import burp.api.montoya.http.message.params.HttpParameterType
+import burp.api.montoya.http.message.requests.HttpRequest
 import burp.api.montoya.persistence.PersistedList
 import burp.api.montoya.ui.contextmenu.ContextMenuEvent
 import burp.api.montoya.ui.contextmenu.ContextMenuItemsProvider
 import burp.api.montoya.ui.contextmenu.InvocationType
 import burp.api.montoya.ui.contextmenu.MessageEditorHttpRequestResponse
 import java.awt.Component
+import burp.api.montoya.core.ByteArray;
+import java.awt.Font
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
+import java.util.*
 import java.util.regex.Pattern
+import javax.swing.JLabel
 import javax.swing.JMenuItem
 
+
 class StripperContextMenu(
-  var montoyaApi: MontoyaApi
+  var montoyaApi: MontoyaApi,
+  var stripperTab: StripperTab
 ) : ContextMenuItemsProvider {
-  var payloadsGui: PayloadsGUI
+  var insertDialog: PayloadsGUI
 
   init {
-    payloadsGui = PayloadsGUI(montoyaApi)
+    insertDialog = PayloadsGUI(montoyaApi)
   }
 
   private fun decryptRequest(
@@ -43,7 +54,8 @@ class StripperContextMenu(
   override fun provideMenuItems(event: ContextMenuEvent): List<Component> {
     val menuItemList = ArrayList<Component>()
 
-    montoyaApi.logging().logToOutput("Entrandoooo")
+    val f = JLabel().font
+    val separatorFont = Font(f.name, f.style, (f.size * 0.7).toInt())
 
     var requestResponse: HttpRequestResponse? = null
     val editorHttpRequestResponse: MessageEditorHttpRequestResponse?
@@ -60,7 +72,7 @@ class StripperContextMenu(
     val scope = scope(montoyaApi)
     val source = event.toolType().toolName().lowercase()
 
-    val insertPayloadMenu: JMenuItem? = null
+    var insertPayloadMenu: JMenuItem? = null
     var decryptMenu: JMenuItem? = null
     var stripperScopeMenu: JMenuItem? = null
     var stripperBlackListMenu: JMenuItem? = null
@@ -80,9 +92,9 @@ class StripperContextMenu(
       ) {
         decryptMenu = JMenuItem("Decrypt")
         decryptMenu.addActionListener { this.decryptRequest(editorHttpRequestResponse, source) }
+        menuItemList.add(decryptMenu)
       }
-
-      // Payload codigo
+      // Payloads
     }
 
     if (isVisible) {
@@ -121,20 +133,17 @@ class StripperContextMenu(
         burpScopeMenu.addActionListener { montoyaApi.scope().includeInScope(removePath(url)) }
       }
 
+      menuItemList.add(KUtils.separator(" Stripper scope", font = separatorFont, visible = false, type = "left"))
+      menuItemList.add(stripperScopeMenu)
+      menuItemList.add(stripperBlackListMenu)
+      menuItemList.add(stripperForceMenu)
+
     }
 
-      if (decryptMenu != null) menuItemList.add(decryptMenu)
-
-      menuItemList.add(KUtils.separator("Stripper scope"))
-      menuItemList.add(stripperScopeMenu!!)
-      menuItemList.add(stripperBlackListMenu!!)
-      menuItemList.add(stripperForceMenu!!)
-
-      menuItemList.add(KUtils.separator("Burp scope"))
-      //menuItemList.add(addToPassThroughMenu!!)
+      menuItemList.add(KUtils.separator(" Burp scope", font = separatorFont, visible = false, type = "left"))
       menuItemList.add(burpScopeMenu!!)
 
-      menuItemList.add(KUtils.separator("Extra"))
+      menuItemList.add(KUtils.separator(" Extra", font = separatorFont, visible = false, type = "left"))
       //menuItemList.add(insertPayloadMenu!!)
       return menuItemList
   }
@@ -171,7 +180,7 @@ class StripperContextMenu(
     }
 
     montoyaApi.persistence().extensionData().setStringList(key, target)
-    //mainTab.loadSettings()
+    stripperTab.loadSettings()
   }
 
 }

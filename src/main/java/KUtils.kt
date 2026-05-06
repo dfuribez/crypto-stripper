@@ -9,6 +9,7 @@ import models.EditedRequest
 import models.EditedResponse
 import net.miginfocom.swing.MigLayout
 import java.awt.Component
+import java.awt.Font
 import java.io.File
 import java.net.URI
 import java.time.LocalTime
@@ -165,19 +166,27 @@ object KUtils {
 
 
   @JvmStatic
-  fun separator(title: String, type: String = "center", visible: Boolean = true): JPanel {
+  fun separator(
+    title: String,
+    type: String = "center",
+    visible: Boolean = true,
+    font: Font? = null
+  ): JPanel {
     val separator = JPanel(MigLayout("insets 0"))
+
+    val titleLabel = JLabel(title)
+    if (font != null) titleLabel.font = font
 
     if (type.equals("center", ignoreCase = true)) {
       separator.add(spacer(visible), "growx, pushx")
-      separator.add(JLabel(title))
+      separator.add(titleLabel)
       separator.add(spacer(visible), "growx, pushx")
     } else if (type.equals("left", ignoreCase = true)) {
-      separator.add(JLabel(title))
+      separator.add(titleLabel)
       separator.add(spacer(visible), "growx, pushx")
     } else {
       separator.add(spacer(visible), "growx, pushx")
-      separator.add(JLabel(title))
+      separator.add(titleLabel)
     }
 
     return separator

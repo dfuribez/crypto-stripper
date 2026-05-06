@@ -162,7 +162,7 @@ public class PayloadsGUI extends JDialog {
   private void setLayout() {
 
     // Separator
-    JPanel separator = KUtils.separator("Characters", "center", true);
+    JPanel separator = KUtils.separator("Characters", "center", true, null);
     mainPanel.add(separator, "span, growx, pushx, wrap");
 
     // Characters
@@ -184,7 +184,7 @@ public class PayloadsGUI extends JDialog {
     mainPanel.add(characters, "span, growx, pushx, wrap");
 
     // --------------
-    JPanel separator2 = KUtils.separator("Files", "center", true);
+    JPanel separator2 = KUtils.separator("Files", "center", true, null);
     mainPanel.add(separator2, "span, growx, pushx, wrap");
 
 
@@ -199,7 +199,7 @@ public class PayloadsGUI extends JDialog {
     mainPanel.add(files, "span, growx, pushx, wrap");
 
     // --------------
-    JPanel separator3 = KUtils.separator("Output", "center", true);
+    JPanel separator3 = KUtils.separator("Output", "center", true, null);
     mainPanel.add(separator3, "span, growx, pushx, wrap");
 
     // Options
@@ -226,7 +226,6 @@ public class PayloadsGUI extends JDialog {
     fileTextField.setText("");
     previewTextArea.setText("");
   }
-
 
   private void onOK() {
     dispose();

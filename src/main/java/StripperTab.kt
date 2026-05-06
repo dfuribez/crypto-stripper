@@ -65,7 +65,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
   private val versionTextArea = JTextArea(5, 20)
 
    var enableBlackListcheckbox: JCheckBox = JCheckBox("Enable")
-   var enableForceinterceptCheckbox: JCheckBox = JCheckBox("Enable")
+   var enableForceListCheckbox: JCheckBox = JCheckBox("Enable")
 
    val requestScriptTextField = JTextField()
   private val responseScriptTextField = JTextField()
@@ -76,8 +76,6 @@ class StripperTab(var montoyaApi: MontoyaApi) {
   private val scrollScope = JScrollPane(scopeList)
   private val scrollBlackList = JScrollPane(blackList)
   private val scrollForceInterceptList = JScrollPane(forceInterceptList)
-
-  var enableForceCheckbox: JCheckBox = JCheckBox("Enable Force")
 
   var fileChooser: JFileChooser = JFileChooser()
 
@@ -124,7 +122,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
       val parent = montoyaApi.userInterface().swingUtils().suiteFrame()
       val path = Utils2.openChooser(parent, fileChooser, "Response Script", filter, true)
       if (path.isBlank()) return@addActionListener
-      montoyaApi.persistence().extensionData().setString(K.KEYS.REQUEST_SCRIPT_PATH, path)
+      montoyaApi.persistence().extensionData().setString(K.KEYS.RESPONSE_SCRIPT_PATH, path)
       responseScriptTextField.text = path
     }
 
@@ -198,7 +196,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     responseCheckBox.addActionListener { saveCurrentSettings() }
     forceInterceptInScopeCheckbox.addActionListener { saveCurrentSettings() }
     enableBlackListcheckbox.addActionListener { saveCurrentSettings() }
-    enableForceinterceptCheckbox.addActionListener { saveCurrentSettings() }
+    enableForceListCheckbox.addActionListener { saveCurrentSettings() }
 
     exportSettingsButton.addActionListener { exportSettings() }
     importSettingsButton.addActionListener { importSettings() }
@@ -300,7 +298,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     forceListPanel.add(separator("Force intercept: (?)", "center", false), "span, growx")
 
     forceListPanel.add(scrollForceInterceptList, "wrap, span 2, grow, push")
-    forceListPanel.add(enableForceinterceptCheckbox, "alignx left")
+    forceListPanel.add(enableForceListCheckbox, "alignx left")
     forceListPanel.add(deleteSelectedForceButton, "alignx right, wrap")
 
     val addForcePanel = JPanel(MigLayout("insets 0"))
@@ -403,7 +401,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     val forceCheckboxStatus = forceInterceptInScopeCheckbox.isSelected
 
     val enableBlack = enableBlackListcheckbox.isSelected
-    val enableForce = enableForceCheckbox.isSelected
+    val enableForce = enableForceListCheckbox.isSelected
 
     montoyaApi.persistence().extensionData().setBoolean(
       K.KEYS.FORCE_CHECKBOX_STATUS, forceCheckboxStatus
@@ -435,7 +433,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     nodeGlobalTextEdit.text = settings.globalNodePath
     pythonGlobalTextEdit.text = settings.globalPythonPath
 
-    enableForceCheckbox.isSelected = settings.enableForce
+    enableForceListCheckbox.isSelected = settings.enableForce
     enableBlackListcheckbox.isSelected = settings.enableBlack
 
     val scopeModel = DefaultListModel<String>()

@@ -21,8 +21,7 @@ class Extension : BurpExtension,
     montoyaApi.logging().logToOutput(K.Gen.VERSION.trimIndent())
 
     montoyaApi.userInterface().registerSuiteTab("Stripper", stripperTab.getMainPanel())
-    montoyaApi.userInterface().registerContextMenuItemsProvider(
-      MyContextMenus(montoyaApi, stripperTab))
+    montoyaApi.userInterface().registerContextMenuItemsProvider(StripperContextMenu(montoyaApi))
 
     montoyaApi.userInterface().registerHttpRequestEditorProvider(this)
     montoyaApi.userInterface().registerHttpResponseEditorProvider(this)

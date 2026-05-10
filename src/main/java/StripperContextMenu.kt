@@ -3,8 +3,12 @@ import utils.isUrlInScope
 import utils.isValidRegex
 import burp.api.montoya.MontoyaApi
 import burp.api.montoya.core.Annotations
+import burp.api.montoya.core.ByteArray.byteArray
 import burp.api.montoya.core.ToolType
 import burp.api.montoya.http.message.HttpRequestResponse
+import burp.api.montoya.http.message.params.HttpParameter
+import burp.api.montoya.http.message.params.HttpParameterType
+import burp.api.montoya.http.message.requests.HttpRequest
 import burp.api.montoya.persistence.PersistedList
 import burp.api.montoya.ui.contextmenu.ContextMenuEvent
 import burp.api.montoya.ui.contextmenu.ContextMenuItemsProvider
@@ -22,10 +26,10 @@ class StripperContextMenu(
   var montoyaApi: MontoyaApi,
   var stripperTab: StripperTab
 ) : ContextMenuItemsProvider {
-  var insertDialog: PayloadsGUI
+  var insertDialog: PayloadsGui
 
   init {
-    insertDialog = PayloadsGUI(montoyaApi)
+    insertDialog = PayloadsGui(montoyaApi)
   }
 
   private fun decryptRequest(
@@ -86,7 +90,9 @@ class StripperContextMenu(
         decryptMenu.addActionListener { this.decryptRequest(editorHttpRequestResponse, source) }
         menuItemList.add(decryptMenu)
       }
-      // Payloads
+
+      insertPayloadMenu = JMenuItem("Insert Payload")
+      insertPayloadMenu.addActionListener { insertPayload(editorHttpRequestResponse) }
     }
 
     if (isVisible) {
@@ -135,11 +141,43 @@ class StripperContextMenu(
       menuItemList.add(KUtils.separator(" Burp scope", font = separatorFont, visible = false, type = "left"))
       menuItemList.add(burpScopeMenu!!)
 
-      menuItemList.add(KUtils.separator(" Extra", font = separatorFont, visible = false, type = "left"))
-      //menuItemList.add(insertPayloadMenu!!)
+      if (insertPayloadMenu != null) {
+        menuItemList.add(KUtils.separator(" Extra", font = separatorFont, visible = false, type = "left"))
+        menuItemList.add(insertPayloadMenu)
+      }
       return menuItemList
   }
 
+  fun insertPayload(editor: MessageEditorHttpRequestResponse): HttpRequest {
+    val request = editor.requestResponse().request()
+    insertDialog.pack()
+    insertDialog.setParameters(request.parameters())
+    insertDialog.isVisible = true
+
+    val selectedCombo = insertDialog.getSelectedParameter()
+
+    val split = selectedCombo.split(" - ", limit = 2)
+    val parameterType = split[0]
+    val parameterName = split[1]
+
+    val selectedFile = insertDialog.selectedFile
+
+    var content: ByteArray? = null
+    if (selectedFile != null) {
+      content = utils.Payloads.readFile(selectedFile)
+    }
+
+    if (parameterName != "SELECTION POINT") {
+      val editedParam = HttpParameter.parameter(
+        parameterName,
+        byteArray(*content!!).toString(),
+        HttpParameterType.valueOf(parameterType)
+      )
+      editor.setRequest(request.withParameter(editedParam))
+    }
+
+    return request
+  }
 
   fun updateScope(source: String, action: String?, url: String) {
     var url = url

@@ -11,7 +11,7 @@ class StripperProxyResponseHandler(
   override fun handleResponseReceived(interceptedResponse: InterceptedResponse?): ProxyResponseReceivedAction? {
     if (interceptedResponse == null) return null
 
-    val url = KUtils.Url.clean(interceptedResponse.initiatingRequest().url())
+    val url = utils.Url.clean(interceptedResponse.initiatingRequest().url())
     val scope = utils.Settings.scope(montoyaApi)
 
     val response = interceptedResponse

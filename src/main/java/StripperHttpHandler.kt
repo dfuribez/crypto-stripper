@@ -15,7 +15,7 @@ class StripperHttpHandler(var montoyaApi: MontoyaApi) : HttpHandler {
       return continueWith(modifiedRequest)
     }
 
-    val url = KUtils.Url.clean(requestToBeSent.url())
+    val url = utils.Url.clean(requestToBeSent.url())
     val scope = utils.Settings.scope(montoyaApi)
 
     val requestEnabled = montoyaApi.persistence().extensionData().getBoolean(K.KEYS.REQUEST_CHECKBOX_STATUS) ?: false
@@ -44,7 +44,7 @@ class StripperHttpHandler(var montoyaApi: MontoyaApi) : HttpHandler {
       return continueWith(responseReceived, responseReceived.annotations())
     }
 
-    val url = KUtils.Url.clean(responseReceived.initiatingRequest().url())
+    val url = utils.Url.clean(responseReceived.initiatingRequest().url())
     val scope = utils.Settings.scope(montoyaApi)
 
     val annotations = responseReceived.annotations()

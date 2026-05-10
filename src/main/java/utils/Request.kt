@@ -1,10 +1,7 @@
 package utils
 
-import Executor
 import K
 import KUtils
-import KUtils.Url.clean
-import KUtils.headersToArray
 import burp.api.montoya.MontoyaApi
 import burp.api.montoya.core.Annotations
 import burp.api.montoya.core.ByteArray
@@ -15,9 +12,9 @@ import burp.api.montoya.http.message.params.HttpParameterType
 import burp.api.montoya.http.message.params.ParsedHttpParameter
 import burp.api.montoya.http.message.requests.HttpRequest
 import burp.api.montoya.http.message.responses.HttpResponse
-import com.google.gson.Gson
 import models.EditedRequest
 import models.ExecutorOutput
+import models.JsonRequestResponse
 import java.nio.charset.StandardCharsets
 import java.util.*
 
@@ -30,11 +27,24 @@ object Request {
     action: String,
     toolName: String
   ) : EditedRequest {
-    val url = KUtils.Url.clean(request.url())
+    val url = utils.Url.clean(request.url())
     var newAnnotations: Annotations? = null
 
-    val ready = prepareRequestForExecutor(request, messageId, toolName)
-    val executed = Executor.execute(montoyaApi, action, "request", ready)
+    val ready = JsonRequestResponse(
+      body = String(request.body().bytes, StandardCharsets.UTF_8),
+      headers = headersToArray(request.headers()),
+      url = request.url(),
+      urlParameters = parametersToArray(request.parameters(HttpParameterType.URL)),
+      messageId = messageId,
+      method = request.method(),
+      path = request.path(),
+      toolSource = toolName,
+      host = request.httpService().host(),
+      port = request.httpService().port(),
+      secure = request.httpService().secure(),
+      action = action
+    )
+    val executed = Executor.execute(montoyaApi, "request", ready)
     val edited = executorToHttpRequest(request, executed)
 
     if (!executed.issue.isNullOrEmpty()) {
@@ -63,7 +73,7 @@ object Request {
   }
 
   private fun executorToHttpRequest(request: HttpRequest, output: ExecutorOutput): HttpRequest {
-    if (output.error != null && !output.error.isEmpty()) {
+    if (!output.error.isEmpty()) {
       return request
         .withHeader(K.HEADER.STRIPPER, K.Error.ERROR)
     }
@@ -90,32 +100,6 @@ object Request {
       .withUpdatedHeader("Host", output.host)
   }
 
-  private fun prepareRequestForExecutor(
-    request: HttpRequest, messageId: Int, source: String?
-  ): HashMap<String?, String?> {
-    val result = HashMap<String?, String?>()
-
-    val headers = Gson().toJson(headersToArray(request.headers()))
-
-    val urlParameters = Gson().toJson(
-      parametersToArray(request.parameters(HttpParameterType.URL))
-    )
-
-    result.put("body", String(request.body().getBytes(), StandardCharsets.UTF_8))
-    result.put("headers", headers)
-    result.put("urlParameters", urlParameters)
-    result.put("url", clean(request.url()))
-    result.put("messageId", messageId.toString())
-    result.put("httpMethod", request.method())
-    result.put("path", request.path())
-    result.put("toolSource", source)
-    result.put("host", request.httpService().host())
-    result.put("port", request.httpService().port().toString())
-    result.put("secure", request.httpService().secure().toString())
-
-    return result
-  }
-
   private fun parametersToArray(parameters: MutableList<ParsedHttpParameter>): List<HashMap<String, String>> {
     return parameters.map {
       hashMapOf("name" to it.name(), "value" to it.value())
@@ -123,7 +107,7 @@ object Request {
   }
 
   fun listToUrlParams(
-    urlParametersList: List<HashMap<String, String>>
+    urlParametersList: List<Map<String, String>>
   ): List<HttpParameter?> {
     return urlParametersList.map {
         HttpParameter.urlParameter(it["name"], it["value"])

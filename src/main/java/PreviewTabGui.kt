@@ -1,4 +1,3 @@
-import KUtils.getCommandFromPath
 import KUtils.separator
 import burp.api.montoya.MontoyaApi
 import burp.api.montoya.core.Annotations
@@ -72,7 +71,7 @@ class PreviewTabGui(
       montoyaApi.persistence().extensionData().getString(K.KEYS.RESPONSE_SCRIPT_PATH)
     }
 
-    val command = getCommandFromPath(montoyaApi.persistence(), scriptPath)
+    val command = utils.getCommandFromPath(montoyaApi.persistence(), scriptPath)
     infoEditorPane.text = "$command $scriptPath"
   }
 
@@ -139,7 +138,7 @@ class PreviewTabGui(
       val s = utils.Response.edit(
         montoyaApi,
         responseEditor.response,
-        KUtils.Url.clean(requestResponse!!.request().url()),
+        utils.Url.clean(requestResponse!!.request().url()),
         Annotations.annotations(),
         messageId,
         action,
@@ -156,8 +155,8 @@ class PreviewTabGui(
     if (!utils.checkScriptVersion(version) && error.isBlank()) {
       sb.append("<div style='color:red'>${K.Error.SCRIPT_NOT_SUPORTED}</div>\n")
     }
-    sb.append(KUtils.escapeHtml(stdErr)).append(System.lineSeparator())
-    sb.append("<div style='color:red;background:black'>${KUtils.escapeHtml(error)}</div>")
+    sb.append(utils.escapeHtml(stdErr)).append(System.lineSeparator())
+    sb.append("<div style='color:red;background:black'>${utils.escapeHtml(error)}</div>")
 
     stdErrTextPane.text = sb.toString()
   }

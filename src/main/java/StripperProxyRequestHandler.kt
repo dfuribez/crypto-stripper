@@ -11,7 +11,7 @@ import burp.api.montoya.proxy.http.ProxyRequestToBeSentAction
 class StripperProxyRequestHandler(var montoyaApi: MontoyaApi) : ProxyRequestHandler {
   override fun handleRequestReceived(interceptedRequest: InterceptedRequest?): ProxyRequestReceivedAction? {
     if (interceptedRequest == null) return null
-    val url = KUtils.Url.clean(interceptedRequest.url())
+    val url = utils.Url.clean(interceptedRequest.url())
     val annotations = interceptedRequest.annotations()
 
     val scope = utils.Settings.scope(montoyaApi)

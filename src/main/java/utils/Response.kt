@@ -1,8 +1,6 @@
 package utils
 
-import Executor
 import K
-import KUtils.headersToArray
 import burp.api.montoya.MontoyaApi
 import burp.api.montoya.core.Annotations
 import burp.api.montoya.core.ByteArray
@@ -12,6 +10,7 @@ import burp.api.montoya.http.message.responses.HttpResponse
 import com.google.gson.Gson
 import models.EditedResponse
 import models.ExecutorOutput
+import models.JsonRequestResponse
 import java.nio.charset.StandardCharsets
 
 object Response {
@@ -25,9 +24,18 @@ object Response {
     toolName: String
   ): EditedResponse {
     var newAnnotations: Annotations? = null
-    val ready = prepareResponseForExecutor(response, url, messageId, toolName)
+    val ready = JsonRequestResponse(
+      body = String(response.body().bytes, StandardCharsets.UTF_8),
+      action = action,
+      headers = headersToArray(response.headers()),
+      url = url,
+      messageId = messageId,
+      statusCode = response.statusCode(),
+      reasonPhrase = response.reasonPhrase(),
+      toolSource = toolName
+    )
 
-    val executed = Executor.execute(montoyaApi, action, "response", ready);
+    val executed = Executor.execute(montoyaApi, "response", ready);
     val response = executorToHttpResponse(response, executed)
 
     if (executed.issue != null) {
@@ -55,29 +63,8 @@ object Response {
     )
   }
 
-  private fun prepareResponseForExecutor(
-    response: HttpResponse, url: String?, messageId: Int, source: String?
-  ): HashMap<String?, String?> {
-    val result = HashMap<String?, String?>()
-
-    val headers = Gson().toJson(headersToArray(response.headers()))
-
-    val urlParameters = Gson().toJson(null)
-
-    result.put("body", String(response.body().getBytes(), StandardCharsets.UTF_8))
-    result.put("headers", headers)
-    result.put("urlParameters", urlParameters)
-    result.put("url", url)
-    result.put("messageId", messageId.toString())
-    result.put("statusCode", response.statusCode().toInt().toString())
-    result.put("reasonPhrase", response.reasonPhrase())
-    result.put("toolSource", source)
-
-    return result
-  }
-
   private fun executorToHttpResponse(response: HttpResponse, output: ExecutorOutput): HttpResponse {
-    if (output.error != null && !output.error.isEmpty()) {
+    if (!output.error.isEmpty()) {
       return response
         .withAddedHeader(K.HEADER.STRIPPER, K.Error.ERROR)
     }

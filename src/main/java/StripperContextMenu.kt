@@ -1,5 +1,3 @@
-import KUtils.Url.clean
-import KUtils.removePath
 import utils.Settings.scope
 import utils.isUrlInScope
 import utils.isValidRegex
@@ -62,7 +60,7 @@ class StripperContextMenu(
       requestResponse = event.selectedRequestResponses().first()
     }
 
-    val url = clean(requestResponse.request().url())
+    val url = utils.Url.clean(requestResponse.request().url())
     val scope = scope(montoyaApi)
     val source = event.toolType().toolName().lowercase()
 
@@ -121,10 +119,10 @@ class StripperContextMenu(
 
       if (montoyaApi.scope().isInScope(url)) {
         burpScopeMenu = JMenuItem("Exclude URL from Burp's scope")
-        burpScopeMenu.addActionListener { montoyaApi.scope().excludeFromScope(removePath(url)) }
+        burpScopeMenu.addActionListener { montoyaApi.scope().excludeFromScope(utils.Url.removePath(url)) }
       } else {
         burpScopeMenu = JMenuItem("Include URL to Burp's scope")
-        burpScopeMenu.addActionListener { montoyaApi.scope().includeInScope(removePath(url)) }
+        burpScopeMenu.addActionListener { montoyaApi.scope().includeInScope(utils.Url.removePath(url)) }
       }
 
       menuItemList.add(KUtils.separator(" Stripper scope", font = separatorFont, visible = false, type = "left"))

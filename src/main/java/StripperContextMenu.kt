@@ -43,7 +43,7 @@ class StripperContextMenu(
     if (requestResponse == null) return
     val request = requestResponse.requestResponse().request()
     val annotations = Annotations.annotations()
-    val edited = KUtils.Request.edit(montoyaApi, request, annotations, -1, "decrypt", tool)
+    val edited = Utils2.Request.edit(montoyaApi, request, annotations, -1, "decrypt", tool)
     try {
       requestResponse.setRequest(edited.request)
     } catch (e: Exception) {

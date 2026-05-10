@@ -25,7 +25,7 @@ class StripperHttpHandler(var montoyaApi: MontoyaApi) : HttpHandler {
 
     val toolName = requestToBeSent.toolSource().toolType().toolName().lowercase()
 
-    val editedRequest = KUtils.Request.edit(
+    val editedRequest = Utils2.Request.edit(
       montoyaApi,
       modifiedRequest,
       annotations,
@@ -64,7 +64,7 @@ class StripperHttpHandler(var montoyaApi: MontoyaApi) : HttpHandler {
 
     val source = responseReceived.toolSource().toolType().toolName().lowercase()
 
-    val editedResponse = KUtils.Response.edit(
+    val editedResponse = Utils2.Response.edit(
       montoyaApi,
       responseReceived.withStatusCode(responseReceived.statusCode()),
       url,

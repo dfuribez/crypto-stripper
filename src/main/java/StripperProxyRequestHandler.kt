@@ -1,4 +1,3 @@
-import KUtils.Request.edit
 import burp.api.montoya.MontoyaApi
 import burp.api.montoya.core.HighlightColor
 import burp.api.montoya.proxy.http.InterceptedRequest
@@ -40,7 +39,7 @@ class StripperProxyRequestHandler(var montoyaApi: MontoyaApi) : ProxyRequestHand
     val isUrlInScope = Utils2.isUrlInScope(url, scope.scope)
 
     if (settings.requestEnabled && isUrlInScope) {
-      val editedRequest = edit(
+      val editedRequest = Utils2.Request.edit(
         montoyaApi,
         request,
         annotations,

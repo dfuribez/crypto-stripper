@@ -55,50 +55,6 @@ public class Utils {
     return array;
   }
 
-  public static HashMap<String, String> prepareRequestForExecutor(
-      HttpRequest request, int messageId, String source) {
-    HashMap<String, String> result = new HashMap<>();
-
-    String headers = new Gson().toJson(KUtils.headersToArray(request.headers()));
-
-    String urlParameters = new Gson().toJson(
-        Utils.parametersToArray(request.parameters(HttpParameterType.URL)));
-
-    result.put("body", new String(request.body().getBytes(), StandardCharsets.UTF_8));
-    result.put("headers", headers);
-    result.put("urlParameters", urlParameters);
-    result.put("url", KUtils.Url.clean(request.url()));
-    result.put("messageId", String.valueOf(messageId));
-    result.put("httpMethod", request.method());
-    result.put("path", request.path());
-    result.put("toolSource", source);
-    result.put("host", request.httpService().host());
-    result.put("port", String.valueOf(request.httpService().port()));
-    result.put("secure", String.valueOf(request.httpService().secure()));
-
-    return result;
-  }
-
-  public static HashMap<String, String> prepareResponseForExecutor(
-      HttpResponse response, String url, int messageId, String source) {
-    HashMap<String, String> result = new HashMap<>();
-
-    String headers = new Gson().toJson(KUtils.headersToArray(response.headers()));
-
-    String urlParameters = new Gson().toJson(null);
-
-    result.put("body", new String(response.body().getBytes(), StandardCharsets.UTF_8));
-    result.put("headers", headers);
-    result.put("urlParameters", urlParameters);
-    result.put("url", url);
-    result.put("messageId", String.valueOf(messageId));
-    result.put("statusCode", String.valueOf(response.statusCode()));
-    result.put("reasonPhrase", response.reasonPhrase());
-    result.put("toolSource", source);
-
-    return result;
-  }
-
   public static List<HttpHeader> listToHttpHeaders(List<String> headersList) {
     List<HttpHeader> headers = new ArrayList<>();
 
@@ -123,51 +79,6 @@ public class Utils {
     );
 
     return urlParameters;
-  }
-
-  public static HttpRequest executorToHttpRequest(HttpRequest request, ExecutorOutput output) {
-    if (output.error != null && !output.error.isEmpty()) {
-      return request
-          .withHeader(K.HEADER.STRIPPER, K.Error.ERROR);
-    }
-
-    HttpRequest modified = request
-        .withService(httpService(output.host, output.port, output.secure))
-        .withPath(output.path)
-        .withRemovedParameters(request.parameters(HttpParameterType.URL))
-        .withMethod(output.httpMethod);
-
-    // avoids kettling
-    for (HttpHeader header : request.headers()) {
-      if (!Arrays.asList(K.Gen.dangerousPseudoHeaders).contains(header.name())) {
-        modified = modified.withRemovedHeader(header.name());
-      }
-    }
-
-    modified = modified.withAddedHeaders(Utils.listToHttpHeaders(output.headers));
-
-    return modified
-        .withBody(ByteArray.byteArray(output.body.getBytes(StandardCharsets.UTF_8)))
-        .withAddedParameters(Utils.listToUrlParams(output.urlParameters))
-        .withHeader(K.HEADER.STRIPPER, "true")
-        .withUpdatedHeader("Host", output.host);
-  }
-
-  public static HttpResponse executorToHttpResponse(HttpResponse response, ExecutorOutput output) {
-    if (output.error != null && !output.error.isEmpty()) {
-      return response
-          .withAddedHeader(K.HEADER.STRIPPER, K.Error.ERROR);
-    }
-
-    HttpResponse modified = response
-        .withRemovedHeaders(response.headers())
-        .withAddedHeaders(Utils.listToHttpHeaders(output.headers))
-        .withStatusCode(output.statusCode)
-        .withReasonPhrase(output.reasonPhrase);
-
-    return modified
-        .withBody(ByteArray.byteArray(output.body.getBytes(StandardCharsets.UTF_8)))
-        .withAddedHeader(K.HEADER.STRIPPER, "true");
   }
 
   public static boolean resourceToFile(MontoyaApi api, String resource, String path) {

@@ -1,10 +1,12 @@
 import KUtils.getCommandFromPath
 import KUtils.separator
 import burp.api.montoya.MontoyaApi
+import burp.api.montoya.core.Annotations
 import burp.api.montoya.http.message.HttpRequestResponse
 import burp.api.montoya.http.message.requests.HttpRequest
 import burp.api.montoya.http.message.responses.HttpResponse
 import burp.api.montoya.ui.editor.EditorOptions
+import models.EditedResponse
 import net.miginfocom.swing.MigLayout
 import javax.swing.*
 
@@ -91,8 +93,6 @@ class PreviewTabGui(
       left.add(responseTransformed.uiComponent(), "grow, push")
     }
 
-    top.add(requestEditor.uiComponent(), "grow, push")
-
     val horizontal = JSplitPane(JSplitPane.VERTICAL_SPLIT, top, bottom)
     val vertical = JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, right)
 
@@ -121,47 +121,44 @@ class PreviewTabGui(
 
   private fun execute(action: String) {
     if (requestResponse == null) return
-    var source: String
-    var prepared: HashMap<String?, String?>
 
     val messageId = requestIdTextField.text.toIntOrNull() ?: -1
     val selectedSource = toolCombo.selectedItem as String
 
     if (isRequest) {
-      prepared = Utils.prepareRequestForExecutor(
+      val r = Utils2.Request.edit(
+        montoyaApi,
         requestEditor.request,
+        Annotations.annotations(),
         messageId,
+        action,
         selectedSource
       )
-      source = "request"
+      requestTransformed.request = r.request
+      showMessage(r.executed.version, r.executed.error, r.executed.stdErr)
     } else {
-      val url = KUtils.Url.clean(requestResponse!!.request().url())
-      prepared = Utils.prepareResponseForExecutor(
+      val s = Utils2.Response.edit(
+        montoyaApi,
         responseEditor.response,
-        url,
+        KUtils.Url.clean(requestResponse!!.request().url()),
+        Annotations.annotations(),
         messageId,
+        action,
         selectedSource
       )
-      source = "response"
+      responseTransformed.response = s.response
+      showMessage(s.executed.version, s.executed.error, s.executed.stdErr)
     }
+  }
 
-    val executed = Executor.execute(montoyaApi, action, source, prepared)
-
-    if (isRequest) {
-      requestTransformed.request = Utils.executorToHttpRequest(
-        requestEditor.request, executed)
-    } else {
-      responseTransformed.response = Utils.executorToHttpResponse(
-        responseEditor.response, executed)
-    }
-
+  fun showMessage(version: Short, error: String, stdErr: String) {
     val sb = StringBuilder()
 
-    if (!Utils.checkScriptVersion(executed.version) && executed.error.isBlank()) {
+    if (!Utils.checkScriptVersion(version) && error.isBlank()) {
       sb.append("<div style='color:red'>${K.Error.SCRIPT_NOT_SUPORTED}</div>\n")
     }
-    sb.append(KUtils.escapeHtml(executed.stdErr)).append(System.lineSeparator())
-    sb.append("<div style='color:red;background:black'>${KUtils.escapeHtml(executed.error)}</div>")
+    sb.append(KUtils.escapeHtml(stdErr)).append(System.lineSeparator())
+    sb.append("<div style='color:red;background:black'>${KUtils.escapeHtml(error)}</div>")
 
     stdErrTextPane.text = sb.toString()
   }
@@ -185,5 +182,4 @@ class PreviewTabGui(
     responseTransformed.response = HttpResponse.httpResponse()
     stdErrTextPane.text = ""
   }
-
 }

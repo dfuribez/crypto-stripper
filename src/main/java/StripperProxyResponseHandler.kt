@@ -25,7 +25,7 @@ class StripperProxyResponseHandler(
     val settings = Utils2.Settings.load(montoyaApi)
 
     if (settings.responseEnabled && isUrlInScope) {
-      val editedResponse = KUtils.Response.edit(
+      val editedResponse = Utils2.Response.edit(
         montoyaApi,
         response,
         url,

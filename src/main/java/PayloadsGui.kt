@@ -33,7 +33,7 @@ class PayloadsGui(
   private val previewTextArea = JTextArea(5, 20)
 
   var base64RadioButton: JRadioButton = JRadioButton("Base 64")
-  var URLEncodeRadioButton: JRadioButton = JRadioButton("URL encondign")
+  var urlEncodeRadioButton: JRadioButton = JRadioButton("URL encondign")
   private val plainTextRadioButton = JRadioButton("Plain text")
 
   private val repeatTimesRadio = JRadioButton("Times")
@@ -89,7 +89,7 @@ class PayloadsGui(
 
     val encondings = ButtonGroup()
     encondings.add(base64RadioButton)
-    encondings.add(URLEncodeRadioButton)
+    encondings.add(urlEncodeRadioButton)
     encondings.add(plainTextRadioButton)
 
     plainTextRadioButton.isSelected = true
@@ -146,7 +146,7 @@ class PayloadsGui(
 
     options.add(JLabel("Encoding:"))
     options.add(base64RadioButton)
-    options.add(URLEncodeRadioButton)
+    options.add(urlEncodeRadioButton)
     options.add(plainTextRadioButton, "wrap")
 
     options.add(JLabel("Insertion point:"))

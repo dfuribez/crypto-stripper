@@ -1,6 +1,3 @@
-import utils.Settings.scope
-import utils.isUrlInScope
-import utils.isValidRegex
 import burp.api.montoya.MontoyaApi
 import burp.api.montoya.core.Annotations
 import burp.api.montoya.core.ByteArray.byteArray
@@ -14,6 +11,9 @@ import burp.api.montoya.ui.contextmenu.ContextMenuEvent
 import burp.api.montoya.ui.contextmenu.ContextMenuItemsProvider
 import burp.api.montoya.ui.contextmenu.InvocationType
 import burp.api.montoya.ui.contextmenu.MessageEditorHttpRequestResponse
+import utils.Settings.scope
+import utils.isUrlInScope
+import utils.isValidRegex
 import java.awt.Component
 import java.awt.Font
 import java.util.*
@@ -161,19 +161,30 @@ class StripperContextMenu(
     val parameterName = split[1]
 
     val selectedFile = insertDialog.selectedFile
+    val b64 = insertDialog.base64RadioButton.isSelected
+    val url = insertDialog.urlEncodeRadioButton.isSelected
 
-    var content: ByteArray? = null
+    var toInsert: ByteArray? = null
     if (selectedFile != null) {
-      content = utils.Payloads.readFile(selectedFile)
+      toInsert = utils.Payloads.readFile(selectedFile, b64)
     }
 
     if (parameterName != "SELECTION POINT") {
       val editedParam = HttpParameter.parameter(
         parameterName,
-        byteArray(*content!!).toString(),
+        byteArray(*toInsert!!).toString(),
         HttpParameterType.valueOf(parameterType)
       )
       editor.setRequest(request.withParameter(editedParam))
+    } else {
+      val currentContent = request.toByteArray().bytes
+      val cursorPosition = editor.caretPosition()
+
+      val start = currentContent.copyOfRange(0, cursorPosition)
+      val end = currentContent.copyOfRange(cursorPosition, currentContent.size)
+
+      val nRequest = start + toInsert!! + end
+      editor.setRequest(HttpRequest.httpRequest(burp.api.montoya.core.ByteArray.byteArray(*nRequest)))
     }
 
     return request

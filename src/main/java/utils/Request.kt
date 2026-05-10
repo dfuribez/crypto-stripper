@@ -1,16 +1,18 @@
-package Utils2
+package utils
 
 import Executor
 import K
 import KUtils
 import KUtils.Url.clean
 import KUtils.headersToArray
-import Utils
 import burp.api.montoya.MontoyaApi
 import burp.api.montoya.core.Annotations
 import burp.api.montoya.core.ByteArray
 import burp.api.montoya.http.HttpService
+import burp.api.montoya.http.message.HttpHeader
+import burp.api.montoya.http.message.params.HttpParameter
 import burp.api.montoya.http.message.params.HttpParameterType
+import burp.api.montoya.http.message.params.ParsedHttpParameter
 import burp.api.montoya.http.message.requests.HttpRequest
 import burp.api.montoya.http.message.responses.HttpResponse
 import com.google.gson.Gson
@@ -36,7 +38,7 @@ object Request {
     val edited = executorToHttpRequest(request, executed)
 
     if (!executed.issue.isNullOrEmpty()) {
-      Utils.setIssue(
+      setIssue(
         montoyaApi,
         executed.issue,
         url,
@@ -46,7 +48,7 @@ object Request {
     }
 
     if (!executed.annotation.isNullOrEmpty()) {
-      newAnnotations = Utils.setAnnotation(
+      newAnnotations = setAnnotation(
         annotations.notes(),
         executed.annotation["color"],
         executed.annotation["note"]
@@ -79,11 +81,11 @@ object Request {
       }
     }
 
-    modified = modified.withAddedHeaders(Utils.listToHttpHeaders(output.headers))
+    modified = modified.withAddedHeaders(output.headers.map { HttpHeader.httpHeader(it) })
 
     return modified
       .withBody(ByteArray.byteArray(*output.body.toByteArray(StandardCharsets.UTF_8)))
-      .withAddedParameters(Utils.listToUrlParams(output.urlParameters))
+      .withAddedParameters(listToUrlParams(output.urlParameters))
       .withHeader(K.HEADER.STRIPPER, "true")
       .withUpdatedHeader("Host", output.host)
   }
@@ -96,7 +98,7 @@ object Request {
     val headers = Gson().toJson(headersToArray(request.headers()))
 
     val urlParameters = Gson().toJson(
-      Utils.parametersToArray(request.parameters(HttpParameterType.URL))
+      parametersToArray(request.parameters(HttpParameterType.URL))
     )
 
     result.put("body", String(request.body().getBytes(), StandardCharsets.UTF_8))
@@ -114,4 +116,17 @@ object Request {
     return result
   }
 
+  private fun parametersToArray(parameters: MutableList<ParsedHttpParameter>): List<HashMap<String, String>> {
+    return parameters.map {
+      hashMapOf("name" to it.name(), "value" to it.value())
+    }
+  }
+
+  fun listToUrlParams(
+    urlParametersList: List<HashMap<String, String>>
+  ): List<HttpParameter?> {
+    return urlParametersList.map {
+        HttpParameter.urlParameter(it["name"], it["value"])
+    }
+  }
 }

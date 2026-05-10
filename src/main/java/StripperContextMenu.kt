@@ -1,25 +1,19 @@
 import KUtils.Url.clean
 import KUtils.removePath
-import Utils2.Settings.scope
-import Utils2.isUrlInScope
-import Utils2.isValidRegex
+import utils.Settings.scope
+import utils.isUrlInScope
+import utils.isValidRegex
 import burp.api.montoya.MontoyaApi
 import burp.api.montoya.core.Annotations
 import burp.api.montoya.core.ToolType
 import burp.api.montoya.http.message.HttpRequestResponse
-import burp.api.montoya.http.message.params.HttpParameter
-import burp.api.montoya.http.message.params.HttpParameterType
-import burp.api.montoya.http.message.requests.HttpRequest
 import burp.api.montoya.persistence.PersistedList
 import burp.api.montoya.ui.contextmenu.ContextMenuEvent
 import burp.api.montoya.ui.contextmenu.ContextMenuItemsProvider
 import burp.api.montoya.ui.contextmenu.InvocationType
 import burp.api.montoya.ui.contextmenu.MessageEditorHttpRequestResponse
 import java.awt.Component
-import burp.api.montoya.core.ByteArray;
 import java.awt.Font
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.regex.Pattern
 import javax.swing.JLabel
@@ -43,7 +37,7 @@ class StripperContextMenu(
     if (requestResponse == null) return
     val request = requestResponse.requestResponse().request()
     val annotations = Annotations.annotations()
-    val edited = Utils2.Request.edit(montoyaApi, request, annotations, -1, "decrypt", tool)
+    val edited = utils.Request.edit(montoyaApi, request, annotations, -1, "decrypt", tool)
     try {
       requestResponse.setRequest(edited.request)
     } catch (e: Exception) {

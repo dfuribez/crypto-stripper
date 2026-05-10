@@ -1,12 +1,12 @@
-package Utils2
+package utils
 
 import Executor
 import K
 import KUtils.headersToArray
-import Utils
 import burp.api.montoya.MontoyaApi
 import burp.api.montoya.core.Annotations
 import burp.api.montoya.core.ByteArray
+import burp.api.montoya.http.message.HttpHeader
 import burp.api.montoya.http.message.requests.HttpRequest
 import burp.api.montoya.http.message.responses.HttpResponse
 import com.google.gson.Gson
@@ -31,7 +31,7 @@ object Response {
     val response = executorToHttpResponse(response, executed)
 
     if (executed.issue != null) {
-      Utils.setIssue(
+      setIssue(
         montoyaApi,
         executed.issue,
         url,
@@ -41,7 +41,7 @@ object Response {
     }
 
     if (executed.annotation != null) {
-      newAnnotations = Utils.setAnnotation(
+      newAnnotations = setAnnotation(
         annotations.notes(),
         executed.annotation["color"],
         executed.annotation["note"]
@@ -84,7 +84,7 @@ object Response {
 
     val modified = response
       .withRemovedHeaders(response.headers())
-      .withAddedHeaders(Utils.listToHttpHeaders(output.headers))
+      .withAddedHeaders(output.headers.map { HttpHeader.httpHeader(it) })
       .withStatusCode(output.statusCode)
       .withReasonPhrase(output.reasonPhrase)
 

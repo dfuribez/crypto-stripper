@@ -134,10 +134,4 @@ object KUtils {
       .replace("\n", "<br>")
   }
 
-  fun printError(montoyaApi: MontoyaApi, source: String, error: String) {
-    val now = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
-    montoyaApi.logging().logToError(
-      "[+] $now at $source\n\t$error\n"
-    )
-  }
 }

@@ -6,7 +6,6 @@ import burp.api.montoya.http.message.HttpRequestResponse
 import burp.api.montoya.http.message.requests.HttpRequest
 import burp.api.montoya.http.message.responses.HttpResponse
 import burp.api.montoya.ui.editor.EditorOptions
-import models.EditedResponse
 import net.miginfocom.swing.MigLayout
 import javax.swing.*
 
@@ -51,7 +50,7 @@ class PreviewTabGui(
     testEncryptionButton.addActionListener { execute("encrypt") }
     testDecryptionButton.addActionListener { execute("decrypt") }
 
-    openScriptButton.addActionListener { Utils2.openFolder(scriptPath) }
+    openScriptButton.addActionListener { utils.openFolder(scriptPath) }
 
     layout()
   }
@@ -126,7 +125,7 @@ class PreviewTabGui(
     val selectedSource = toolCombo.selectedItem as String
 
     if (isRequest) {
-      val r = Utils2.Request.edit(
+      val r = utils.Request.edit(
         montoyaApi,
         requestEditor.request,
         Annotations.annotations(),
@@ -137,7 +136,7 @@ class PreviewTabGui(
       requestTransformed.request = r.request
       showMessage(r.executed.version, r.executed.error, r.executed.stdErr)
     } else {
-      val s = Utils2.Response.edit(
+      val s = utils.Response.edit(
         montoyaApi,
         responseEditor.response,
         KUtils.Url.clean(requestResponse!!.request().url()),
@@ -154,7 +153,7 @@ class PreviewTabGui(
   fun showMessage(version: Short, error: String, stdErr: String) {
     val sb = StringBuilder()
 
-    if (!Utils.checkScriptVersion(version) && error.isBlank()) {
+    if (!utils.checkScriptVersion(version) && error.isBlank()) {
       sb.append("<div style='color:red'>${K.Error.SCRIPT_NOT_SUPORTED}</div>\n")
     }
     sb.append(KUtils.escapeHtml(stdErr)).append(System.lineSeparator())

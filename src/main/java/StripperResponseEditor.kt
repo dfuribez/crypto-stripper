@@ -34,11 +34,11 @@ class StripperResponseEditor(
       || requestResponse.request() == null) return false
 
     this.currentRequestResponse = requestResponse
-    val url = KUtils.Url.clean(requestResponse.request().url())
-    val scope = Utils2.Settings.scope(montoyaApi)
+    val url = utils.Url.clean(requestResponse.request().url())
+    val scope = utils.Settings.scope(montoyaApi)
 
     previewTabGui.setRequestResponse(requestResponse)
-    return Utils2.isUrlInScope(url, scope.scope)
+    return utils.isUrlInScope(url, scope.scope)
   }
 
   override fun caption(): String {

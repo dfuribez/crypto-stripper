@@ -111,7 +111,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     selectRequestScriptButton.addActionListener {
       val filter = FileNameExtensionFilter("Python, JavaScript files", "py", "js")
       val parent = montoyaApi.userInterface().swingUtils().suiteFrame()
-      val path = Utils2.openChooser(parent, fileChooser, "Request Script", filter, true)
+      val path = utils.openChooser(parent, fileChooser, "Request Script", filter, true)
       if (path.isBlank()) return@addActionListener
       montoyaApi.persistence().extensionData().setString(K.KEYS.REQUEST_SCRIPT_PATH, path)
       requestScriptTextField.text = path
@@ -120,7 +120,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     selectResponseScriptButton.addActionListener {
       val filter = FileNameExtensionFilter("Python, JavaScript files", "py", "js")
       val parent = montoyaApi.userInterface().swingUtils().suiteFrame()
-      val path = Utils2.openChooser(parent, fileChooser, "Response Script", filter, true)
+      val path = utils.openChooser(parent, fileChooser, "Response Script", filter, true)
       if (path.isBlank()) return@addActionListener
       montoyaApi.persistence().extensionData().setString(K.KEYS.RESPONSE_SCRIPT_PATH, path)
       responseScriptTextField.text = path
@@ -128,14 +128,14 @@ class StripperTab(var montoyaApi: MontoyaApi) {
 
     chooseNodeBinaryButton.addActionListener {
       val parent = montoyaApi.userInterface().swingUtils().suiteFrame()
-      val path = Utils2.openChooser(parent, fileChooser, "Node binary path", null, true)
+      val path = utils.openChooser(parent, fileChooser, "Node binary path", null, true)
       if (path.isEmpty()) return@addActionListener
       montoyaApi.persistence().extensionData().setString(K.KEYS.PROJECT_NODE_PATH, path)
       nodePathTextField.text = path
     }
     choosePythonBinaryButton.addActionListener {
       val parent = montoyaApi.userInterface().swingUtils().suiteFrame()
-      val path = Utils2.openChooser(parent, fileChooser, "Python binary path", null, true)
+      val path = utils.openChooser(parent, fileChooser, "Python binary path", null, true)
       if (path.isEmpty()) return@addActionListener
       montoyaApi.persistence().extensionData().setString(K.KEYS.PROJECT_PYTHON_PATH, path)
       pythonPathTextField.text = path
@@ -143,7 +143,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
 
     selectNodeGlobalButton.addActionListener {
       val parent = montoyaApi.userInterface().swingUtils().suiteFrame()
-      val path = Utils2.openChooser(parent, fileChooser, "Node binary path", null, true)
+      val path = utils.openChooser(parent, fileChooser, "Node binary path", null, true)
       if (path.isBlank()) return@addActionListener
       montoyaApi.persistence().preferences().setString(K.KEYS.GLOBAL_NODE_PATH, path)
       nodeGlobalTextEdit.text = path
@@ -151,7 +151,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
 
     selectPythonGlobalButton.addActionListener {
       val parent = montoyaApi.userInterface().swingUtils().suiteFrame()
-      val path = Utils2.openChooser(parent, fileChooser, "Python binary path", null, true)
+      val path = utils.openChooser(parent, fileChooser, "Python binary path", null, true)
       if (path.isBlank()) return@addActionListener
       montoyaApi.persistence().preferences().setString(K.KEYS.GLOBAL_PYTHON_PATH, path)
       pythonGlobalTextEdit.text = path
@@ -160,17 +160,17 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     jsTemplateButton.addActionListener {
       val parent = montoyaApi.userInterface().swingUtils().suiteFrame()
       val filter = FileNameExtensionFilter("JavaScript files", "js")
-      val path = Utils2.openChooser(parent, fileChooser, "JS template", filter, false)
+      val path = utils.openChooser(parent, fileChooser, "JS template", filter, false)
       if (path.isBlank()) return@addActionListener
-      Utils.resourceToFile(montoyaApi, "template.js", path)
+      utils.resourceToFile(montoyaApi, "/template.js", path)
     }
 
     pythonTemplateButton.addActionListener {
       val parent = montoyaApi.userInterface().swingUtils().suiteFrame()
       val filter = FileNameExtensionFilter("Python files", "py")
-      val path = Utils2.openChooser(parent, fileChooser, "Python template", filter, false)
+      val path = utils.openChooser(parent, fileChooser, "Python template", filter, false)
       if (path.isBlank()) return@addActionListener
-      Utils.resourceToFile(montoyaApi, "template.py", path)
+      utils.resourceToFile(montoyaApi, "/template.py", path)
     }
 
     setNodeDefaultButton.addActionListener {
@@ -206,9 +206,9 @@ class StripperTab(var montoyaApi: MontoyaApi) {
   }
 
   private fun openFolder(path: String) {
-    val result = Utils2.openFolder(path)
+    val result = utils.openFolder(path)
     val parent = montoyaApi.userInterface().swingUtils().suiteFrame()
-    if (!result) Utils2.showAlertMessage(parent, "Error opening containing folder")
+    if (!result) utils.showAlertMessage(parent, "Error opening containing folder")
   }
 
   private fun layout() {
@@ -336,7 +336,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     val key: String?
     val addUrl: String?
 
-    val scope = Utils2.Settings.scope(montoyaApi)
+    val scope = utils.Settings.scope(montoyaApi)
 
     when (source) {
       "scope" -> {
@@ -373,13 +373,13 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     } else {
       addUrl = selectedTextField.text;
       val parent = montoyaApi.userInterface().swingUtils().suiteFrame()
-      if (!Utils2.isValidRegex(addUrl) || addUrl.isBlank()) {
-        Utils2.showAlertMessage(parent, "Please check your url, it is not a valid regex");
+      if (!utils.isValidRegex(addUrl) || addUrl.isBlank()) {
+        utils.showAlertMessage(parent, "Please check your url, it is not a valid regex");
         return;
       }
 
-      if (Utils2.isUrlInScope(addUrl, selectedScopeList)) {
-        Utils2.showAlertMessage(parent, "Url already in the scope");
+      if (utils.isUrlInScope(addUrl, selectedScopeList)) {
+        utils.showAlertMessage(parent, "Url already in the scope");
         return;
       }
 
@@ -391,7 +391,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
   }
 
   private fun clearSettings() {
-    Utils2.Settings.clear(montoyaApi)
+    utils.Settings.clear(montoyaApi)
     loadSettings()
   }
 
@@ -419,8 +419,8 @@ class StripperTab(var montoyaApi: MontoyaApi) {
   }
 
   fun loadSettings() {
-    val settings = Utils2.Settings.load(montoyaApi)
-    val scope = Utils2.Settings.scope(montoyaApi)
+    val settings = utils.Settings.load(montoyaApi)
+    val scope = utils.Settings.scope(montoyaApi)
 
     requestCheckBox.isSelected = settings.requestEnabled
     responseCheckBox.isSelected = settings.responseEnabled
@@ -452,21 +452,21 @@ class StripperTab(var montoyaApi: MontoyaApi) {
   private fun importSettings() {
     val parent = montoyaApi.userInterface().swingUtils().suiteFrame()
     val filter = FileNameExtensionFilter("JSON, configuration files", "json")
-    val path = Utils2.openChooser(parent, fileChooser, "Import JSON settings",filter,true)
+    val path = utils.openChooser(parent, fileChooser, "Import JSON settings",filter,true)
 
     if (path.isEmpty()) return
-    Utils2.Settings.importFromJson(montoyaApi, path)
+    utils.Settings.importFromJson(montoyaApi, path)
     loadSettings()
   }
 
   private fun exportSettings() {
     val parent = montoyaApi.userInterface().swingUtils().suiteFrame()
     val filter = FileNameExtensionFilter("JSON, configuration files", "json")
-    val path = Utils2.openChooser(parent, fileChooser, "Save settings", filter, false)
+    val path = utils.openChooser(parent, fileChooser, "Save settings", filter, false)
 
     if (path.isEmpty()) return
 
-    Utils2.Settings.exportToJson(montoyaApi, path)
+    utils.Settings.exportToJson(montoyaApi, path)
   }
 
   fun getMainPanel() : JPanel { return panel1}

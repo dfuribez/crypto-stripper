@@ -47,7 +47,7 @@ function printJSON(body, headers, urlParameters, httpMethod, host, port, secure,
           reasonPhrase: reasonPhrase,
           httpMethod: httpMethod,
           path: path,
-          version: 5,
+          version: 6,
           host: host,
           port: port,
           secure: secure,
@@ -97,17 +97,17 @@ async function main() {
   var jsonData = JSON.parse(fs.readFileSync(process.argv[2]).toString())
 
   var body = jsonData.body
-  var headers = JSON.parse(jsonData.headers)
-  var urlParameters = JSON.parse(jsonData.urlParameters)
+  var headers = jsonData.headers
+  var urlParameters = jsonData.urlParameters
   var url = jsonData.url
   var messageId = jsonData.messageId
   var statusCode = jsonData.statusCode
   var reasonPhrase = jsonData.reasonPhrase
-  var httpMethod = jsonData.httpMethod
+  var httpMethod = jsonData.method
   var path = jsonData.path
   var source = jsonData.toolSource
   var host = jsonData.host
-  var port = jsonData.port
+  var port = jsonData.ports
   var secure = jsonData.secure
 
   if (jsonData.action == "encrypt") {

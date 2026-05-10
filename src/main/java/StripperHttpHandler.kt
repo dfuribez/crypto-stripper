@@ -15,17 +15,17 @@ class StripperHttpHandler(var montoyaApi: MontoyaApi) : HttpHandler {
       return continueWith(modifiedRequest)
     }
 
-    val url = KUtils.Url.clean(requestToBeSent.url())
-    val scope = Utils2.Settings.scope(montoyaApi)
+    val url = utils.Url.clean(requestToBeSent.url())
+    val scope = utils.Settings.scope(montoyaApi)
 
-    val requestEnabled = montoyaApi.persistence().extensionData().getBoolean(K.KEYS.REQUEST_CHECKBOX_STATUS)
+    val requestEnabled = montoyaApi.persistence().extensionData().getBoolean(K.KEYS.REQUEST_CHECKBOX_STATUS) ?: false
 
-    if (!(requestEnabled && Utils2.isUrlInScope(url, scope.scope)))
+    if (!(requestEnabled && utils.isUrlInScope(url, scope.scope)))
       return continueWith(modifiedRequest, annotations)
 
     val toolName = requestToBeSent.toolSource().toolType().toolName().lowercase()
 
-    val editedRequest = KUtils.Request.edit(
+    val editedRequest = utils.Request.edit(
       montoyaApi,
       modifiedRequest,
       annotations,
@@ -44,16 +44,16 @@ class StripperHttpHandler(var montoyaApi: MontoyaApi) : HttpHandler {
       return continueWith(responseReceived, responseReceived.annotations())
     }
 
-    val url = KUtils.Url.clean(responseReceived.initiatingRequest().url())
-    val scope = Utils2.Settings.scope(montoyaApi)
+    val url = utils.Url.clean(responseReceived.initiatingRequest().url())
+    val scope = utils.Settings.scope(montoyaApi)
 
     val annotations = responseReceived.annotations()
 
-    if (!Utils2.isUrlInScope(url, scope.scope)) {
+    if (!utils.isUrlInScope(url, scope.scope)) {
       return continueWith(responseReceived, annotations)
     }
 
-    val responseEnabled = montoyaApi.persistence().extensionData().getBoolean(K.KEYS.RESPONSE_CHECKBOX_STATUS)
+    val responseEnabled = montoyaApi.persistence().extensionData().getBoolean(K.KEYS.RESPONSE_CHECKBOX_STATUS) ?: false
 
     if (!responseEnabled) {
       return continueWith(
@@ -64,7 +64,7 @@ class StripperHttpHandler(var montoyaApi: MontoyaApi) : HttpHandler {
 
     val source = responseReceived.toolSource().toolType().toolName().lowercase()
 
-    val editedResponse = KUtils.Response.edit(
+    val editedResponse = utils.Response.edit(
       montoyaApi,
       responseReceived.withStatusCode(responseReceived.statusCode()),
       url,

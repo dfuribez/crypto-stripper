@@ -1,4 +1,4 @@
-package Utils2
+package utils
 
 import K
 import burp.api.montoya.MontoyaApi
@@ -7,11 +7,8 @@ import kotlinx.serialization.json.Json
 import models.JsonSettings
 import models.StripperScope
 import models.StripperSettings
-import java.awt.Component
 import java.io.File
 import java.io.FileReader
-import javax.swing.JFileChooser
-import javax.swing.filechooser.FileNameExtensionFilter
 
 object Settings {
   fun load(montoyaApi: MontoyaApi): StripperSettings {

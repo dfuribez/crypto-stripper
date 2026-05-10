@@ -1,4 +1,3 @@
-import KUtils.Request.edit
 import burp.api.montoya.MontoyaApi
 import burp.api.montoya.core.HighlightColor
 import burp.api.montoya.proxy.http.InterceptedRequest
@@ -12,10 +11,10 @@ import burp.api.montoya.proxy.http.ProxyRequestToBeSentAction
 class StripperProxyRequestHandler(var montoyaApi: MontoyaApi) : ProxyRequestHandler {
   override fun handleRequestReceived(interceptedRequest: InterceptedRequest?): ProxyRequestReceivedAction? {
     if (interceptedRequest == null) return null
-    val url = KUtils.Url.clean(interceptedRequest.url())
+    val url = utils.Url.clean(interceptedRequest.url())
     val annotations = interceptedRequest.annotations()
 
-    val scope = Utils2.Settings.scope(montoyaApi)
+    val scope = utils.Settings.scope(montoyaApi)
 
     var request = interceptedRequest
       .withMethod(interceptedRequest.method())
@@ -29,18 +28,18 @@ class StripperProxyRequestHandler(var montoyaApi: MontoyaApi) : ProxyRequestHand
         annotations.setNotes(containerName)
         annotations.setHighlightColor(HighlightColor.valueOf(color.uppercase()))
       } catch (e : Exception) {
-        KUtils.printError(montoyaApi, "StripperProxyRequestHandler.handleRequestReceived", e.toString())
+        utils.printError(montoyaApi, "StripperProxyRequestHandler.handleRequestReceived", e.toString())
       }
     }
 
-    val settings = Utils2.Settings.load(montoyaApi)
+    val settings = utils.Settings.load(montoyaApi)
 
-    val isBlacklisted = settings.enableBlack && Utils2.isUrlInScope(url, scope.black)
-    val forceIntercept = Utils2.isUrlInScope(url, scope.force) && settings.enableForce
-    val isUrlInScope = Utils2.isUrlInScope(url, scope.scope)
+    val isBlacklisted = settings.enableBlack && utils.isUrlInScope(url, scope.black)
+    val forceIntercept = utils.isUrlInScope(url, scope.force) && settings.enableForce
+    val isUrlInScope = utils.isUrlInScope(url, scope.scope)
 
     if (settings.requestEnabled && isUrlInScope) {
-      val editedRequest = edit(
+      val editedRequest = utils.Request.edit(
         montoyaApi,
         request,
         annotations,

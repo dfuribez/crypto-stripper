@@ -12,8 +12,10 @@ import burp.api.montoya.persistence.Persistence
 import burp.api.montoya.scanner.audit.issues.AuditIssue
 import burp.api.montoya.scanner.audit.issues.AuditIssueConfidence
 import burp.api.montoya.scanner.audit.issues.AuditIssueSeverity
+import net.miginfocom.swing.MigLayout
 import java.awt.Component
 import java.awt.Desktop
+import java.awt.Font
 import java.io.File
 import java.io.IOException
 import java.net.http.HttpHeaders
@@ -21,7 +23,11 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.swing.JFileChooser
+import javax.swing.JLabel
 import javax.swing.JOptionPane
+import javax.swing.JPanel
+import javax.swing.JSeparator
+import javax.swing.SwingConstants
 import javax.swing.filechooser.FileNameExtensionFilter
 import kotlin.collections.ArrayList
 
@@ -218,4 +224,37 @@ fun escapeHtml(input: String): String {
     .replace("\"", "&quot;")
     .replace("'", "&#x27;")
     .replace("\n", "<br>")
+}
+
+fun separator(
+  title: String,
+  type: String = "center",
+  visible: Boolean = true,
+  font: Font? = null
+): JPanel {
+  val separator = JPanel(MigLayout("insets 0"))
+
+  val titleLabel = JLabel(title)
+  if (font != null) titleLabel.font = font
+
+  if (type.equals("center", ignoreCase = true)) {
+    separator.add(spacer(visible), "growx, pushx")
+    separator.add(titleLabel)
+    separator.add(spacer(visible), "growx, pushx")
+  } else if (type.equals("left", ignoreCase = true)) {
+    separator.add(titleLabel)
+    separator.add(spacer(visible), "growx, pushx")
+  } else {
+    separator.add(spacer(visible), "growx, pushx")
+    separator.add(titleLabel)
+  }
+
+  return separator
+}
+
+fun spacer(visible: Boolean): Component {
+  if (visible) {
+    return JSeparator(SwingConstants.HORIZONTAL)
+  }
+  return JPanel()
 }

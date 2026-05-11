@@ -1,7 +1,6 @@
 package utils
 
 import K
-import KUtils
 import burp.api.montoya.MontoyaApi
 import burp.api.montoya.core.Annotations
 import burp.api.montoya.core.ByteArray

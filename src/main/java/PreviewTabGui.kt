@@ -1,4 +1,3 @@
-import KUtils.separator
 import burp.api.montoya.MontoyaApi
 import burp.api.montoya.core.Annotations
 import burp.api.montoya.http.message.HttpRequestResponse
@@ -98,7 +97,7 @@ class PreviewTabGui(
 
     bottom.add(vertical, "grow, push")
 
-    right.add(separator("Output", "center", false), "alignx center, wrap")
+    right.add(utils.separator("Output", "center", false), "alignx center, wrap")
     right.add(stdErrScroll, "grow, push")
 
     mainPanel.add(horizontal, "grow, wrap, push")

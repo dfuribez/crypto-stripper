@@ -131,18 +131,18 @@ class StripperContextMenu(
         burpScopeMenu.addActionListener { montoyaApi.scope().includeInScope(utils.Url.removePath(url)) }
       }
 
-      menuItemList.add(KUtils.separator(" Stripper scope", font = separatorFont, visible = false, type = "left"))
+      menuItemList.add(utils.separator(" Stripper scope", font = separatorFont, visible = false, type = "left"))
       menuItemList.add(stripperScopeMenu)
       menuItemList.add(stripperBlackListMenu)
       menuItemList.add(stripperForceMenu)
 
     }
 
-      menuItemList.add(KUtils.separator(" Burp scope", font = separatorFont, visible = false, type = "left"))
+      menuItemList.add(utils.separator(" Burp scope", font = separatorFont, visible = false, type = "left"))
       menuItemList.add(burpScopeMenu!!)
 
       if (insertPayloadMenu != null) {
-        menuItemList.add(KUtils.separator(" Extra", font = separatorFont, visible = false, type = "left"))
+        menuItemList.add(utils.separator(" Extra", font = separatorFont, visible = false, type = "left"))
         menuItemList.add(insertPayloadMenu)
       }
       return menuItemList

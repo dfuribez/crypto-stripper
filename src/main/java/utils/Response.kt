@@ -7,7 +7,6 @@ import burp.api.montoya.core.ByteArray
 import burp.api.montoya.http.message.HttpHeader
 import burp.api.montoya.http.message.requests.HttpRequest
 import burp.api.montoya.http.message.responses.HttpResponse
-import com.google.gson.Gson
 import models.EditedResponse
 import models.ExecutorOutput
 import models.JsonRequestResponse

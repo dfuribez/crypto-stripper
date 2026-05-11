@@ -1,4 +1,3 @@
-import KUtils.separator
 import burp.api.montoya.MontoyaApi
 import burp.api.montoya.http.message.params.ParsedHttpParameter
 import net.miginfocom.swing.MigLayout
@@ -103,7 +102,7 @@ class PayloadsGui(
 
   private fun initLayout() {
     // Separator
-    val separator = separator("Characters", "center", true, null)
+    val separator = utils.separator("Characters", "center", true, null)
     mainPanel.add(separator, "span, growx, pushx, wrap")
 
     // Characters
@@ -125,7 +124,7 @@ class PayloadsGui(
     mainPanel.add(characters, "span, growx, pushx, wrap")
 
     // --------------
-    val separator2 = separator("Files", "center", true, null)
+    val separator2 = utils.separator("Files", "center", true, null)
     mainPanel.add(separator2, "span, growx, pushx, wrap")
 
     // Files
@@ -138,7 +137,7 @@ class PayloadsGui(
     mainPanel.add(files, "span, growx, pushx, wrap")
 
     // --------------
-    val separator3 = separator("Output", "center", true, null)
+    val separator3 = utils.separator("Output", "center", true, null)
     mainPanel.add(separator3, "span, growx, pushx, wrap")
 
     // Options

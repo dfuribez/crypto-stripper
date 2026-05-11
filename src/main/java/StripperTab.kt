@@ -1,4 +1,3 @@
-import KUtils.separator
 import burp.api.montoya.MontoyaApi
 import burp.api.montoya.persistence.PersistedList
 import net.miginfocom.swing.MigLayout
@@ -263,7 +262,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     panel1.add(gpathsPanel, "growx, wrap")
 
     // ---------------
-    val separator = separator("Crypto Stripper scope", "center", true)
+    val separator = utils.separator("Crypto Stripper scope", "center", true)
 
     panel1.add(separator, "growx, wrap")
 
@@ -271,7 +270,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     val scopesPanel = JPanel(MigLayout("fill"))
 
     // Scope panel
-    scopeListPanel.add(separator("Scope (?)", "center", false), "span, growx")
+    scopeListPanel.add(utils.separator("Scope (?)", "center", false), "span, growx")
     scopeListPanel.add(scrollScope, "wrap, span 2, grow, push")
     scopeListPanel.add(deleteSelectedScopeButton, "alignx right, span 2, wrap")
     scopeListPanel.add(scopeUrlTextField, "growx, pushx")
@@ -280,7 +279,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     scopesPanel.add(scopeListPanel, "sg pn, grow")
 
     // BlackList panel
-    blackListPanel.add(separator("Black List: (?)", "center", false), "span, growx")
+    blackListPanel.add(utils.separator("Black List: (?)", "center", false), "span, growx")
     blackListPanel.add(scrollBlackList, "span 2, grow, push, wrap")
     blackListPanel.add(enableBlackListcheckbox, "alignx left")
     blackListPanel.add(deleteSelectedBlacklistButton, "alignx right, wrap")
@@ -295,7 +294,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
     scopesPanel.add(blackListPanel, "sg pn, grow")
 
     // Force interept panel
-    forceListPanel.add(separator("Force intercept: (?)", "center", false), "span, growx")
+    forceListPanel.add(utils.separator("Force intercept: (?)", "center", false), "span, growx")
 
     forceListPanel.add(scrollForceInterceptList, "wrap, span 2, grow, push")
     forceListPanel.add(enableForceListCheckbox, "alignx left")

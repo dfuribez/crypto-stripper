@@ -38,6 +38,7 @@ object Executor {
     var temp: File? = null
 
     temp = createTempFile(prefix = "stripper_", suffix = ".json").toFile()
+    temp.deleteOnExit()
     val format = Json { encodeDefaults = true }
     val json = format.encodeToString(JsonRequestResponse.serializer(), requestResponse)
     temp.writeText(json, StandardCharsets.UTF_8)

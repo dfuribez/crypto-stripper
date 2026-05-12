@@ -5,7 +5,9 @@ import burp.api.montoya.http.message.requests.HttpRequest
 import burp.api.montoya.http.message.responses.HttpResponse
 import burp.api.montoya.ui.editor.EditorOptions
 import net.miginfocom.swing.MigLayout
+import java.awt.Dimension
 import javax.swing.*
+
 
 class PreviewTabGui(
   var montoyaApi: MontoyaApi,
@@ -44,7 +46,7 @@ class PreviewTabGui(
     initialize()
 
     stdErrTextPane.contentType = "text/html"
-
+    stdErrTextPane.setMinimumSize(Dimension(0, 0))
     testEncryptionButton.addActionListener { execute("encrypt") }
     testDecryptionButton.addActionListener { execute("decrypt") }
 

@@ -107,7 +107,7 @@ async function main() {
   var path = jsonData.path
   var source = jsonData.toolSource
   var host = jsonData.host
-  var port = jsonData.ports
+  var port = jsonData.port
   var secure = jsonData.secure
 
   if (jsonData.action == "encrypt") {

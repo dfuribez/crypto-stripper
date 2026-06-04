@@ -14,13 +14,10 @@ class StripperProxyResponseHandler(
     val url = utils.Url.clean(interceptedResponse.initiatingRequest().url())
     val scope = utils.Settings.scope(montoyaApi)
 
-    val response = interceptedResponse
-      .withStatusCode(interceptedResponse.statusCode())
-
+    val response = interceptedResponse.copyToTempFile()
     val annotations = interceptedResponse.annotations()
 
     val isUrlInScope = utils.isUrlInScope(url, scope.scope)
-
     val settings = utils.Settings.load(montoyaApi)
 
     if (settings.responseEnabled && isUrlInScope) {

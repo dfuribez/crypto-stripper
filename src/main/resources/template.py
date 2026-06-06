@@ -47,7 +47,7 @@ def print_json(body, headers, url_parameters, http_method, host, port, secure, p
                 "host": host,
                 "port": port,
                 "secure": secure,
-                "version": 5,
+                "version": 6,
                 "eventLog": event_log,
                 "intercept": intercept,
                 "issue": issue,
@@ -94,13 +94,13 @@ with open(sys.argv[1]) as file:
     json_content = json.load(file)
 
     body = json_content["body"]
-    headers = json.loads(json_content["headers"])
+    headers = json_content["headers"]
     url = json_content["url"]
-    url_parameters = json.loads(json_content["urlParameters"])
+    url_parameters = json_content["urlParameters"]
     messageid = json_content["messageId"]
     status_code = json_content.get("statusCode", 0)
     reason_phrase = json_content.get("reasonPhrase", "")
-    http_method = json_content.get("httpMethod", "")
+    http_method = json_content.get("method", "")
     path = json_content.get("path", "")
     source = json_content.get("toolSource")
     host = json_content.get("host")

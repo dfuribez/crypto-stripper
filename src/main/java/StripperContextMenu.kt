@@ -146,11 +146,13 @@ class StripperContextMenu(
       return menuItemList
   }
 
-  fun insertPayload(editor: MessageEditorHttpRequestResponse): HttpRequest {
+  fun insertPayload(editor: MessageEditorHttpRequestResponse) {
     val request = editor.requestResponse().request()
     insertDialog.pack()
     insertDialog.setParameters(request.parameters())
     insertDialog.isVisible = true
+
+    if (insertDialog.canceled) return
 
     val selectedCombo = insertDialog.getSelectedParameter()
 
@@ -159,18 +161,24 @@ class StripperContextMenu(
     val parameterName = split[1]
 
     val selectedFile = insertDialog.selectedFile
+    val repeat = insertDialog.textRepeat.text.toByteArray()
+    val len = insertDialog.textLenght.text.toIntOrNull()
+    val repeatBytes = insertDialog.repeatBytesRadio.isSelected
     val b64 = insertDialog.base64RadioButton.isSelected
     val url = insertDialog.urlEncodeRadioButton.isSelected
 
     var toInsert: ByteArray? = null
     if (selectedFile != null) {
-      toInsert = utils.Payloads.readFile(selectedFile, b64)
+      toInsert = utils.Payloads.readFile(selectedFile, b64, url)
+    } else {
+      if (len == null) return
+      toInsert = utils.Payloads.generate(repeat, len, repeatBytes, b64, url)
     }
 
     if (parameterName != "SELECTION POINT") {
       val editedParam = HttpParameter.parameter(
         parameterName,
-        byteArray(*toInsert!!).toString(),
+        byteArray(*toInsert).toString(),
         HttpParameterType.valueOf(parameterType)
       )
       editor.setRequest(request.withParameter(editedParam))
@@ -181,11 +189,9 @@ class StripperContextMenu(
       val start = currentContent.copyOfRange(0, cursorPosition)
       val end = currentContent.copyOfRange(cursorPosition, currentContent.size)
 
-      val nRequest = start + toInsert!! + end
+      val nRequest = start + toInsert + end
       editor.setRequest(HttpRequest.httpRequest(burp.api.montoya.core.ByteArray.byteArray(*nRequest)))
     }
-
-    return request
   }
 
   fun updateScope(source: String, action: String?, url: String) {

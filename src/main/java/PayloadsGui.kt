@@ -23,16 +23,16 @@ class PayloadsGui(
   private val insertRandomButton = JButton("Random")
   private val selectFileButton = JButton("Select")
 
-  private val textRepeat = JTextArea(5, 20)
-  private val textLenght = JTextField()
+  val textRepeat = JTextArea(5, 20)
+  val textLenght = JTextField()
   private val fileTextField = JTextField()
 
   var base64RadioButton: JRadioButton = JRadioButton("Base 64")
-  var urlEncodeRadioButton: JRadioButton = JRadioButton("URL encondign")
+  var urlEncodeRadioButton: JRadioButton = JRadioButton("URL encoding")
   private val plainTextRadioButton = JRadioButton("Plain text")
 
   private val repeatTimesRadio = JRadioButton("Times")
-  private val repeatBytesRadio = JRadioButton("Bytes")
+  val repeatBytesRadio = JRadioButton("Bytes")
 
   private val parametersCombo = JComboBox<String?>()
 

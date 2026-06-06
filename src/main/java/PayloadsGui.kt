@@ -23,13 +23,9 @@ class PayloadsGui(
   private val insertRandomButton = JButton("Random")
   private val selectFileButton = JButton("Select")
 
-  private val lenghtLabel = JLabel("0")
-
-  private val textRepeat = JTextField()
+  private val textRepeat = JTextArea(5, 20)
   private val textLenght = JTextField()
   private val fileTextField = JTextField()
-
-  private val previewTextArea = JTextArea(5, 20)
 
   var base64RadioButton: JRadioButton = JRadioButton("Base 64")
   var urlEncodeRadioButton: JRadioButton = JRadioButton("URL encondign")
@@ -40,17 +36,19 @@ class PayloadsGui(
 
   private val parametersCombo = JComboBox<String?>()
 
-  private val scrollPreview = JScrollPane(previewTextArea)
+
+  private val scrollRepeat = JScrollPane(textRepeat)
 
   var selectedText: ByteArray? = null
 
   var fileChooser: JFileChooser = JFileChooser()
   var burpMainFrame: Frame? = null
 
-  val URL_SAFE_CHARS: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+  val URL_SAFE_CHARS = ('a'..'z') + ('A'..'Z') + ('0'..'9')
   val RANDOM: Random = Random()
 
   var selectedFile: String? = null
+  var canceled: Boolean = false
 
   init {
     setLocationRelativeTo(montoyaApi.userInterface().swingUtils().suiteFrame())
@@ -72,6 +70,15 @@ class PayloadsGui(
     buttonOK.addActionListener { onOK() }
     buttonCancel.addActionListener { onCancel() }
 
+    insertRandomButton.addActionListener {
+      val lenght = textLenght.text.toIntOrNull() ?: 0
+      val generated = (1..lenght)
+        .map { URL_SAFE_CHARS.random() }
+        .joinToString("")
+
+      textRepeat.text = generated
+    }
+
     selectFileButton.addActionListener { openFile() }
   }
 
@@ -80,11 +87,6 @@ class PayloadsGui(
 
     textLenght.text = "100"
     fileTextField.isEditable = false
-
-    lenghtLabel.horizontalAlignment = SwingConstants.CENTER
-
-    previewTextArea.isEditable = false
-    previewTextArea.lineWrap = true
 
     val encondings = ButtonGroup()
     encondings.add(base64RadioButton)
@@ -103,66 +105,62 @@ class PayloadsGui(
   private fun initLayout() {
     // Separator
     val separator = utils.separator("Characters", "center", true, null)
-    mainPanel.add(separator, "span, growx, pushx, wrap")
+    mainPanel.add(separator, "growx, span, wrap")
 
     // Characters
-    val characters = JPanel(MigLayout())
+    val strings = JPanel(MigLayout())
 
-    characters.add(JLabel("Strings:"))
-    characters.add(textRepeat, "growx, pushx, span 3")
-    characters.add(lenghtLabel, "wrap, alignx center")
+    mainPanel.add(JLabel("String:"), "aligny center")
+    strings.add(scrollRepeat, "growx, pushx, wrap")
+    strings.add(insertRandomButton, "aligny center, alignx right, sg btn, wrap")
+    mainPanel.add(strings, "grow, wrap")
 
-    characters.add(JLabel("Repeat:"))
-    characters.add(textLenght, "growx, pushx")
-    characters.add(repeatBytesRadio)
-    characters.add(repeatTimesRadio)
-    characters.add(insertRandomButton, "wrap")
 
-    characters.add(JLabel("Preview:"))
-    characters.add(scrollPreview, "span, grow, push")
-
-    mainPanel.add(characters, "span, growx, pushx, wrap")
+    val repeat = JPanel(MigLayout())
+    mainPanel.add(JLabel("Repeat:"))
+    repeat.add(textLenght, "growx, pushx")
+    repeat.add(repeatBytesRadio)
+    repeat.add(repeatTimesRadio)
+    mainPanel.add(repeat, "growx, wrap")
 
     // --------------
     val separator2 = utils.separator("Files", "center", true, null)
-    mainPanel.add(separator2, "span, growx, pushx, wrap")
+    mainPanel.add(separator2, "span, growx, wrap")
 
     // Files
     val files = JPanel(MigLayout())
-
-    files.add(JLabel("File:"))
+    mainPanel.add(JLabel("File:"), ", sg labels")
     files.add(fileTextField, "growx, pushx")
     files.add(selectFileButton, "sg btn")
-
-    mainPanel.add(files, "span, growx, pushx, wrap")
+    mainPanel.add(files, "grow, wrap")
 
     // --------------
     val separator3 = utils.separator("Output", "center", true, null)
-    mainPanel.add(separator3, "span, growx, pushx, wrap")
+    mainPanel.add(separator3, "span, growx, wrap")
 
-    // Options
     val options = JPanel(MigLayout())
-
-    options.add(JLabel("Encoding:"))
+    mainPanel.add(JLabel("Encoding:"))
     options.add(base64RadioButton)
     options.add(urlEncodeRadioButton)
     options.add(plainTextRadioButton, "wrap")
+    mainPanel.add(options, "growx, alignx center, wrap")
 
-    options.add(JLabel("Insertion point:"))
-    options.add(parametersCombo, "growx, pushx, span, wrap, wmax 400")
+    mainPanel.add(JLabel("Insertion point:"))
+    mainPanel.add(parametersCombo, "growx, pushx, span, wrap, wmax 600")
 
-    mainPanel.add(options, "span, pushx, growx, wrap")
-
-    mainPanel.add(JPanel(), "growx")
-    mainPanel.add(buttonCancel)
-    mainPanel.add(buttonOK)
+    val buttons = JPanel(MigLayout())
+    buttons.add(JLabel(""), "growx, pushx")
+    buttons.add(buttonCancel, "sg btn")
+    buttons.add(buttonOK, "sg btn")
+    mainPanel.add(JLabel(""))
+    mainPanel.add(buttons, "growx")
   }
 
   fun clear() {
     textRepeat.text = ""
     fileTextField.text = ""
-    previewTextArea.text = ""
     selectedFile = null
+    canceled = false
   }
 
   fun setParameters(parameters: List<ParsedHttpParameter?>) {
@@ -184,6 +182,7 @@ class PayloadsGui(
   }
 
   private fun onCancel() {
+    canceled = true
     dispose()
   }
 

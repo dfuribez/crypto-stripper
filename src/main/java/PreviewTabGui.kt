@@ -50,7 +50,7 @@ class PreviewTabGui(
     testEncryptionButton.addActionListener { execute("encrypt") }
     testDecryptionButton.addActionListener { execute("decrypt") }
 
-    openScriptButton.addActionListener { utils.openFolder(scriptPath) }
+    openScriptButton.addActionListener { utils.openScript(scriptPath) }
 
     layout()
   }
@@ -77,19 +77,22 @@ class PreviewTabGui(
   }
 
   private fun layout() {
+    val PADDING = "10"
+
     val top = JPanel(MigLayout("insets 0"))
     val bottom = JPanel(MigLayout("insets 0"))
 
     val left = JPanel(MigLayout("insets 0"))
     val right = JPanel(MigLayout("insets 0"))
 
+    top.add(utils.separator("Original", visible = false), "wrap, alignx center")
     left.add(JLabel("Edited"), "alignx center, wrap")
     if (isRequest) {
-      top.add(requestEditor.uiComponent(), "grow, push")
-      left.add(requestTransformed.uiComponent(), "grow, push")
+      top.add(requestEditor.uiComponent(), "grow, push, gap 0 $PADDING, gapleft $PADDING")
+      left.add(requestTransformed.uiComponent(), "grow, push, gapleft $PADDING")
     } else {
-      top.add(responseEditor.uiComponent(), "grow, push")
-      left.add(responseTransformed.uiComponent(), "grow, push")
+      top.add(responseEditor.uiComponent(), "grow, push, gap 0 $PADDING, gapleft $PADDING")
+      left.add(responseTransformed.uiComponent(), "grow, push, gapleft $PADDING")
     }
 
     val horizontal = JSplitPane(JSplitPane.VERTICAL_SPLIT, top, bottom)
@@ -99,8 +102,8 @@ class PreviewTabGui(
 
     bottom.add(vertical, "grow, push")
 
-    right.add(utils.separator("Output", "center", false), "alignx center, wrap")
-    right.add(stdErrScroll, "grow, push")
+    right.add(utils.separator("Output", visible =  false), "alignx center, wrap")
+    right.add(stdErrScroll, "grow, push, gap 0 $PADDING")
 
     mainPanel.add(horizontal, "grow, wrap, push")
 

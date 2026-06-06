@@ -205,7 +205,7 @@ class StripperTab(var montoyaApi: MontoyaApi) {
   }
 
   private fun openFolder(path: String) {
-    val result = utils.openFolder(path)
+    val result = utils.openScript(path)
     val parent = montoyaApi.userInterface().swingUtils().suiteFrame()
     if (!result) utils.showAlertMessage(parent, "Error opening containing folder")
   }

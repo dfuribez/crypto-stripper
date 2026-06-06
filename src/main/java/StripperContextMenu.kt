@@ -11,9 +11,7 @@ import burp.api.montoya.ui.contextmenu.ContextMenuEvent
 import burp.api.montoya.ui.contextmenu.ContextMenuItemsProvider
 import burp.api.montoya.ui.contextmenu.InvocationType
 import burp.api.montoya.ui.contextmenu.MessageEditorHttpRequestResponse
-import utils.Settings.scope
 import utils.isUrlInScope
-import utils.isValidRegex
 import java.awt.Component
 import java.awt.Font
 import java.util.*
@@ -65,7 +63,7 @@ class StripperContextMenu(
     }
 
     val url = utils.Url.clean(requestResponse.request().url())
-    val scope = scope(montoyaApi)
+    val scope = utils.Settings.scope(montoyaApi)
     val source = event.toolType().toolName().lowercase()
 
     var insertPayloadMenu: JMenuItem? = null
@@ -191,12 +189,11 @@ class StripperContextMenu(
   }
 
   fun updateScope(source: String, action: String?, url: String) {
-    var url = url
+    val url = Pattern.quote(url)
     val target: PersistedList<String>
     val key: String
 
-    val scope = scope(montoyaApi)
-    if (!isValidRegex(url)) url = Pattern.quote(url)
+    val scope = utils.Settings.scope(montoyaApi)
 
     when (source) {
       "blacklist" -> {

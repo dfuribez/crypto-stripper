@@ -18,7 +18,6 @@ import java.awt.Desktop
 import java.awt.Font
 import java.io.File
 import java.io.IOException
-import java.net.http.HttpHeaders
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -64,13 +63,11 @@ fun isValidRegex(pattern: String) : Boolean{
   }
 }
 
-fun openFolder(path: String?): Boolean {
+fun openScript(path: String?): Boolean {
   if (path.isNullOrBlank()) return false
   if (Desktop.isDesktopSupported()) {
-    val file = File(path)
-    val desktop = Desktop.getDesktop()
     try {
-      desktop.open(File(file.parent))
+      Desktop.getDesktop().open(File(path))
       return true
     } catch (e: IOException) {
       return false

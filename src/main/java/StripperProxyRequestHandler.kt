@@ -49,17 +49,15 @@ class StripperProxyRequestHandler(var montoyaApi: MontoyaApi) : ProxyRequestHand
       );
 
       if (editedRequest.intercept == null) {
-        if (isBlacklisted) return doNotIntercept(editedRequest.request, annotations)
-        if (settings.forceInScope || forceIntercept) {
-          return intercept(editedRequest.request, annotations)
-        }
-        return continueWith(editedRequest.request, annotations)
+        if (isBlacklisted) return doNotIntercept(editedRequest.request, editedRequest.annotations)
+        if (settings.forceInScope || forceIntercept) return intercept(editedRequest.request, editedRequest.annotations)
+
+        return continueWith(editedRequest.request, editedRequest.annotations)
       }
 
-      if (editedRequest.intercept) {
-        return intercept(editedRequest.request, annotations)
-      }
-      return doNotIntercept(editedRequest.request, annotations)
+      if (editedRequest.intercept) return intercept(editedRequest.request, editedRequest.annotations)
+
+      return doNotIntercept(editedRequest.request, editedRequest.annotations)
     }
 
     if (isUrlInScope) {

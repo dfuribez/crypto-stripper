@@ -35,7 +35,7 @@ class StripperHttpHandler(var montoyaApi: MontoyaApi) : HttpHandler {
     )
 
     val newRequest = editedRequest.request.withRemovedHeader(K.HEADER.STRIPPER)
-    return continueWith(newRequest, annotations)
+    return continueWith(newRequest, editedRequest.annotations)
   }
 
   override fun handleHttpResponseReceived(responseReceived: HttpResponseReceived?): ResponseReceivedAction? {
@@ -49,9 +49,7 @@ class StripperHttpHandler(var montoyaApi: MontoyaApi) : HttpHandler {
 
     val annotations = responseReceived.annotations()
 
-    if (!utils.isUrlInScope(url, scope.scope)) {
-      return continueWith(responseReceived, annotations)
-    }
+    if (!utils.isUrlInScope(url, scope.scope)) return continueWith(responseReceived, annotations)
 
     val responseEnabled = montoyaApi.persistence().extensionData().getBoolean(K.KEYS.RESPONSE_CHECKBOX_STATUS) ?: false
 
